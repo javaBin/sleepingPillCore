@@ -11,13 +11,19 @@ import java.util.function.Supplier;
 
 public class ServiceLocator implements AutoCloseable {
     private static final Map<Long,ServiceLocator> transactions = new HashMap<>();
+    private EmsDao emsDao;
 
     @Override
     public void close() throws Exception {
+        if (emsDao != null) {
+            emsDao.close();
+        }
+        emsDao = null;
         ServiceLocator removed = transactions.remove(Thread.currentThread().getId());
         if (removed == null) {
             throw new InternalError("Trying to close when transaction not started");
         }
+
     }
 
     private ServiceLocator() {
@@ -43,6 +49,15 @@ public class ServiceLocator implements AutoCloseable {
     }
 
     public EmsDao emsDao() {
-        return new InMemEmsDao();
+        if (emsDao == null) {
+            emsDao = new InMemEmsDao();
+        }
+        return emsDao;
+    }
+
+    public void rollback() {
+        if (emsDao != null) {
+            emsDao.rollback();
+        }
     }
 }

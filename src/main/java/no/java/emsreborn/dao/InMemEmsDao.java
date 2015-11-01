@@ -6,21 +6,31 @@ import no.java.emsreborn.Talk;
 import java.util.*;
 
 public class InMemEmsDao implements EmsDao {
-    private static final Map<String,Event> events = new HashMap<>();
+    private static final Map<String,Event> allEvents = new HashMap<>();
+
+    private final Map<String,Event> updatedEvents = new HashMap();
 
     @Override
     public void addEvent(Event event) {
-        events.put(event.eventid,event);
+        updatedEvents.put(event.eventid, event);
+    }
+
+    private Map<String, Event> events() {
+        Map<String, Event> computedEvents = new HashMap<>();
+        computedEvents.putAll(allEvents);
+        computedEvents.putAll(updatedEvents);
+        return computedEvents;
+
     }
 
     @Override
     public Optional<Event> findEvent(String eventid) {
-        return Optional.ofNullable(events.get(eventid));
+        return Optional.ofNullable(events().get(eventid));
     }
 
     @Override
     public List<Event> allEvents() {
-        return new ArrayList<>(events.values());
+        return new ArrayList<>(events().values());
     }
 
     @Override
@@ -41,5 +51,16 @@ public class InMemEmsDao implements EmsDao {
     @Override
     public List<Talk> allTalks(String eventid) {
         return null;
+    }
+
+    @Override
+    public void rollback() {
+        updatedEvents.clear();
+
+    }
+
+    @Override
+    public void close() throws Exception {
+        allEvents.putAll(updatedEvents);
     }
 }

@@ -14,6 +14,7 @@ public class TestWithTransaction {
 
     @After
     public void endTransaction() throws Exception {
+        serviceLocator.rollback();
         serviceLocator.close();
     }
 }

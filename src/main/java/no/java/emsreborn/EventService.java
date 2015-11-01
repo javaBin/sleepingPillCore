@@ -16,7 +16,12 @@ public class EventService {
     }
 
     public JsonObject findEvent(JsonObject input) {
-        return null;
+        String id = input.stringValue("id").get();
+        Event event = ServiceLocator.instance().emsDao().findEvent(id).get();
+
+        return JsonFactory.jsonObject()
+                .put("id",event.eventid)
+                .put("name",event.name);
     }
 
     public static EventService get() {

@@ -21,5 +21,9 @@ public class EventServiceTest extends TestWithTransaction {
 
         Optional<String> id = result.stringValue("id");
         assertThat(id).isPresent();
+
+        JsonObject event = eventService.findEvent(result);
+        assertThat(event.requiredString("name")).isEqualTo("Javazone 2016");
+        assertThat(event.requiredString("id")).isEqualTo(id.get());
     }
 }

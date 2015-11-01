@@ -5,6 +5,7 @@ import no.java.emsreborn.Talk;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface EmsDao {
     void addEvent(Event event);
@@ -15,4 +16,8 @@ public interface EmsDao {
     void updateTalk(Talk talk);
     Optional<Talk> findTalk(String talkid);
     List<Talk> allTalks(String eventid);
+
+    default String newKey() {
+        return UUID.randomUUID().toString();
+    }
 }

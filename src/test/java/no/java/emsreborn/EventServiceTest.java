@@ -26,4 +26,18 @@ public class EventServiceTest extends TestWithTransaction {
         assertThat(event.requiredString("name")).isEqualTo("Javazone 2016");
         assertThat(event.requiredString("id")).isEqualTo(id.get());
     }
+
+    @Test
+    public void shouldAddTalk() throws Exception {
+        EventService eventService = EventService.get();
+        String eventId = eventService.addEvent(JsonFactory.jsonObject().put("name", "Javazone 2016")).requiredString("id");
+
+        JsonObject newTalk = JsonFactory.jsonObject()
+                .put("public", JsonFactory.jsonObject().put("name", "MyTalk"));
+
+        String talkid = eventService.addTalk(newTalk, eventId).requiredString("id");
+
+        assertThat(talkid).isNotNull();
+
+    }
 }

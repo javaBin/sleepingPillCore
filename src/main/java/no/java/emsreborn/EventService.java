@@ -4,6 +4,7 @@ import no.java.emsreborn.dao.EmsDao;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class EventService {
@@ -26,5 +27,29 @@ public class EventService {
 
     public static EventService get() {
         return new EventService();
+    }
+
+    public JsonObject addTalk(JsonObject newTalk, String eventId) {
+        EmsDao emsDao = ServiceLocator.instance().emsDao();
+        Talk.Builder builder = Talk.builder()
+                .setTalkid(emsDao.newKey())
+                .setEventid(eventId);
+        Optional<JsonObject> publicValues = newTalk.objectValue("public");
+        if (publicValues.isPresent()) {
+            builder.setPublicValues(publicValues.get());
+        }
+        Optional<JsonObject> privateValues = newTalk.objectValue("private");
+        if (privateValues.isPresent()) {
+            builder.setPrivateValues(privateValues.get());
+        }
+        Optional<Boolean> isPublic = newTalk.booleanValue("isPublic");
+        if (isPublic.isPresent()) {
+            builder.setIsPublic(isPublic.get());
+        }
+        Talk talk = builder.create();
+        emsDao.addTalk(talk);
+
+        return JsonFactory.jsonObject().put("id",talk.getTalkid());
+
     }
 }

@@ -35,9 +35,13 @@ public class EventServiceTest extends TestWithTransaction {
         JsonObject newTalk = JsonFactory.jsonObject()
                 .put("public", JsonFactory.jsonObject().put("name", "MyTalk"));
 
-        String talkid = eventService.addTalk(newTalk, eventId).requiredString("id");
+        JsonObject result = eventService.addTalk(newTalk, eventId);
+        String talkid = result.requiredString("id");
 
         assertThat(talkid).isNotNull();
+
+        JsonObject talk = eventService.findTalk(result);
+        assertThat(talk.requiredObject("public").requiredString("name")).isEqualTo("MyTalk");
 
     }
 }

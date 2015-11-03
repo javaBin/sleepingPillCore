@@ -52,4 +52,17 @@ public class EventService {
         return JsonFactory.jsonObject().put("id",talk.getTalkid());
 
     }
+
+    public JsonObject findTalk(JsonObject input) {
+        String id = input.stringValue("id").get();
+        Talk event = ServiceLocator.instance().emsDao().findTalk(id).get();
+
+        return JsonFactory.jsonObject()
+                .put("talkid",event.getTalkid())
+                .put("eventid",event.getEventid())
+                .put("isPublic",event.isPublic())
+                .put("private",event.getPrivateValues())
+                .put("public",event.getPublicValues())
+                ;
+    }
 }

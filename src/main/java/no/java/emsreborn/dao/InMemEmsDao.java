@@ -7,8 +7,10 @@ import java.util.*;
 
 public class InMemEmsDao implements EmsDao {
     private static final Map<String,Event> allEvents = new HashMap<>();
+    private static final Map<String,Talk> allTalks = new HashMap<>();
 
     private final Map<String,Event> updatedEvents = new HashMap();
+    private final Map<String,Talk> updatedTalks = new HashMap();
 
     @Override
     public void addEvent(Event event) {
@@ -20,7 +22,13 @@ public class InMemEmsDao implements EmsDao {
         computedEvents.putAll(allEvents);
         computedEvents.putAll(updatedEvents);
         return computedEvents;
+    }
 
+    private Map<String, Talk> talks() {
+        Map<String, Talk> computedTalks = new HashMap<>();
+        computedTalks.putAll(allTalks);
+        computedTalks.putAll(updatedTalks);
+        return computedTalks;
     }
 
     @Override
@@ -35,22 +43,24 @@ public class InMemEmsDao implements EmsDao {
 
     @Override
     public void addTalk(Talk talk) {
-
+        updatedTalks.put(talk.getTalkid(),talk);
     }
 
     @Override
     public void updateTalk(Talk talk) {
-
+        throw new UnsupportedOperationException("updateTalk");
     }
 
     @Override
     public Optional<Talk> findTalk(String talkid) {
-        return null;
+        return talks().values().stream()
+                .filter(talk -> talk.getTalkid().equals(talkid))
+                .findAny();
     }
 
     @Override
     public List<Talk> allTalks(String eventid) {
-        return null;
+        return new ArrayList<>(talks().values());
     }
 
     @Override

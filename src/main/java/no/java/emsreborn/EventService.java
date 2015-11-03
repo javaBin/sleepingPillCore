@@ -5,24 +5,25 @@ import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
 
 import java.util.Optional;
-import java.util.UUID;
+
+import static no.java.emsreborn.TalkAttribute.*;
 
 public class EventService {
     public JsonObject addEvent(JsonObject input) {
-        String name = input.stringValue("name").get();
+        String name = input.stringValue(EVENT_NAME).get();
         EmsDao emsDao = ServiceLocator.instance().emsDao();
         Event event = new Event(emsDao.newKey(), name);
         emsDao.addEvent(event);
-        return JsonFactory.jsonObject().put("id",event.eventid);
+        return JsonFactory.jsonObject().put(EVENT_ID,event.eventid);
     }
 
     public JsonObject findEvent(JsonObject input) {
-        String id = input.stringValue("id").get();
+        String id = input.stringValue(EVENT_ID).get();
         Event event = ServiceLocator.instance().emsDao().findEvent(id).get();
 
         return JsonFactory.jsonObject()
-                .put("id",event.eventid)
-                .put("name",event.name);
+                .put(EVENT_ID,event.eventid)
+                .put(EVENT_NAME,event.name);
     }
 
     public static EventService get() {
@@ -34,35 +35,35 @@ public class EventService {
         Talk.Builder builder = Talk.builder()
                 .setTalkid(emsDao.newKey())
                 .setEventid(eventId);
-        Optional<JsonObject> publicValues = newTalk.objectValue("public");
+        Optional<JsonObject> publicValues = newTalk.objectValue(TALK_PUBLIC_VALUES);
         if (publicValues.isPresent()) {
             builder.setPublicValues(publicValues.get());
         }
-        Optional<JsonObject> privateValues = newTalk.objectValue("private");
+        Optional<JsonObject> privateValues = newTalk.objectValue(TALK_PRIVATE_VALUES);
         if (privateValues.isPresent()) {
             builder.setPrivateValues(privateValues.get());
         }
-        Optional<Boolean> isPublic = newTalk.booleanValue("isPublic");
+        Optional<Boolean> isPublic = newTalk.booleanValue(TALK_PRIVATE_VALUES);
         if (isPublic.isPresent()) {
             builder.setIsPublic(isPublic.get());
         }
         Talk talk = builder.create();
         emsDao.addTalk(talk);
 
-        return JsonFactory.jsonObject().put("id",talk.getTalkid());
+        return JsonFactory.jsonObject().put(TALK_ID,talk.getTalkid());
 
     }
 
     public JsonObject findTalk(JsonObject input) {
-        String id = input.stringValue("id").get();
+        String id = input.stringValue(TALK_ID).get();
         Talk event = ServiceLocator.instance().emsDao().findTalk(id).get();
 
         return JsonFactory.jsonObject()
-                .put("talkid",event.getTalkid())
-                .put("eventid",event.getEventid())
-                .put("isPublic",event.isPublic())
-                .put("private",event.getPrivateValues())
-                .put("public",event.getPublicValues())
+                .put(TALK_ID,event.getTalkid())
+                .put(EVENT_ID,event.getEventid())
+                .put(TALK_IS_PUBLIC,event.isPublic())
+                .put(TALK_PRIVATE_VALUES,event.getPrivateValues())
+                .put(TALK_PUBLIC_VALUES,event.getPublicValues())
                 ;
     }
 }

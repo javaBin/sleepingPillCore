@@ -9,28 +9,28 @@ import java.util.Optional;
 import static no.java.emsreborn.TalkAttribute.*;
 
 public class EventService {
-    public JsonObject addEvent(JsonObject input) {
+    public ServiceResult addEvent(JsonObject input) {
         String name = input.stringValue(EVENT_NAME).get();
         EmsDao emsDao = ServiceLocator.instance().emsDao();
         Event event = new Event(emsDao.newKey(), name);
         emsDao.addEvent(event);
-        return JsonFactory.jsonObject().put(EVENT_ID,event.eventid);
+        return ServiceResult.ok(JsonFactory.jsonObject().put(EVENT_ID,event.eventid));
     }
 
-    public JsonObject findEvent(JsonObject input) {
+    public ServiceResult findEvent(JsonObject input) {
         String id = input.stringValue(EVENT_ID).get();
         Event event = ServiceLocator.instance().emsDao().findEvent(id).get();
 
-        return JsonFactory.jsonObject()
+        return ServiceResult.ok(JsonFactory.jsonObject()
                 .put(EVENT_ID,event.eventid)
-                .put(EVENT_NAME,event.name);
+                .put(EVENT_NAME,event.name));
     }
 
     public static EventService get() {
         return new EventService();
     }
 
-    public JsonObject addTalk(JsonObject newTalk, String eventId) {
+    public ServiceResult addTalk(JsonObject newTalk, String eventId) {
         EmsDao emsDao = ServiceLocator.instance().emsDao();
         Talk.Builder builder = Talk.builder()
                 .setTalkid(emsDao.newKey())
@@ -50,20 +50,20 @@ public class EventService {
         Talk talk = builder.create();
         emsDao.addTalk(talk);
 
-        return JsonFactory.jsonObject().put(TALK_ID,talk.getTalkid());
+        return ServiceResult.ok(JsonFactory.jsonObject().put(TALK_ID,talk.getTalkid()));
 
     }
 
-    public JsonObject findTalk(JsonObject input) {
+    public ServiceResult findTalk(JsonObject input) {
         String id = input.stringValue(TALK_ID).get();
         Talk event = ServiceLocator.instance().emsDao().findTalk(id).get();
 
-        return JsonFactory.jsonObject()
+        return ServiceResult.ok(JsonFactory.jsonObject()
                 .put(TALK_ID,event.getTalkid())
                 .put(EVENT_ID,event.getEventid())
                 .put(TALK_IS_PUBLIC,event.isPublic())
                 .put(TALK_PRIVATE_VALUES,event.getPrivateValues())
                 .put(TALK_PUBLIC_VALUES,event.getPublicValues())
-                ;
+        );
     }
 }

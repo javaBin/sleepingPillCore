@@ -22,4 +22,7 @@ public interface EmsDao extends AutoCloseable {
     default String newKey() {
         return UUID.randomUUID().toString();
     }
+
+    @Override
+    void close();
 }

@@ -14,7 +14,7 @@ public class ServiceLocator implements AutoCloseable {
     private EmsDao emsDao;
 
     @Override
-    public void close() throws Exception {
+    public void close()  {
         if (emsDao != null) {
             emsDao.close();
         }

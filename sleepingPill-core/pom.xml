@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>no.java</groupId>
-    <artifactId>emsreborn</artifactId>
+    <artifactId>sleepingPillCore</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -129,7 +129,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>no.java.emsreborn.WebServer</mainClass>
+                            <mainClass>no.java.sleepingpill.core.WebServer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

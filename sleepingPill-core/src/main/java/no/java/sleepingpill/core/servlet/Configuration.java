@@ -1,4 +1,4 @@
-package no.java.emsreborn.servlet;
+package no.java.sleepingpill.core.servlet;
 
 public class Configuration {
     public static int serverPort() {

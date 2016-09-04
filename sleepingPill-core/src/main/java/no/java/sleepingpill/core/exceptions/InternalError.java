@@ -1,4 +1,4 @@
-package no.java.emsreborn.exceptions;
+package no.java.sleepingpill.core.exceptions;
 
 public class InternalError extends RuntimeException {
     public InternalError(String message) {

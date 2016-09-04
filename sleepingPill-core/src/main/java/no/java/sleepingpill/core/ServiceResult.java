@@ -1,4 +1,4 @@
-package no.java.emsreborn;
+package no.java.sleepingpill.core;
 
 import org.jsonbuddy.JsonObject;
 

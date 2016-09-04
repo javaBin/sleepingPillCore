@@ -1,7 +1,7 @@
-package no.java.emsreborn.dao;
+package no.java.sleepingpill.core.dao;
 
-import no.java.emsreborn.Event;
-import no.java.emsreborn.Talk;
+import no.java.sleepingpill.core.Event;
+import no.java.sleepingpill.core.Talk;
 
 import java.util.*;
 

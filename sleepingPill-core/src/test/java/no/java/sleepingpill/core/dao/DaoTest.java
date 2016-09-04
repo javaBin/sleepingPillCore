@@ -1,7 +1,7 @@
-package no.java.emsreborn.dao;
+package no.java.sleepingpill.core.dao;
 
-import no.java.emsreborn.Event;
-import no.java.emsreborn.ServiceLocator;
+import no.java.sleepingpill.core.Event;
+import no.java.sleepingpill.core.ServiceLocator;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ public class DaoTest {
             serviceLocator.emsDao().rollback();
         }
         try (ServiceLocator serviceLocator = ServiceLocator.startTransaction()) {
-            assertThat(serviceLocator.emsDao().allEvents()).isEmpty();
+            Assertions.assertThat(serviceLocator.emsDao().allEvents()).isEmpty();
         }
 
     }

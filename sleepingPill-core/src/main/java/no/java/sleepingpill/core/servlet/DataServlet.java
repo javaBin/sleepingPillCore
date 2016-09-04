@@ -1,8 +1,8 @@
-package no.java.emsreborn.servlet;
+package no.java.sleepingpill.core.servlet;
 
-import no.java.emsreborn.EventService;
-import no.java.emsreborn.ServiceLocator;
-import no.java.emsreborn.ServiceResult;
+import no.java.sleepingpill.core.EventService;
+import no.java.sleepingpill.core.ServiceLocator;
+import no.java.sleepingpill.core.ServiceResult;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
 import org.jsonbuddy.parse.JsonParser;

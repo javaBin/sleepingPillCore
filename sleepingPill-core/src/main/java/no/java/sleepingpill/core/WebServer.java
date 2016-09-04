@@ -1,7 +1,7 @@
-package no.java.emsreborn;
+package no.java.sleepingpill.core;
 
-import no.java.emsreborn.servlet.Configuration;
-import no.java.emsreborn.servlet.DataServlet;
+import no.java.sleepingpill.core.servlet.Configuration;
+import no.java.sleepingpill.core.servlet.DataServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;

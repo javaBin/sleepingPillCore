@@ -1,10 +1,8 @@
-package no.java.emsreborn.servlet;
+package no.java.sleepingpill.core.servlet;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 public class ComputePathTest {
     private ComputePath computePath = new ComputePath();

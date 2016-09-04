@@ -1,8 +1,8 @@
-package no.java.emsreborn;
+package no.java.sleepingpill.core;
 
-import no.java.emsreborn.dao.EmsDao;
-import no.java.emsreborn.dao.InMemEmsDao;
-import no.java.emsreborn.exceptions.InternalError;
+import no.java.sleepingpill.core.dao.EmsDao;
+import no.java.sleepingpill.core.dao.InMemEmsDao;
+import no.java.sleepingpill.core.exceptions.InternalError;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +44,7 @@ public class ServiceLocator implements AutoCloseable {
         return Optional.ofNullable(transactions.get(Thread.currentThread().getId())).orElseThrow(throwInternalError("Transaction has not started"));
     }
 
-    private static Supplier<no.java.emsreborn.exceptions.InternalError> throwInternalError(String message) {
+    private static Supplier<InternalError> throwInternalError(String message) {
         return () -> new InternalError(message);
     }
 

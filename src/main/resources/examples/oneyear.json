@@ -1,0 +1,433 @@
+{
+  "collection": {
+    "queries": [
+      {
+        "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions",
+        "rel": "session by-slug",
+        "prompt": "By Slug",
+        "data": [
+          {
+            "name": "slug"
+          }
+        ]
+      }
+    ],
+    "items": [
+      {
+        "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/42d387b3-0637-4f11-98cd-ab6f73a2608e",
+        "data": [
+          {
+            "name": "format",
+            "prompt": "Format",
+            "value": "presentation"
+          },
+          {
+            "name": "body",
+            "prompt": "Body",
+            "value": "sgsdg"
+          },
+          {
+            "name": "outline",
+            "prompt": "Outline",
+            "value": "dgdsg"
+          },
+          {
+            "name": "state",
+            "prompt": "State",
+            "value": "pending"
+          },
+          {
+            "name": "tags",
+            "prompt": "Tags",
+            "array": [
+              "len60"
+            ]
+          },
+          {
+            "name": "published",
+            "prompt": "Published",
+            "value": false
+          },
+          {
+            "name": "audience",
+            "prompt": "Audience",
+            "value": "dgfds"
+          },
+          {
+            "name": "slug",
+            "prompt": "Slug",
+            "value": "anderstest201602"
+          },
+          {
+            "name": "keywords",
+            "prompt": "Keywords",
+            "array": [
+              "xyz",
+              "javase"
+            ]
+          },
+          {
+            "name": "equipment",
+            "prompt": "Equipment",
+            "value": ""
+          },
+          {
+            "name": "title",
+            "prompt": "Title",
+            "value": "AndersTest201602"
+          },
+          {
+            "name": "lang",
+            "prompt": "Lang",
+            "value": "no"
+          },
+          {
+            "name": "level",
+            "prompt": "Level",
+            "value": "beginner"
+          }
+        ],
+        "links": [
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/42d387b3-0637-4f11-98cd-ab6f73a2608e/attachments",
+            "rel": "attachment collection",
+            "prompt": "Attachments"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/42d387b3-0637-4f11-98cd-ab6f73a2608e/speakers",
+            "rel": "speaker collection",
+            "prompt": "Speakers"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/42d387b3-0637-4f11-98cd-ab6f73a2608e/tags",
+            "rel": "session tag",
+            "prompt": "Tag session"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/42d387b3-0637-4f11-98cd-ab6f73a2608e/slot",
+            "rel": "session slot",
+            "prompt": "Assign a slot"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/42d387b3-0637-4f11-98cd-ab6f73a2608e/room",
+            "rel": "session room",
+            "prompt": "Assign a room"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions",
+            "rel": "publish",
+            "prompt": "Publish the session"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/42d387b3-0637-4f11-98cd-ab6f73a2608e/speakers/305b166a-55df-4572-971f-83a39138600f",
+            "rel": "speaker item",
+            "prompt": "Anders Test Karlsen"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/42d387b3-0637-4f11-98cd-ab6f73a2608e/speakers/7d878c69-50a0-4652-9611-e59d72fc3958",
+            "rel": "speaker item",
+            "prompt": "Anders to test k"
+          }
+        ]
+      },
+      {
+        "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/b44ae759-237f-49b3-bdcb-9558d5735e35",
+        "data": [
+          {
+            "name": "format",
+            "prompt": "Format",
+            "value": "presentation"
+          },
+          {
+            "name": "body",
+            "prompt": "Body",
+            "value": "sdfsdf"
+          },
+          {
+            "name": "outline",
+            "prompt": "Outline",
+            "value": "dsgd"
+          },
+          {
+            "name": "state",
+            "prompt": "State",
+            "value": "pending"
+          },
+          {
+            "name": "tags",
+            "prompt": "Tags",
+            "array": [
+              "[\"len45\"]"
+            ]
+          },
+          {
+            "name": "published",
+            "prompt": "Published",
+            "value": false
+          },
+          {
+            "name": "audience",
+            "prompt": "Audience",
+            "value": "dfdsf"
+          },
+          {
+            "name": "slug",
+            "prompt": "Slug",
+            "value": "anderstest201603"
+          },
+          {
+            "name": "keywords",
+            "prompt": "Keywords",
+            "array": [
+              "mytag",
+              "javase",
+              "topic:",
+              "type:"
+            ]
+          },
+          {
+            "name": "equipment",
+            "prompt": "Equipment",
+            "value": "dgd"
+          },
+          {
+            "name": "title",
+            "prompt": "Title",
+            "value": "AndersTest201603"
+          },
+          {
+            "name": "lang",
+            "prompt": "Lang",
+            "value": "no"
+          },
+          {
+            "name": "summary",
+            "prompt": "Summary",
+            "value": ""
+          },
+          {
+            "name": "level",
+            "prompt": "Level",
+            "value": "beginner"
+          }
+        ],
+        "links": [
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/b44ae759-237f-49b3-bdcb-9558d5735e35/attachments",
+            "rel": "attachment collection",
+            "prompt": "Attachments"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/b44ae759-237f-49b3-bdcb-9558d5735e35/speakers",
+            "rel": "speaker collection",
+            "prompt": "Speakers"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/b44ae759-237f-49b3-bdcb-9558d5735e35/tags",
+            "rel": "session tag",
+            "prompt": "Tag session"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/b44ae759-237f-49b3-bdcb-9558d5735e35/slot",
+            "rel": "session slot",
+            "prompt": "Assign a slot"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/b44ae759-237f-49b3-bdcb-9558d5735e35/room",
+            "rel": "session room",
+            "prompt": "Assign a room"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions",
+            "rel": "publish",
+            "prompt": "Publish the session"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/b44ae759-237f-49b3-bdcb-9558d5735e35/speakers/e26f9254-9d50-4f05-a082-fde805fcd85a",
+            "rel": "speaker item",
+            "prompt": "Anders Test Karlsen"
+          }
+        ]
+      },
+      {
+        "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/cc1c65a9-c790-4059-a663-245a27159677",
+        "data": [
+          {
+            "name": "format",
+            "prompt": "Format",
+            "value": "presentation"
+          },
+          {
+            "name": "body",
+            "prompt": "Body",
+            "value": "sdgdf"
+          },
+          {
+            "name": "outline",
+            "prompt": "Outline",
+            "value": "sdgdsg"
+          },
+          {
+            "name": "state",
+            "prompt": "State",
+            "value": "pending"
+          },
+          {
+            "name": "tags",
+            "prompt": "Tags",
+            "array": [
+              "len45"
+            ]
+          },
+          {
+            "name": "published",
+            "prompt": "Published",
+            "value": false
+          },
+          {
+            "name": "audience",
+            "prompt": "Audience",
+            "value": "sdg"
+          },
+          {
+            "name": "slug",
+            "prompt": "Slug",
+            "value": "anderstest201604"
+          },
+          {
+            "name": "keywords",
+            "prompt": "Keywords",
+            "array": [
+              "javaee",
+              "clojure"
+            ]
+          },
+          {
+            "name": "equipment",
+            "prompt": "Equipment",
+            "value": ""
+          },
+          {
+            "name": "title",
+            "prompt": "Title",
+            "value": "AndersTest201604"
+          },
+          {
+            "name": "lang",
+            "prompt": "Lang",
+            "value": "no"
+          },
+          {
+            "name": "summary",
+            "prompt": "Summary",
+            "value": ""
+          },
+          {
+            "name": "level",
+            "prompt": "Level",
+            "value": "beginner"
+          }
+        ],
+        "links": [
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/cc1c65a9-c790-4059-a663-245a27159677/attachments",
+            "rel": "attachment collection",
+            "prompt": "Attachments"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/cc1c65a9-c790-4059-a663-245a27159677/speakers",
+            "rel": "speaker collection",
+            "prompt": "Speakers"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/cc1c65a9-c790-4059-a663-245a27159677/tags",
+            "rel": "session tag",
+            "prompt": "Tag session"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/cc1c65a9-c790-4059-a663-245a27159677/slot",
+            "rel": "session slot",
+            "prompt": "Assign a slot"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/cc1c65a9-c790-4059-a663-245a27159677/room",
+            "rel": "session room",
+            "prompt": "Assign a room"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions",
+            "rel": "publish",
+            "prompt": "Publish the session"
+          },
+          {
+            "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions/cc1c65a9-c790-4059-a663-245a27159677/speakers/1f929859-42d4-4600-b10d-52904a1a5a3a",
+            "rel": "speaker item",
+            "prompt": "Anders Test Karlsen"
+          }
+        ]
+      }
+    ],
+    "version": "1.0",
+    "template": {
+      "data": [
+        {
+          "name": "title"
+        },
+        {
+          "name": "summary"
+        },
+        {
+          "name": "body"
+        },
+        {
+          "name": "outline"
+        },
+        {
+          "name": "audience"
+        },
+        {
+          "name": "equipment"
+        },
+        {
+          "name": "tags"
+        },
+        {
+          "name": "keywords"
+        },
+        {
+          "name": "published"
+        },
+        {
+          "name": "lang",
+          "options": [
+            "no",
+            "en"
+          ]
+        },
+        {
+          "name": "format",
+          "options": [
+            "presentation",
+            "lightning-talk",
+            "workshop",
+            "thunder-talk",
+            "panel",
+            "bof"
+          ]
+        },
+        {
+          "name": "level",
+          "options": [
+            "beginner",
+            "beginner-intermediate",
+            "intermediate",
+            "intermediate-advanced",
+            "advanced",
+            "hardcore"
+          ]
+        }
+      ]
+    },
+    "href": "http://test.javazone.no/ems/server/events/aad84b5a-b527-45d4-b532-c5be1f25c1d0/sessions"
+  }
+}

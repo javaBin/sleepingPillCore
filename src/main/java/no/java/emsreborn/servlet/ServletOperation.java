@@ -6,6 +6,6 @@ public enum  ServletOperation {
     FIND_EVENT,
     ADD_TALK,
     FIND_TALK,
-    ALL_TALKS_FOR_EVENT
+    TEST, ALL_TALKS_FOR_EVENT
 
 }

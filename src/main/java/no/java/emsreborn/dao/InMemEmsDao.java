@@ -70,7 +70,7 @@ public class InMemEmsDao implements EmsDao {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         allEvents.putAll(updatedEvents);
     }
 }

@@ -9,6 +9,9 @@ public class ComputePath {
     }
 
     public Optional<ServletOperation> computePost(String pathInfo) {
+        if (pathInfo.startsWith("/test")) {
+            return Optional.of(ServletOperation.TEST);
+        }
         if ("/event".equals(pathInfo)) {
             return Optional.of(ServletOperation.ADD_EVENT);
         }

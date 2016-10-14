@@ -1,6 +1,5 @@
 package no.java.sleepingpill.core.servlet;
 
-import no.java.sleepingpill.core.EventService;
 import no.java.sleepingpill.core.ServiceLocator;
 import no.java.sleepingpill.core.ServiceResult;
 import org.jsonbuddy.JsonFactory;
@@ -30,23 +29,13 @@ public class DataServlet extends HttpServlet {
         try (ServiceLocator ignored = ServiceLocator.startTransaction()) {
             ServiceResult serviceResult;
             switch (operationOptional.get()) {
-                case TEST:
-                    testAdd(req,resp);
-                    serviceResult = ServiceResult.ok(JsonFactory.jsonObject());
-                    break;
-                case ADD_EVENT:
-                    serviceResult = EventService.get().addEvent(payload);
-                    break;
-                case ADD_TALK:
-                    serviceResult = EventService.get().addTalk(payload,eventidFromAddTalk(pathInfo));
-                    break;
 
                 default:
                     throw new UnsupportedOperationException("Unknown operation " + operationOptional.get());
             }
-            if (serviceResult.getResult().isPresent()) {
-                serviceResult.getResult().get().toJson(resp.getWriter());
-            }
+            //if (serviceResult.getResult().isPresent()) {
+            //    serviceResult.getResult().get().toJson(resp.getWriter());
+            //}
         }
     }
 

@@ -1,6 +1,7 @@
 package no.java.sleepingpill.core;
 
 
+import no.java.sleepingpill.core.domain.TalkAttribute;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
 import org.junit.Test;

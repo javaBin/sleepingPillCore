@@ -6,6 +6,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.flywaydb.core.Flyway;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -20,16 +21,15 @@ public class WebServer {
     }
 
     public static void setConfigFile(String[] argv) {
-        Locale.setDefault(new Locale("no"));
         if (argv != null && argv.length > 0) {
-//            System.setProperty(Configuration.CONFIG_FILE_PROPERTY, argv[0]);
+            System.setProperty(Configuration.CONFIG_FILE_PROPERTY, argv[0]);
         }
     }
 
 
     protected void start() throws Exception {
         //Locale.setDefault(new Locale(Configuration.getLocale()));
-        //migrateDb();
+        migrateDb();
         server = new Server(Configuration.serverPort());
         server.setHandler(getHandler());
         server.start();
@@ -38,6 +38,11 @@ public class WebServer {
         System.out.println("Path=" + new File(".").getAbsolutePath());
     }
 
+    private void migrateDb() {
+        Flyway flyway = new Flyway();
+        flyway.setDataSource(Postgres.createSource());
+        flyway.migrate();
+    }
 
 
     protected WebAppContext getHandler() {

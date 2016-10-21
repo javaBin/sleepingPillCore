@@ -3,6 +3,7 @@ package no.java.sleepingpill.core.commands;
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventHandler;
 import no.java.sleepingpill.core.event.EventType;
+import no.java.sleepingpill.core.exceptions.InternalError;
 import no.java.sleepingpill.core.session.DataField;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
@@ -36,11 +37,15 @@ public class CreateNewSession {
     }
 
     public Event createEvent() {
-
+        this.sessionId = Optional.of(sessionId.orElse(UUID.randomUUID().toString()));
         JsonObject dataObj = JsonFactory.jsonObject();
-        dataObj.put("sessionId",sessionId.orElse(UUID.randomUUID().toString()));
+        dataObj.put("sessionId",sessionId.get());
         dataObj.put("speakers", JsonArray.fromNodeStream(speakers.stream().map(NewSpeaker::asNewEvent)));
         dataObj.put("data", JsonGenerator.generate(data));
         return new Event(EventType.NEW_SESSION,arrangedEventId, EventHandler.nextId(),dataObj);
+    }
+
+    public String getSessionId() {
+        return sessionId.orElseThrow(() -> new InternalError("Session Id not set yet"));
     }
 }

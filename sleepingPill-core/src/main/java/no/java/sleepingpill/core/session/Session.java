@@ -1,5 +1,7 @@
 package no.java.sleepingpill.core.session;
 
+import org.jsonbuddy.JsonObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,4 +13,7 @@ public class Session extends DataObject {
         super(id);
         this.arrangedEventId = arrangedEventId;
     }
+
+
+
 }

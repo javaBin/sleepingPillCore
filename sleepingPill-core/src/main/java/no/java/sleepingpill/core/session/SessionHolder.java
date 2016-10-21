@@ -26,6 +26,7 @@ public class SessionHolder implements EventListener {
     private void handleNewSession(Event event) {
         String sessionId = event.data.requiredString("sessionId");
         Session session = new Session(sessionId, event.arrangedEventId);
+        session.addData(event.data);
         allSessions.add(session);
     }
 

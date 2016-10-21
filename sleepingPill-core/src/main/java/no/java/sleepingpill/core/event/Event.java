@@ -14,4 +14,9 @@ public class Event {
         this.index = index;
         this.data = data;
     }
+
+    public Event(EventType eventType, String arrangedEventId, JsonObject data) {
+        this(eventType,arrangedEventId,EventHandler.nextId(),data);
+
+    }
 }

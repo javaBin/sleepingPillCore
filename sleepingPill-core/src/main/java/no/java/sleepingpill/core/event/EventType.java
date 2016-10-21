@@ -1,5 +1,6 @@
 package no.java.sleepingpill.core.event;
 
 public enum EventType {
-    NEW_SESSION
+    NEW_SESSION,
+    UPDATE_SESSION
 }

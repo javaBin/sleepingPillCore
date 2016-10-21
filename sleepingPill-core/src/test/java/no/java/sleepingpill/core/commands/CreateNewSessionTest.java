@@ -29,7 +29,7 @@ public class CreateNewSessionTest {
 
     @Test
     public void shouldCreateASession() throws Exception {
-        CreateNewSession newSession = new CreateNewSession();
+        CreateNewSession newSession = new CreateNewSession().setArrangedEventId("eventx");
         NewSpeaker newSpeaker = new NewSpeaker();
         newSpeaker.setEmail("darth@deathstar.com");
         newSpeaker.setName("Darth Vader");
@@ -46,14 +46,45 @@ public class CreateNewSessionTest {
         Session session = sessions.get(0);
 
         assertThat(session.getId()).isEqualTo(sessionId);
-        Optional<DataField> title = session.dataValue("title");
-        assertThat(title).isPresent();
-        assertThat(title.map(DataField::propertyValue)).contains("How to choke");
+        validateValue(session, "title", "How to choke");
     }
 
     @Test
     public void shouldCreateAndUpdateASession() throws Exception {
+        CreateNewSession newSession = new CreateNewSession().setArrangedEventId("eventx");
+        NewSpeaker newSpeaker = new NewSpeaker();
+        newSpeaker.setEmail("darth@deathstar.com");
+        newSpeaker.setName("Darth Vader");
+
+        newSession.addSpeaker(newSpeaker);
+        newSession.addData("title", DataField.simplePublicStringValue("How to choke"));
+        newSession.addData("description", DataField.simplePublicStringValue("Initial description"));
+
+        Event event = newSession.createEvent();
+        String sessionId = newSession.getSessionId();
+        eventHandler.addEvent(event);
+
+        UpdateSession updateSession = new UpdateSession(sessionId, "eventx")
+                .addData("description", DataField.simplePublicStringValue("Updated description"))
+                .addData("audience", DataField.simplePublicStringValue("Do not need one"));
+        Event updateSessionEvent = updateSession.createEvent();
+        eventHandler.addEvent(updateSessionEvent);
+
+        List<Session> sessions = sessionHolder.allSessions();
+        assertThat(sessions).hasSize(1);
+        Session session = sessions.get(0);
+
+        assertThat(session.getId()).isEqualTo(sessionId);
+        validateValue(session, "title", "How to choke");
+        validateValue(session, "description", "Updated description");
+        validateValue(session, "audience", "Do not need one");
 
 
+    }
+
+    private void validateValue(Session session, String key, String expectedValue) {
+        Optional<DataField> title = session.dataValue(key);
+        assertThat(title).isPresent();
+        assertThat(title.map(DataField::propertyValue)).contains(expectedValue);
     }
 }

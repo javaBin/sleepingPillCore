@@ -14,6 +14,7 @@ public class Session extends DataObject {
         this.arrangedEventId = arrangedEventId;
     }
 
-
-
+    public String getArrangedEventId() {
+        return arrangedEventId;
+    }
 }

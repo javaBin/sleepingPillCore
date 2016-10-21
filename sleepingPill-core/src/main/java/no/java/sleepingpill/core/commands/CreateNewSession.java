@@ -32,8 +32,9 @@ public class CreateNewSession {
         speakers.add(speaker);
     }
 
-    public void addData(String key,DataField dataField) {
+    public CreateNewSession addData(String key,DataField dataField) {
         data.put(key,dataField);
+        return this;
     }
 
     public Event createEvent() {
@@ -42,7 +43,7 @@ public class CreateNewSession {
         dataObj.put("sessionId",sessionId.get());
         dataObj.put("speakers", JsonArray.fromNodeStream(speakers.stream().map(NewSpeaker::asNewEvent)));
         dataObj.put("data", JsonGenerator.generate(data));
-        return new Event(EventType.NEW_SESSION,arrangedEventId, EventHandler.nextId(),dataObj);
+        return new Event(EventType.NEW_SESSION,arrangedEventId,dataObj);
     }
 
     public String getSessionId() {

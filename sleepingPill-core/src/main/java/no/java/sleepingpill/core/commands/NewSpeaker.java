@@ -1,6 +1,7 @@
 package no.java.sleepingpill.core.commands;
 
 import no.java.sleepingpill.core.session.DataField;
+import no.java.sleepingpill.core.util.IdGenerator;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonNode;
 import org.jsonbuddy.JsonObject;
@@ -52,7 +53,7 @@ public class NewSpeaker {
     public JsonNode asNewEvent() {
         Map<String,DataField> fields = new HashMap<>();
         fields.putAll(dataFields);
-        fields.put("id",DataField.simplePublicStringValue(id.orElse(UUID.randomUUID().toString())));
+        fields.put("id",DataField.simplePublicStringValue(id.orElse(IdGenerator.newId())));
         fields.put("name",DataField.simplePublicStringValue(name));
         fields.put("email",DataField.simplePublicStringValue(name));
 

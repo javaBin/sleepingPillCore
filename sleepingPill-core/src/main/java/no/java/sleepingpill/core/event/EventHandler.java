@@ -1,5 +1,7 @@
 package no.java.sleepingpill.core.event;
 
+import no.java.sleepingpill.core.ServiceLocator;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -15,7 +17,7 @@ public class EventHandler {
     }
 
     public static EventHandler instance() {
-        return _instance;
+        return ServiceLocator.eventHandler();
     }
 
 

@@ -1,5 +1,6 @@
 package no.java.sleepingpill.core.session;
 
+import no.java.sleepingpill.core.ServiceLocator;
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventListener;
 import no.java.sleepingpill.core.event.EventType;
@@ -10,10 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class SessionHolder implements EventListener {
-    private final static SessionHolder _instance = new SessionHolder();
 
     public static SessionHolder instance() {
-        return _instance;
+        return ServiceLocator.sessionHolder();
     }
 
     private List<Session> sessions = new ArrayList<>();

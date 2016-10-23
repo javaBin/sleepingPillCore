@@ -13,10 +13,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class NewSpeaker {
+public class NewSpeaker implements HasDataInput {
     private Optional<String> id = Optional.empty();
-    private String name;
-    private String email;
+    private Optional<String> name;
+    private Optional<String> email;
     private Map<String,DataField> dataFields = new HashMap<>();
 
     public Optional<String> getId() {
@@ -28,35 +28,43 @@ public class NewSpeaker {
         return this;
     }
 
-    public String getName() {
-        return name;
-    }
 
     public NewSpeaker setName(String name) {
+        return setName(Optional.of(name));
+    }
+
+
+    public NewSpeaker setEmail(String email) {
+        return setEmail(Optional.of(email));
+    }
+
+    public NewSpeaker setName(Optional<String> name) {
         this.name = name;
         return this;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public NewSpeaker setEmail(String email) {
+    public NewSpeaker setEmail(Optional<String> email) {
         this.email = email;
         return this;
     }
 
-    public Map<String, DataField> getDataFields() {
-        return dataFields;
+    public void addData(String key,DataField dataField) {
+        dataFields.put(key,dataField);
     }
 
     public JsonNode asNewEvent() {
         Map<String,DataField> fields = new HashMap<>();
-        fields.putAll(dataFields);
         fields.put("id",DataField.simplePublicStringValue(id.orElse(IdGenerator.newId())));
-        fields.put("name",DataField.simplePublicStringValue(name));
-        fields.put("email",DataField.simplePublicStringValue(name));
+        if (name.isPresent()) {
+            fields.put("name", DataField.simplePublicStringValue(name.get()));
+        }
+        if (email.isPresent()) {
+            fields.put("email", DataField.simplePublicStringValue(email.get()));
+        }
 
-        return JsonGenerator.generate(fields);
+        JsonObject result = (JsonObject) JsonGenerator.generate(fields);
+        result.put("data",JsonGenerator.generate(dataFields));
+
+        return result;
     }
 }

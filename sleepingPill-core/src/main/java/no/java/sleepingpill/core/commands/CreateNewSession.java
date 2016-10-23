@@ -13,11 +13,12 @@ import org.jsonbuddy.pojo.JsonGenerator;
 
 import java.util.*;
 
-public class CreateNewSession {
+public class CreateNewSession implements HasDataInput {
     private Optional<String> sessionId = Optional.empty();
     private String arrangedEventId;
     private List<NewSpeaker> speakers = new ArrayList<>();
     private Map<String,DataField> data = new HashMap<>();
+    private Optional<String> postedByMail = Optional.empty();
 
     public CreateNewSession setSessionId(String sessionId) {
         this.sessionId = Optional.of(sessionId);
@@ -29,13 +30,17 @@ public class CreateNewSession {
         return this;
     }
 
+    public CreateNewSession setPostedByMail(Optional<String> postedByMail) {
+        this.postedByMail = postedByMail;
+        return this;
+    }
+
     public void addSpeaker(NewSpeaker speaker) {
         speakers.add(speaker);
     }
 
-    public CreateNewSession addData(String key,DataField dataField) {
+    public void addData(String key,DataField dataField) {
         data.put(key,dataField);
-        return this;
     }
 
     public Event createEvent() {
@@ -44,6 +49,10 @@ public class CreateNewSession {
         dataObj.put("sessionId",sessionId.get());
         dataObj.put("speakers", JsonArray.fromNodeStream(speakers.stream().map(NewSpeaker::asNewEvent)));
         dataObj.put("data", JsonGenerator.generate(data));
+        if (postedByMail.isPresent()) {
+            dataObj.put("postedByMail",postedByMail.get());
+        }
+
         return new Event(EventType.NEW_SESSION,arrangedEventId,dataObj);
     }
 

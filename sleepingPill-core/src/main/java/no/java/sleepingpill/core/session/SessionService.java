@@ -1,5 +1,6 @@
-package no.java.sleepingpill.core;
+package no.java.sleepingpill.core.session;
 
+import no.java.sleepingpill.core.ServiceResult;
 import no.java.sleepingpill.core.commands.CreateNewSession;
 import no.java.sleepingpill.core.commands.HasDataInput;
 import no.java.sleepingpill.core.commands.NewSpeaker;
@@ -18,6 +19,11 @@ public class SessionService {
     private static final String VALUE_KEY = "value";
     private static final String PRIVATE_FLAG = "privateData";
 
+    private static final SessionService instance = new SessionService();
+
+    public static SessionService instance() {
+        return instance;
+    }
 
     public ServiceResult addSession(String arrangedEventId, JsonObject incomingJson) {
         JsonObject talkData = incomingJson.objectValue(DATA_OBJECT).orElse(JsonFactory.jsonObject());

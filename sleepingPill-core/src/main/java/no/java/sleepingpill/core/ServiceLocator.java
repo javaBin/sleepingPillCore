@@ -92,17 +92,6 @@ public class ServiceLocator implements AutoCloseable {
         return serviceLocator;
     }
 
-    public static ServiceLocator instance() {
-        synchronized (transactions) {
-            return Optional.ofNullable(transactions.get(Thread.currentThread().getId())).orElseThrow(throwInternalError("Transaction has not started"));
-        }
-    }
-
-
-
-    private static Supplier<InternalError> throwInternalError(String message) {
-        return () -> new InternalError(message);
-    }
 
 
     public void rollback() {

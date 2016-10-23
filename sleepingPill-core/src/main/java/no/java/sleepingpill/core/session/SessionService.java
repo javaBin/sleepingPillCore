@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class SessionService {
-    private static final String DATA_OBJECT = "data";
-    private static final String SPEAKER_ARRAY = "speakers";
-    private static final String POSTED_BY_MAIL = "postedBy";
-    private static final String VALUE_KEY = "value";
-    private static final String PRIVATE_FLAG = "privateData";
+    public static final String DATA_OBJECT = "data";
+    public static final String SPEAKER_ARRAY = "speakers";
+    public static final String POSTED_BY_MAIL = "postedBy";
+    public static final String VALUE_KEY = "value";
+    public static final String PRIVATE_FLAG = "privateData";
 
     private static final SessionService instance = new SessionService();
 

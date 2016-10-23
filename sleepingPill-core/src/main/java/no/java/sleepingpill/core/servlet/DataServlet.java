@@ -2,6 +2,7 @@ package no.java.sleepingpill.core.servlet;
 
 import no.java.sleepingpill.core.ServiceLocator;
 import no.java.sleepingpill.core.ServiceResult;
+import no.java.sleepingpill.core.session.SessionService;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
 import org.jsonbuddy.parse.JsonParser;
@@ -29,13 +30,15 @@ public class DataServlet extends HttpServlet {
         try (ServiceLocator ignored = ServiceLocator.startTransaction()) {
             ServiceResult serviceResult;
             switch (operationOptional.get()) {
-
+                case NEW_SESSION:
+                    serviceResult = SessionService.instance().addSession(pathInfo.substring(1,pathInfo.indexOf("/",1)),payload);
+                    break;
                 default:
                     throw new UnsupportedOperationException("Unknown operation " + operationOptional.get());
             }
-            //if (serviceResult.getResult().isPresent()) {
-            //    serviceResult.getResult().get().toJson(resp.getWriter());
-            //}
+            if (serviceResult.getResult().isPresent()) {
+                serviceResult.getResult().get().toJson(resp.getWriter());
+            }
         }
     }
 

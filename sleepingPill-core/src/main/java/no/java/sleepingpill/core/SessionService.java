@@ -36,7 +36,7 @@ public class SessionService {
             return newSpeaker;
         }).forEach(createNewSession::addSpeaker);
 
-        
+
 
         addData(talkData, createNewSession);
         Event event = createNewSession.createEvent();

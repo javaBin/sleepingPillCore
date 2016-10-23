@@ -6,6 +6,7 @@ import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventHandler;
 import no.java.sleepingpill.core.exceptions.InternalError;
 import no.java.sleepingpill.core.session.SessionHolder;
+import no.java.sleepingpill.core.submitters.EmailHolder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,7 @@ public class ServiceLocator implements AutoCloseable {
     private static volatile ArrangedEventHolder arrangedEventHolder;
     private static volatile SessionHolder sessionHolder;
     private static volatile EventHandler eventHandler;
+    private static volatile EmailHolder emailHolder;
 
     public static synchronized ArrangedEventHolder arrangedEventHolder() {
         if (arrangedEventHolder == null) {
@@ -37,8 +39,16 @@ public class ServiceLocator implements AutoCloseable {
         if (eventHandler == null) {
             eventHandler = new EventHandler();
             eventHandler.addEventListener(SessionHolder.instance());
+            eventHandler.addEventListener(EmailHolder.instance());
         }
         return eventHandler;
+    }
+
+    public static synchronized EmailHolder emailHolder() {
+        if (emailHolder == null) {
+            emailHolder = new EmailHolder();
+        }
+        return emailHolder;
     }
 
     @SuppressWarnings("unused")
@@ -46,6 +56,7 @@ public class ServiceLocator implements AutoCloseable {
         arrangedEventHolder = null;
         sessionHolder = null;
         eventHandler = null;
+        emailHolder = null;
     }
 
 
@@ -96,7 +107,6 @@ public class ServiceLocator implements AutoCloseable {
 
     public void rollback() {
     }
-
 
 
 

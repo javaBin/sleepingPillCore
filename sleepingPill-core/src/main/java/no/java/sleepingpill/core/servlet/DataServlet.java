@@ -41,6 +41,31 @@ public class DataServlet extends HttpServlet {
     }
 
 
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String pathInfo = req.getPathInfo();
+        Optional<ServletOperation> operationOptional = computePath.computePut(pathInfo);
+        if (!operationOptional.isPresent()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST,"Unknown path " + pathInfo);
+            return;
+        }
+        JsonObject payload = JsonParser.parseToObject(req.getReader());
+        try (ServiceLocator ignored = ServiceLocator.startTransaction()) {
+            ServiceResult serviceResult;
+            switch (operationOptional.get()) {
+                case UPDATE_SESSION:
+                    String sessionid = pathInfo.substring(pathInfo.lastIndexOf("/")+1);
+                    serviceResult = SessionService.instance().updateSession(sessionid,payload);
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Unknown operation " + operationOptional.get());
+            }
+            handleResult(resp,serviceResult);
+        }
+    }
+
+
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

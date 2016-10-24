@@ -64,9 +64,10 @@ public class CreateNewSessionTest {
         String sessionId = newSession.getSessionId();
         eventHandler.addEvent(event);
 
-        UpdateSession updateSession = new UpdateSession(sessionId, "eventx")
-                .addData("description", DataField.simplePublicStringValue("Updated description"))
-                .addData("audience", DataField.simplePublicStringValue("Do not need one"));
+        UpdateSession updateSession = new UpdateSession(sessionId, "eventx");
+        updateSession.addData("description", DataField.simplePublicStringValue("Updated description"));
+        updateSession.addData("audience", DataField.simplePublicStringValue("Do not need one"));
+
         Event updateSessionEvent = updateSession.createEvent();
         eventHandler.addEvent(updateSessionEvent);
 

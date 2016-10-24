@@ -10,7 +10,7 @@ import org.jsonbuddy.pojo.JsonGenerator;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UpdateSession {
+public class UpdateSession implements HasDataInput {
     private final String sessionId;
     private final String arrangedEventId;
     private final Map<String,DataField> data = new HashMap<>();
@@ -20,9 +20,8 @@ public class UpdateSession {
         this.arrangedEventId = arrangedEventId;
     }
 
-    public UpdateSession addData(String key,DataField dataField) {
+    public void addData(String key,DataField dataField) {
         data.put(key,dataField);
-        return this;
     }
 
     public Event createEvent() {

@@ -31,4 +31,11 @@ public class ComputePath {
         Matcher matcher = compile.matcher(pathInfo);
         return matcher.matches();
     }
+
+    public Optional<ServletOperation> computePut(String pathInfo) {
+        if (matchesOneSession(pathInfo)) {
+            return Optional.of(ServletOperation.UPDATE_SESSION);
+        }
+        return Optional.empty();
+    }
 }

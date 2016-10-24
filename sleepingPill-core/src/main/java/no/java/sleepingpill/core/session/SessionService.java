@@ -4,6 +4,7 @@ import no.java.sleepingpill.core.ServiceResult;
 import no.java.sleepingpill.core.commands.CreateNewSession;
 import no.java.sleepingpill.core.commands.HasDataInput;
 import no.java.sleepingpill.core.commands.NewSpeaker;
+import no.java.sleepingpill.core.commands.UpdateSession;
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventHandler;
 import no.java.sleepingpill.core.session.DataField;
@@ -67,5 +68,21 @@ public class SessionService {
             return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST,"Unknown sessionid " + sessionId);
         }
         return ServiceResult.ok(session.get().asSingleSessionJson());
+    }
+
+    public ServiceResult updateSession(String sessionId, JsonObject payload) {
+        Optional<Session> session = SessionHolder.instance().sessionFromId(sessionId);
+        if (!session.isPresent()) {
+            return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST,"Unknown sessionid " + sessionId);
+        }
+        JsonObject talkData = payload.objectValue(DATA_OBJECT).orElse(JsonFactory.jsonObject());
+
+        UpdateSession updateSession = new UpdateSession(sessionId, session.get().getArrangedEventId());
+        addData(talkData,updateSession);
+
+        Event event = updateSession.createEvent();
+        EventHandler.instance().addEvent(event);
+
+        return ServiceResult.ok(JsonFactory.jsonObject());
     }
 }

@@ -11,7 +11,7 @@ public class ComputePathTest {
 
     @Test
     public void shouldReadAddSession() throws Exception {
-        Optional<ServletOperation> servletOperation = new ComputePath().computePost("/event/dfgdfg/session/");
+        Optional<ServletOperation> servletOperation = new ComputePath().computePost("/event/dfgdfg/session");
         Assertions.assertThat(servletOperation).contains(ServletOperation.NEW_SESSION);
     }
 }

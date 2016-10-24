@@ -29,7 +29,7 @@ public class WebServer {
 
     protected void start() throws Exception {
         //Locale.setDefault(new Locale(Configuration.getLocale()));
-        migrateDb();
+        //migrateDb();
         server = new Server(Configuration.serverPort());
         server.setHandler(getHandler());
         server.start();
@@ -38,6 +38,7 @@ public class WebServer {
         System.out.println("Path=" + new File(".").getAbsolutePath());
     }
 
+    @SuppressWarnings("unused") // No db yet...
     private void migrateDb() {
         Flyway flyway = new Flyway();
         flyway.setDataSource(Postgres.createSource());

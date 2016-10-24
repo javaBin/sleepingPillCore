@@ -2,6 +2,7 @@ package no.java.sleepingpill.core.session;
 
 import no.java.sleepingpill.core.exceptions.InternalError;
 import org.jsonbuddy.JsonObject;
+import org.jsonbuddy.pojo.JsonGenerator;
 import org.jsonbuddy.pojo.PojoMapper;
 
 import java.util.HashMap;
@@ -22,6 +23,10 @@ public class DataObject {
 
     public Optional<DataField> dataValue(String key) {
         return Optional.ofNullable(data.get(key));
+    }
+
+    public JsonObject dataAsJson() {
+        return (JsonObject) JsonGenerator.generate(data);
     }
 
     public void addData(JsonObject update) {

@@ -36,27 +36,39 @@ public class DataServlet extends HttpServlet {
                 default:
                     throw new UnsupportedOperationException("Unknown operation " + operationOptional.get());
             }
-            if (serviceResult.getResult().isPresent()) {
-                serviceResult.getResult().get().toJson(resp.getWriter());
-            }
+            handleResult(resp,serviceResult);
         }
     }
 
-    private void testAdd(HttpServletRequest req, HttpServletResponse resp) {
-        String value = Configuration.myLocation() + "test/" + UUID.randomUUID().toString();
-        System.out.println("Returned: " + value);
-        resp.addHeader("location", value);
-    }
 
-    private String eventidFromAddTalk(String pathInfo) {
-        pathInfo.indexOf("/","/event/".length());
-        return pathInfo.substring("/event/".length(),pathInfo.indexOf("/","/event/".length()));
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String res = toString(getClass().getClassLoader().getResourceAsStream("examples/allyear.json"));
-        resp.getWriter().append(res);
+        String pathInfo = req.getPathInfo();
+        Optional<ServletOperation> operationOptional = computePath.computeGet(pathInfo);
+        if (!operationOptional.isPresent()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST,"Unknown path " + pathInfo);
+            return;
+        }
+        try (ServiceLocator ignored = ServiceLocator.startTransaction()) {
+            ServiceResult serviceResult;
+            switch (operationOptional.get()) {
+                case SESSION_BY_ID:
+                    serviceResult = SessionService.instance().sessionById(pathInfo.substring(pathInfo.lastIndexOf("/")+1));
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Unknown operation " + operationOptional.get());
+            }
+            handleResult(resp, serviceResult);
+        }
+    }
+
+    private void handleResult(HttpServletResponse resp, ServiceResult serviceResult) throws IOException {
+        if (serviceResult.getResult().isPresent()) {
+            serviceResult.getResult().get().toJson(resp.getWriter());
+        } else {
+            serviceResult.sendError(resp);
+        }
     }
 
     private static String toString(InputStream inputStream) throws IOException {

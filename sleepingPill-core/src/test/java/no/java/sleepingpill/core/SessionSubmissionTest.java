@@ -41,10 +41,10 @@ public class SessionSubmissionTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getPathInfo()).thenReturn("/" + arrangedEvent.id + "/" + "session");
+        when(request.getPathInfo()).thenReturn("/event/" + arrangedEvent.id + "/" + "session");
         when(request.getMethod()).thenReturn("POST");
         JsonObject input = jsonObject()
-                .put("value", jsonObject()
+                .put("data", jsonObject()
                         .put("title", jsonObject().put("value", "My title").put("privateData", false)));
         when(request.getReader()).thenReturn(new BufferedReader(new StringReader(input.toJson())));
         StringWriter output = new StringWriter();
@@ -53,6 +53,21 @@ public class SessionSubmissionTest {
         dataServlet.service(request,response);
 
         JsonObject result = JsonParser.parseToObject(output.toString());
-        assertThat(result.requiredString("id")).isNotNull();
+        String sessionId = result.requiredString("id");
+        assertThat(sessionId).isNotNull();
+
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+        when(request.getPathInfo()).thenReturn("/session/" + sessionId);
+        when(request.getMethod()).thenReturn("GET");
+        StringWriter sessionData = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(sessionData));
+
+        dataServlet.service(request,response);
+
+        JsonObject session = JsonParser.parseToObject(sessionData.toString());
+        JsonObject titleObject = session.requiredObject("title");
+        assertThat(titleObject.requiredString("value")).isEqualTo("My title");
+        assertThat(titleObject.requiredBoolean("privateData")).isFalse();
     }
 }

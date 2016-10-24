@@ -1,5 +1,6 @@
 package no.java.sleepingpill.core.session;
 
+import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
 
 import java.util.HashMap;
@@ -16,5 +17,9 @@ public class Session extends DataObject {
 
     public String getArrangedEventId() {
         return arrangedEventId;
+    }
+
+    public JsonObject asSingleSessionJson() {
+        return dataAsJson();
     }
 }

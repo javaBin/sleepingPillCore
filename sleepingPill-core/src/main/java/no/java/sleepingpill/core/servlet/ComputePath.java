@@ -6,7 +6,17 @@ import java.util.regex.Pattern;
 
 public class ComputePath {
     public Optional<ServletOperation> computeGet(String pathInfo) {
+        if (matchesOneSession(pathInfo)) {
+            return Optional.of(ServletOperation.SESSION_BY_ID);
+        }
         return Optional.empty();
+    }
+
+    private boolean matchesOneSession(String pathInfo) {
+        Pattern compile = Pattern.compile("/session/\\w+");
+        Matcher matcher = compile.matcher(pathInfo);
+        return matcher.matches();
+
     }
 
     public Optional<ServletOperation> computePost(String pathInfo) {
@@ -17,7 +27,7 @@ public class ComputePath {
     }
 
     private boolean matchesAddSession(String pathInfo) {
-        Pattern compile = Pattern.compile("/\\w+/session");
+        Pattern compile = Pattern.compile("/event/\\w+/session");
         Matcher matcher = compile.matcher(pathInfo);
         return matcher.matches();
     }

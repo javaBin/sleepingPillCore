@@ -9,6 +9,7 @@ import no.java.sleepingpill.core.event.EventHandler;
 import no.java.sleepingpill.core.session.DataField;
 import org.jsonbuddy.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,5 +59,13 @@ public class SessionService {
             boolean privateValue = valueObject.booleanValue(PRIVATE_FLAG).orElse(false);
             hasDataInput.addData(key,new DataField(jsonValue,privateValue));
         }
+    }
+
+    public ServiceResult sessionById(String sessionId) {
+        Optional<Session> session = SessionHolder.instance().sessionFromId(sessionId);
+        if (!session.isPresent()) {
+            return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST,"Unknown sessionid " + sessionId);
+        }
+        return ServiceResult.ok(session.get().asSingleSessionJson());
     }
 }

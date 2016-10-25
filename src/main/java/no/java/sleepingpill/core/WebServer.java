@@ -2,6 +2,7 @@ package no.java.sleepingpill.core;
 
 import no.java.sleepingpill.core.servlet.Configuration;
 import no.java.sleepingpill.core.servlet.DataServlet;
+import no.java.sleepingpill.core.util.LoggerFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
@@ -26,13 +27,26 @@ public class WebServer {
         }
     }
 
+    private void onlyLogWarningsFromJetty() {
+        org.eclipse.jetty.util.log.Log.setLog(LoggerFactory.jettyLogger());
+        org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger("org.eclipse.jetty");
+        if (!(logger instanceof ch.qos.logback.classic.Logger)) {
+            return;
+        }
+        ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) logger;
+        logbackLogger.setLevel(ch.qos.logback.classic.Level.WARN);
+    }
+
 
     protected void start() throws Exception {
+        onlyLogWarningsFromJetty();
         //Locale.setDefault(new Locale(Configuration.getLocale()));
         //migrateDb();
         server = new Server(Configuration.serverPort());
         server.setHandler(getHandler());
         server.start();
+
+        LoggerFactory.getLogger(WebServer.class).info("Logger starting. Loglevel: " + Configuration.logLevel());
 
         System.out.println(server.getURI() + " at " + LocalDateTime.now());
         System.out.println("Path=" + new File(".").getAbsolutePath());

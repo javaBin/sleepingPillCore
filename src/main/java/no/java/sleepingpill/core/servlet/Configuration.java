@@ -90,5 +90,13 @@ public class Configuration {
         return instance().readValue("dbPassword", "bingo");
     }
 
+    public static String logLevel() {
+        return instance().readValue("logLevel", "DEBUG");
+    }
+
+    public static String logfilePattern() {
+        return instance().readValue("logfilePattern", null);
+    }
+
 
 }

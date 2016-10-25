@@ -1,4 +1,4 @@
-sleepingPill-core/.idea/
+.idea/
 *.iml
-sleepingPill-core/target/
+target/
 .DS_Store

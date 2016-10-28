@@ -34,9 +34,6 @@ public class LoggerFactory {
         logger.setAdditive(false);
 
 
-
-
-
         return logger;
     }
 
@@ -58,9 +55,6 @@ public class LoggerFactory {
 
 
     }
-
-
-
 
 
     private static ConsoleAppender<ILoggingEvent> setupConsoleAppender(LoggerContext lc, PatternLayoutEncoder ple) {

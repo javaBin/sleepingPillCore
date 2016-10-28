@@ -64,12 +64,22 @@ public class ExampleClient {
 
     }
 
+    public JsonObject readSession(String sessionid) throws Exception {
+        URL url = new URL(SERVER_ADDRESS + "/session/" + sessionid);
+        try (InputStream inputStream = url.openConnection().getInputStream()) {
+            JsonObject jsonObject = JsonParser.parseToObject(inputStream);
+            return jsonObject;
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         ExampleClient exampleClient = new ExampleClient();
         String arrangedEventId = exampleClient.allArrangedEvents().get(0, JsonObject.class).requiredString("id");
         String newSessionId = exampleClient.addNewSession(arrangedEventId);
         exampleClient.updateSession(newSessionId);
-
+        JsonObject session = exampleClient.readSession(newSessionId);
+        System.out.println("Current session data:");
+        System.out.println(session);
     }
 
 

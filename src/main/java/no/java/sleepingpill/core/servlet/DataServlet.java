@@ -17,7 +17,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Optional;
 
-import static org.eclipse.jetty.http.HttpMethod.*;
+import static org.eclipse.jetty.http.HttpMethod.GET;
+import static org.eclipse.jetty.http.HttpMethod.POST;
+import static org.eclipse.jetty.http.HttpMethod.PUT;
 
 public class DataServlet extends HttpServlet {
     private ComputePath computePath = new ComputePath();

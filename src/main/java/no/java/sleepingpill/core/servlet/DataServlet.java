@@ -3,6 +3,7 @@ package no.java.sleepingpill.core.servlet;
 import no.java.sleepingpill.core.ServiceLocator;
 import no.java.sleepingpill.core.ServiceResult;
 import no.java.sleepingpill.core.session.SessionService;
+import no.java.sleepingpill.core.submitters.SubmittersService;
 import org.jsonbuddy.JsonObject;
 import org.jsonbuddy.parse.JsonParser;
 
@@ -38,6 +39,9 @@ public class DataServlet extends HttpServlet {
             switch (operationOptional.get()) {
                 case SESSION_IN_EVENT:
                     serviceResult = SessionService.instance().addSession(pathInfo.substring(1, pathInfo.indexOf("/", 1)), payload);
+                    break;
+                case ALL_SUBMITTERS:
+                    serviceResult = SubmittersService.instance().confirmNewEmail(payload);
                     break;
                 default:
                     throw new UnsupportedOperationException("Unknown operation " + operationOptional.get());

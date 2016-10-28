@@ -16,14 +16,14 @@ public class SubmittersService {
         return instance;
     }
 
-    public synchronized ServiceResult confirmNewEmail(JsonObject innkommendeJson) {
-        Optional<String> email = innkommendeJson.stringValue("email");
+    public synchronized ServiceResult confirmNewEmail(JsonObject addEmailObject) {
+        Optional<String> email = addEmailObject.stringValue("email");
         if (!email.isPresent()) {
             return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST,"Value email is required");
         }
         Optional<ConfirmedEmail> confirmedEmail = EmailHolder.instance().confirmedEmailByEmail(email.get());
         if (confirmedEmail.isPresent()) {
-            return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST,"Email is already confirmed");
+            return ServiceResult.ok(JsonFactory.jsonObject().put("id",confirmedEmail.get().id));
         }
         RegisterEmail registerEmail = new RegisterEmail(email.get());
         Event event = registerEmail.createEvent();

@@ -18,7 +18,7 @@ public class RegisterEmail {
     }
 
     public String getId() {
-        return id.orElseThrow(() -> new InternalError("Session Id not set yet"));
+        return id.orElseThrow(() -> new InternalError("Email Id not set yet"));
     }
 
     public Event createEvent() {

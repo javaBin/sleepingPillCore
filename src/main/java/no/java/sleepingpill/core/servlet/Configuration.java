@@ -95,7 +95,7 @@ public class Configuration {
     }
 
     public static String logfilePattern() {
-        return instance().readValue("logfilePattern", null);
+        return instance().readValue("logfilePattern", null  );
     }
 
 

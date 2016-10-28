@@ -84,6 +84,9 @@ public class DataServlet extends HttpServlet {
                 case SESSION_BY_ID:
                     serviceResult = SessionService.instance().sessionById(pathInfo.substring(pathInfo.lastIndexOf("/")+1));
                     break;
+                case ALL_ARRANGED_EVENTS:
+                    serviceResult = SessionService.instance().allArrangedEvents();
+                    break;
                 default:
                     throw new UnsupportedOperationException("Unknown operation " + operationOptional.get());
             }

@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.eclipse.jetty.http.HttpMethod.GET;
 import static org.eclipse.jetty.http.HttpMethod.POST;
@@ -38,7 +40,7 @@ public class DataServlet extends HttpServlet {
             ServiceResult serviceResult;
             switch (operationOptional.get()) {
                 case SESSION_IN_EVENT:
-                    serviceResult = SessionService.instance().addSession(pathInfo.substring(1, pathInfo.indexOf("/", 1)), payload);
+                    serviceResult = SessionService.instance().addSession(extractGroup(ServletOperation.SESSION_IN_EVENT, pathInfo, 1), payload);
                     break;
                 case ALL_SUBMITTERS:
                     serviceResult = SubmittersService.instance().confirmNewEmail(payload);
@@ -95,6 +97,9 @@ public class DataServlet extends HttpServlet {
                 case ALL_EVENTS:
                     serviceResult = SessionService.instance().allArrangedEvents();
                     break;
+                case SESSION_IN_EVENT:
+                    serviceResult = SessionService.instance().allSessionsForArrangedEvent(extractGroup(ServletOperation.SESSION_IN_EVENT, pathInfo, 1));
+                    break;
                 default:
                     throw new UnsupportedOperationException("Unknown operation " + operationOptional.get());
             }
@@ -108,6 +113,13 @@ public class DataServlet extends HttpServlet {
         } else {
             serviceResult.sendError(resp);
         }
+    }
+
+    public static String extractGroup(ServletOperation servletOperation, String input, int matchNo) {
+        Pattern compile = Pattern.compile(servletOperation.pathPattern);
+        Matcher matcher = compile.matcher(input);
+        matcher.matches();
+        return matcher.group(matchNo);
     }
 
     private static String toString(InputStream inputStream) throws IOException {

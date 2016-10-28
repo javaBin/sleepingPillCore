@@ -7,8 +7,8 @@ import static org.eclipse.jetty.http.HttpMethod.POST;
 import static org.eclipse.jetty.http.HttpMethod.PUT;
 
 public enum ServletOperation {
-    SESSION_BY_ID("^/session/\\w+$", GET, PUT),
-    SESSION_IN_EVENT("^/event/\\w+/session$", POST),
+    SESSION_BY_ID("^/session/(\\w+)$", GET, PUT),
+    SESSION_IN_EVENT("^/event/(\\w+)/session$", POST, GET),
     ALL_EVENTS("^/event$", GET),
     ALL_SUBMITTERS("^/submitter$",POST)
     ;

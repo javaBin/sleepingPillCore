@@ -15,6 +15,16 @@ public class Session extends DataObject {
         this.arrangedEventId = arrangedEventId;
     }
 
+    @Override
+    public String getId() {
+        return super.getId();
+    }
+
+    @Override
+    public Map<String, DataField> getData() {
+        return super.getData();
+    }
+
     public String getArrangedEventId() {
         return arrangedEventId;
     }

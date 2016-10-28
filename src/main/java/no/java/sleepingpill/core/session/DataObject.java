@@ -21,6 +21,12 @@ public class DataObject {
         return id;
     }
 
+    public Map<String, DataField> getData() {
+        Map clone = new HashMap<String, DataField>();
+        clone.putAll(data);
+        return clone;
+    }
+
     public Optional<DataField> dataValue(String key) {
         return Optional.ofNullable(data.get(key));
     }

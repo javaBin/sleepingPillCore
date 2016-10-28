@@ -5,8 +5,6 @@ import org.junit.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-
 import static org.eclipse.jetty.http.HttpMethod.POST;
 public class ComputePathTest {
 

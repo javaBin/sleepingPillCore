@@ -9,13 +9,18 @@ import no.java.sleepingpill.core.commands.UpdateSession;
 import no.java.sleepingpill.core.event.ArrangedEvent;
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventHandler;
-import no.java.sleepingpill.core.session.DataField;
-import org.jsonbuddy.*;
+import org.jsonbuddy.JsonArray;
+import org.jsonbuddy.JsonFactory;
+import org.jsonbuddy.JsonNode;
+import org.jsonbuddy.JsonNull;
+import org.jsonbuddy.JsonObject;
 import org.jsonbuddy.pojo.JsonGenerator;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SessionService {
     public static final String DATA_OBJECT = "data";
@@ -43,17 +48,16 @@ public class SessionService {
             NewSpeaker newSpeaker = new NewSpeaker();
             newSpeaker.setName(speakobj.stringValue("name"));
             newSpeaker.setEmail(speakobj.stringValue("email"));
-            addData(speakobj.objectValue(DATA_OBJECT).orElse(JsonFactory.jsonObject()),newSpeaker);
+            addData(speakobj.objectValue(DATA_OBJECT).orElse(JsonFactory.jsonObject()), newSpeaker);
             return newSpeaker;
         }).forEach(createNewSession::addSpeaker);
-
 
 
         addData(talkData, createNewSession);
         Event event = createNewSession.createEvent();
         EventHandler.instance().addEvent(event);
 
-        return ServiceResult.ok(JsonFactory.jsonObject().put("id",createNewSession.getSessionId()));
+        return ServiceResult.ok(JsonFactory.jsonObject().put("id", createNewSession.getSessionId()));
     }
 
     private void addData(JsonObject talkData, HasDataInput hasDataInput) {
@@ -61,14 +65,14 @@ public class SessionService {
             JsonObject valueObject = talkData.requiredObject(key);
             JsonNode jsonValue = valueObject.value(VALUE_KEY).orElse(new JsonNull());
             boolean privateValue = valueObject.booleanValue(PRIVATE_FLAG).orElse(false);
-            hasDataInput.addData(key,new DataField(jsonValue,privateValue));
+            hasDataInput.addData(key, new DataField(jsonValue, privateValue));
         }
     }
 
     public ServiceResult sessionById(String sessionId) {
         Optional<Session> session = SessionHolder.instance().sessionFromId(sessionId);
         if (!session.isPresent()) {
-            return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST,"Unknown sessionid " + sessionId);
+            return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown sessionid " + sessionId);
         }
         return ServiceResult.ok(session.get().asSingleSessionJson());
     }
@@ -76,12 +80,12 @@ public class SessionService {
     public ServiceResult updateSession(String sessionId, JsonObject payload) {
         Optional<Session> session = SessionHolder.instance().sessionFromId(sessionId);
         if (!session.isPresent()) {
-            return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST,"Unknown sessionid " + sessionId);
+            return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown sessionid " + sessionId);
         }
         JsonObject talkData = payload.objectValue(DATA_OBJECT).orElse(JsonFactory.jsonObject());
 
         UpdateSession updateSession = new UpdateSession(sessionId, session.get().getArrangedEventId());
-        addData(talkData,updateSession);
+        addData(talkData, updateSession);
 
         Event event = updateSession.createEvent();
         EventHandler.instance().addEvent(event);
@@ -94,4 +98,20 @@ public class SessionService {
         JsonObject result = JsonFactory.jsonObject().put("arrangedEvents", JsonGenerator.generate(arrangedEvents));
         return ServiceResult.ok(result);
     }
+
+    public ServiceResult allSessionsForArrangedEvent(String arrangedEventId) {
+        List<Session> sessions;
+        if (arrangedEventId == null) {
+            sessions = new ArrayList<>();
+        } else {
+           sessions = ServiceLocator.sessionHolder().allSessions().stream()
+                    .filter(session -> arrangedEventId.equals(session.getArrangedEventId()))
+                    .collect(Collectors.toList());
+
+        }
+
+        JsonObject result = JsonFactory.jsonObject().put("sessions", JsonGenerator.generate(sessions));
+        return ServiceResult.ok(result);
+    }
+
 }

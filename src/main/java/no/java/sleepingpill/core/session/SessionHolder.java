@@ -28,6 +28,10 @@ public class SessionHolder implements EventListener {
         }
     }
 
+    public void clear(){
+        sessions.clear();;
+    }
+
     private void handleUpdateSession(Event event) {
         String sessionId = event.data.requiredString("sessionId");
         Session session = sessions.stream()

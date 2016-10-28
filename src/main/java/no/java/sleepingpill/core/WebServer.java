@@ -68,9 +68,11 @@ public class WebServer {
 
         if (isDevEnviroment()) {
             // Development ie running in ide
+            System.out.println("Running from ide");
             webAppContext.setResourceBase("src/main/resources/webapp");
         } else {
             // Prod ie running from jar
+            System.out.println("Running from jar");
             webAppContext.setBaseResource(Resource.newClassPathResource("webapp", true, false));
         }
 

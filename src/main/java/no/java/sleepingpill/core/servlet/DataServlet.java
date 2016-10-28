@@ -57,6 +57,9 @@ public class DataServlet extends HttpServlet {
                     String sessionid = pathInfo.substring(pathInfo.lastIndexOf("/")+1);
                     serviceResult = SessionService.instance().updateSession(sessionid,payload);
                     break;
+                case ALL_ARRANGED_EVENTS:
+                    serviceResult = SessionService.instance().allArrangedEvents();
+                    break;
                 default:
                     throw new UnsupportedOperationException("Unknown operation " + operationOptional.get());
             }

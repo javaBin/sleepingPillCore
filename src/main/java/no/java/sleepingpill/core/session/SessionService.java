@@ -1,14 +1,17 @@
 package no.java.sleepingpill.core.session;
 
+import no.java.sleepingpill.core.ServiceLocator;
 import no.java.sleepingpill.core.ServiceResult;
 import no.java.sleepingpill.core.commands.CreateNewSession;
 import no.java.sleepingpill.core.commands.HasDataInput;
 import no.java.sleepingpill.core.commands.NewSpeaker;
 import no.java.sleepingpill.core.commands.UpdateSession;
+import no.java.sleepingpill.core.event.ArrangedEvent;
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventHandler;
 import no.java.sleepingpill.core.session.DataField;
 import org.jsonbuddy.*;
+import org.jsonbuddy.pojo.JsonGenerator;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -84,5 +87,11 @@ public class SessionService {
         EventHandler.instance().addEvent(event);
 
         return ServiceResult.ok(JsonFactory.jsonObject());
+    }
+
+    public ServiceResult allArrangedEvents() {
+        List<ArrangedEvent> arrangedEvents = ServiceLocator.arrangedEventHolder().allArrangedEvents();
+        JsonObject result = JsonFactory.jsonObject().put("arrangedEvents", JsonGenerator.generate(arrangedEvents));
+        return ServiceResult.ok(result);
     }
 }

@@ -6,6 +6,9 @@ import java.util.regex.Pattern;
 
 public class ComputePath {
     public Optional<ServletOperation> computeGet(String pathInfo) {
+        if ("/event".equals(pathInfo)) {
+            return Optional.of(ServletOperation.ALL_ARRANGED_EVENTS);
+        }
         if (matchesOneSession(pathInfo)) {
             return Optional.of(ServletOperation.SESSION_BY_ID);
         }

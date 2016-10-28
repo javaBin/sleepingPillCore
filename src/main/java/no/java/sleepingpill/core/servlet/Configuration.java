@@ -8,7 +8,6 @@ public class Configuration {
     public static final String CONFIG_FILE_PROPERTY = "sleepingpillconfigfile";
     private static Configuration instance;
 
-
     synchronized private static Configuration instance() {
         if (instance == null) {
             instance = new Configuration();

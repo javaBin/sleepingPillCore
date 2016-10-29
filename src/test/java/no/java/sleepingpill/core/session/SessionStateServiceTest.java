@@ -3,7 +3,6 @@ package no.java.sleepingpill.core.session;
 import no.java.sleepingpill.core.CleanSetupTest;
 import no.java.sleepingpill.core.ServiceLocator;
 import no.java.sleepingpill.core.ServiceResult;
-import no.java.sleepingpill.core.event.ArrangedEvent;
 import no.java.sleepingpill.core.event.Conference;
 import org.assertj.core.api.Assertions;
 import org.jsonbuddy.JsonArray;

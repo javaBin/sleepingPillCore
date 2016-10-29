@@ -100,4 +100,11 @@ public class Configuration {
     }
 
 
+    public static String emmsUser() {
+        return instance().readValue("emsUser",null);
+    }
+
+    public static String emsPassword() {
+        return instance().readValue("emsPassword",null);
+    }
 }

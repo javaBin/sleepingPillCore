@@ -12,7 +12,7 @@ import static spark.Spark.post;
 import static spark.Spark.put;
 
 public class SessionController {
-    private SessionService sessionService = SessionService.instance();
+    private SessionService sessionService;
 
     public SessionController(SessionService sessionService) {
         this.sessionService = sessionService;
@@ -25,7 +25,6 @@ public class SessionController {
             String confereceId = req.params(":conferenceId");
             return sessionService.allSessionsForConference(confereceId);
         }, jsonBuddyString());
-
 
         get("/data/session/:id", (req, res) -> {
             String id = req.params(":id");

@@ -52,29 +52,4 @@ public class DBEventListener implements EventListener {
         }
     }
 
-
-    public void initDB() {
-
-        Connection c = null;
-        PreparedStatement ps = null;
-
-        try {
-            c = getConnection();
-            String sql = "CREATE TABLE event ( " +
-                    "   id bigint auto_increment, " +
-                    "   event_type varchar(128) not null, " +
-                    "   event_date timestamp not null, " +
-                    "   event_submitter varchar(128) not null, " +
-                    "   json_data text not null " +
-                    ")";
-            ps = c.prepareStatement(sql);
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            logger.error("Event insert failed: " + ex.toString());
-            throw new RuntimeException(ex);
-        } finally {
-            close(c, ps, null);
-        }
-    }
-
 }

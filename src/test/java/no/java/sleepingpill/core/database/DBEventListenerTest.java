@@ -33,7 +33,7 @@ public class DBEventListenerTest {
     @Before
     public void setupDB() throws SQLException {
         listener = new DBEventListener();
-        listener.initDB();
+        DBUtil.initDB();
         listener.sagaInitialized();
     }
 }

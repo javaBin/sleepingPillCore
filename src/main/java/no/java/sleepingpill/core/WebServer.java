@@ -1,6 +1,7 @@
 package no.java.sleepingpill.core;
 
 import no.java.sleepingpill.core.database.DBEventReader;
+import no.java.sleepingpill.core.database.DBUtil;
 import no.java.sleepingpill.core.event.EventListener;
 import no.java.sleepingpill.core.servlet.Configuration;
 import no.java.sleepingpill.core.servlet.DataServlet;
@@ -12,6 +13,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 import static no.java.sleepingpill.core.ServiceLocator.eventHandler;
@@ -72,8 +74,11 @@ public class WebServer {
     }
 
     @SuppressWarnings("unused") // No db yet...
-    private void migrateDb() {
-        logger.info("DB-Migration: Not yet implemented");
+    private void migrateDb() throws SQLException {
+        if(!DBUtil.dbIsUpToDate()) {
+            DBUtil.initDB();
+        }
+//        logger.info("DB-Migration: Not yet implemented");
     }
 
     protected WebAppContext getHandler() {

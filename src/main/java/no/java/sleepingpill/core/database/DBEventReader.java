@@ -2,6 +2,7 @@ package no.java.sleepingpill.core.database;
 
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventType;
+import no.java.sleepingpill.core.servlet.Configuration;
 import org.jsonbuddy.parse.JsonParser;
 import org.slf4j.Logger;
 
@@ -16,9 +17,10 @@ import static no.java.sleepingpill.core.database.DBUtil.close;
 import static no.java.sleepingpill.core.database.DBUtil.getConnection;
 
 public class DBEventReader {
-    private static Logger logger = org.slf4j.LoggerFactory.getLogger(DBUtil.class);
+    private static Logger logger = org.slf4j.LoggerFactory.getLogger(DBEventReader.class);
 
     public List<Event> events() {
+        logger.info( "Loading events from db using url {}", Configuration.dbURL());
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet rs;
@@ -37,6 +39,7 @@ public class DBEventReader {
             while (rs.next()) {
                 list.add(createEvent(rs));
             }
+            logger.info( "Done loading {} events from db using url {}", list.size(), Configuration.dbURL());
             return list;
         } catch (SQLException ex) {
             logger.error("Event insert failed: " + ex.toString());

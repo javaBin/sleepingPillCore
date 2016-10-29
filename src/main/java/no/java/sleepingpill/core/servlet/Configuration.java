@@ -7,6 +7,11 @@ import java.util.Map;
 public class Configuration {
     public static final String CONFIG_FILE_PROPERTY = "sleepingpillconfigfile";
     private static Configuration instance;
+    private final Map<String, String> values;
+
+    private Configuration() {
+        values = readValues(System.getProperty(CONFIG_FILE_PROPERTY));
+    }
 
     synchronized private static Configuration instance() {
         if (instance == null) {
@@ -15,18 +20,16 @@ public class Configuration {
         return instance;
     }
 
-    private final Map<String, String> values;
-
-    private Configuration() {
-        values = readValues(System.getProperty(CONFIG_FILE_PROPERTY));
-    }
-
     private static Map<String, String> readValues(String filename) {
         Map<String, String> result = new HashMap<>();
 
-        if (filename == null || filename.isEmpty() || !(new File(filename).exists())) {
+        if (filename == null || filename.isEmpty()) {
             return result;
         }
+        if (!(new File(filename).exists())) {
+            throw new IllegalArgumentException("Configuration file does not exists: " + new File(filename).getAbsolutePath());
+        }
+
         String doc;
         try {
             doc = toString(new FileInputStream(filename));
@@ -59,16 +62,10 @@ public class Configuration {
         }
     }
 
-    private String readValue(String key, String defaultValue) {
-        String val = values.get(key);
-        return val != null ? val : defaultValue;
-    }
-
-
-
     public static int serverPort() {
         return 8082;
     }
+
     public static String myLocation() {
         return "http://localhost:8082/data/";
     }
@@ -90,7 +87,12 @@ public class Configuration {
     }
 
     public static String logfilePattern() {
-        return instance().readValue("logfilePattern", null  );
+        return instance().readValue("logfilePattern", null);
+    }
+
+    private String readValue(String key, String defaultValue) {
+        String val = values.get(key);
+        return val != null ? val : defaultValue;
     }
 
 

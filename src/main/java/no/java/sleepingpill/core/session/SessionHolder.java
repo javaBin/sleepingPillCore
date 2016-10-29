@@ -30,7 +30,6 @@ public class SessionHolder implements EventListener {
 
     public void clear() {
         sessions.clear();
-        ;
     }
 
     private void handleUpdateSession(Event event) {

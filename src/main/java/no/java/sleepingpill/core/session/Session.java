@@ -32,4 +32,8 @@ public class Session extends DataObject {
     public JsonObject asSingleSessionJson() {
         return dataAsJson();
     }
+
+    public SessionStatus getSessionStatus() {
+        return sessionStatus;
+    }
 }

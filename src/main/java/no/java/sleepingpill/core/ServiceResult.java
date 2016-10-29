@@ -41,4 +41,12 @@ public class ServiceResult {
         }
         response.sendError(error,message);
     }
+
+    public Integer getError() {
+        return error;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

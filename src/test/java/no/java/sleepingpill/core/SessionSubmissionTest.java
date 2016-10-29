@@ -19,18 +19,11 @@ import static org.jsonbuddy.JsonFactory.jsonObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SessionSubmissionTest {
+public class SessionSubmissionTest extends CleanSetupTest {
 
-    private DataServlet dataServlet;
+    private DataServlet dataServlet = new DataServlet();
 
-    @Before
-    public void cleanAll() throws Exception {
-        Method cleanAll = ServiceLocator.class.getDeclaredMethod("cleanAll");
-        cleanAll.setAccessible(true);
-        cleanAll.invoke(null);
-        cleanAll.setAccessible(false);
-        dataServlet = new DataServlet();
-    }
+
 
     @Test
     public void shouldCreateSession() throws Exception {

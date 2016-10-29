@@ -1,5 +1,7 @@
 package no.java.sleepingpill.core;
 
+import no.java.sleepingpill.core.database.DBEventReader;
+import no.java.sleepingpill.core.event.EventListener;
 import no.java.sleepingpill.core.servlet.Configuration;
 import no.java.sleepingpill.core.servlet.DataServlet;
 import no.java.sleepingpill.core.util.LoggerFactory;
@@ -11,6 +13,8 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.time.LocalDateTime;
+
+import static no.java.sleepingpill.core.ServiceLocator.eventHandler;
 
 public class WebServer {
     private static Logger logger = org.slf4j.LoggerFactory.getLogger(WebServer.class);
@@ -44,7 +48,13 @@ public class WebServer {
     protected void start() throws Exception {
         onlyLogWarningsFromJetty();
         //Locale.setDefault(new Locale(Configuration.getLocale()));
-        //migrateDb();
+        migrateDb();
+        loadInitialEvents();
+
+        eventHandler().getEventListeners().stream()
+                .forEach(EventListener::sagaInitialized);
+
+
         server = new Server(Configuration.serverPort());
         server.setHandler(getHandler());
         server.start();
@@ -53,6 +63,12 @@ public class WebServer {
 
         System.out.println(server.getURI() + " at " + LocalDateTime.now());
         System.out.println("Path=" + new File(".").getAbsolutePath());
+    }
+
+    private void loadInitialEvents() {
+        new DBEventReader().events().stream().
+                forEach(e -> eventHandler().addEvent(e));
+
     }
 
     @SuppressWarnings("unused") // No db yet...

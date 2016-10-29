@@ -1,5 +1,6 @@
 package no.java.sleepingpill.core;
 
+import no.java.sleepingpill.core.database.DBEventListener;
 import no.java.sleepingpill.core.event.ConferenceHolder;
 import no.java.sleepingpill.core.event.DummyConferenceHolder;
 import no.java.sleepingpill.core.event.EventHandler;
@@ -41,6 +42,7 @@ public class ServiceLocator implements AutoCloseable {
             eventHandler = new EventHandler();
             eventHandler.addEventListener(SessionHolder.instance());
             eventHandler.addEventListener(EmailHolder.instance());
+            eventHandler.addEventListener(new DBEventListener());
         }
         return eventHandler;
     }

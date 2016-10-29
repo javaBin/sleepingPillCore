@@ -73,20 +73,16 @@ public class Configuration {
         return "http://localhost:8082/data/";
     }
 
-    public static String dbServer() {
-        return instance().readValue("dbServer", "localhost");
-    }
-
-    public static String dbName() {
-        return instance().readValue("dbName", "sleeppill");
+    public static String dbURL() {
+        return instance().readValue("dbURL", "jdbc:h2:mem:ems;DB_CLOSE_DELAY=-1");
     }
 
     public static String dbUser() {
-        return instance().readValue("dbUser", "postgres");
+        return instance().readValue("dbUser", "sa");
     }
 
     public static String dbPassword() {
-        return instance().readValue("dbPassword", "bingo");
+        return instance().readValue("dbPassword", "");
     }
 
     public static String logLevel() {

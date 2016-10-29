@@ -30,4 +30,8 @@ public class EventHandler {
     public synchronized void addEventListener(EventListener eventListener) {
         listeners.add(eventListener);
     }
+
+    public List<EventListener> getEventListeners() {
+        return new ArrayList<>(listeners);
+    }
 }

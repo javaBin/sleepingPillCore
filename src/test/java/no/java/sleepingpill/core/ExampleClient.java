@@ -18,7 +18,7 @@ public class ExampleClient {
     private static String SERVER_ADDRESS= "http://localhost:8082/data";
 
     public JsonArray allConferences() throws Exception {
-        URL url = new URL(SERVER_ADDRESS + "/event");
+        URL url = new URL(SERVER_ADDRESS + "/conference");
         try (InputStream inputStream = url.openConnection().getInputStream()) {
             JsonObject jsonObject = JsonParser.parseToObject(inputStream);
             return jsonObject.requiredArray("conferences");
@@ -31,7 +31,7 @@ public class ExampleClient {
                         .put("title", jsonObject().put("value", "My title").put("privateData", false)));
         System.out.println("Posting: " + input);
 
-        URLConnection conn = new URL(SERVER_ADDRESS + "/event/" + conferenceId + "/session").openConnection();
+        URLConnection conn = new URL(SERVER_ADDRESS + "/conference/" + conferenceId + "/session").openConnection();
         conn.setDoOutput(true);
         try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(),"utf-8"))) {
             input.toJson(printWriter);

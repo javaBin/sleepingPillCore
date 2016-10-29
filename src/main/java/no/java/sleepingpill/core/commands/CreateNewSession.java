@@ -1,7 +1,6 @@
 package no.java.sleepingpill.core.commands;
 
 import no.java.sleepingpill.core.event.Event;
-import no.java.sleepingpill.core.event.EventHandler;
 import no.java.sleepingpill.core.event.EventType;
 import no.java.sleepingpill.core.exceptions.InternalError;
 import no.java.sleepingpill.core.session.DataField;
@@ -15,18 +14,13 @@ import java.util.*;
 
 public class CreateNewSession implements HasDataInput {
     private Optional<String> sessionId = Optional.empty();
-    private String arrangedEventId;
+    private String conferenceId;
     private List<NewSpeaker> speakers = new ArrayList<>();
-    private Map<String,DataField> data = new HashMap<>();
+    private Map<String, DataField> data = new HashMap<>();
     private Optional<String> postedByMail = Optional.empty();
 
-    public CreateNewSession setSessionId(String sessionId) {
-        this.sessionId = Optional.of(sessionId);
-        return this;
-    }
-
-    public CreateNewSession setArrangedEventId(String arrangedEventId) {
-        this.arrangedEventId = arrangedEventId;
+    public CreateNewSession setConferenceId(String conferenceId) {
+        this.conferenceId = conferenceId;
         return this;
     }
 
@@ -39,24 +33,30 @@ public class CreateNewSession implements HasDataInput {
         speakers.add(speaker);
     }
 
-    public void addData(String key,DataField dataField) {
-        data.put(key,dataField);
+    public void addData(String key, DataField dataField) {
+        data.put(key, dataField);
     }
 
     public Event createEvent() {
         this.sessionId = Optional.of(sessionId.orElse(IdGenerator.newId()));
         JsonObject dataObj = JsonFactory.jsonObject();
-        dataObj.put("sessionId",sessionId.get());
+        dataObj.put("conferenceId", conferenceId);
+        dataObj.put("sessionId", sessionId.get());
         dataObj.put("speakers", JsonArray.fromNodeStream(speakers.stream().map(NewSpeaker::asNewEvent)));
         dataObj.put("data", JsonGenerator.generate(data));
         if (postedByMail.isPresent()) {
-            dataObj.put("postedByMail",postedByMail.get());
+            dataObj.put("postedByMail", postedByMail.get());
         }
 
-        return new Event(EventType.NEW_SESSION,arrangedEventId,dataObj);
+        return new Event(EventType.NEW_SESSION, dataObj);
     }
 
     public String getSessionId() {
         return sessionId.orElseThrow(() -> new InternalError("Session Id not set yet"));
+    }
+
+    public CreateNewSession setSessionId(String sessionId) {
+        this.sessionId = Optional.of(sessionId);
+        return this;
     }
 }

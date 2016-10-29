@@ -6,7 +6,7 @@ import no.java.sleepingpill.core.commands.CreateNewSession;
 import no.java.sleepingpill.core.commands.HasDataInput;
 import no.java.sleepingpill.core.commands.NewSpeaker;
 import no.java.sleepingpill.core.commands.UpdateSession;
-import no.java.sleepingpill.core.event.ArrangedEvent;
+import no.java.sleepingpill.core.event.Conference;
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventHandler;
 import org.jsonbuddy.JsonArray;
@@ -35,13 +35,13 @@ public class SessionService {
         return instance;
     }
 
-    public ServiceResult addSession(String arrangedEventId, JsonObject incomingJson) {
+    public ServiceResult addSession(String conferenceId, JsonObject incomingJson) {
         JsonObject talkData = incomingJson.objectValue(DATA_OBJECT).orElse(JsonFactory.jsonObject());
         JsonArray speakers = incomingJson.arrayValue(SPEAKER_ARRAY).orElse(JsonFactory.jsonArray());
         Optional<String> postedBy = incomingJson.stringValue(POSTED_BY_MAIL);
 
         CreateNewSession createNewSession = new CreateNewSession();
-        createNewSession.setArrangedEventId(arrangedEventId);
+        createNewSession.setConferenceId(conferenceId);
         createNewSession.setPostedByMail(postedBy);
 
         speakers.objects(speakobj -> {
@@ -84,7 +84,7 @@ public class SessionService {
         }
         JsonObject talkData = payload.objectValue(DATA_OBJECT).orElse(JsonFactory.jsonObject());
 
-        UpdateSession updateSession = new UpdateSession(sessionId, session.get().getArrangedEventId());
+        UpdateSession updateSession = new UpdateSession(sessionId, session.get().getConferenceId());
         addData(talkData, updateSession);
 
         Event event = updateSession.createEvent();
@@ -93,19 +93,19 @@ public class SessionService {
         return ServiceResult.ok(JsonFactory.jsonObject());
     }
 
-    public ServiceResult allArrangedEvents() {
-        List<ArrangedEvent> arrangedEvents = ServiceLocator.arrangedEventHolder().allArrangedEvents();
-        JsonObject result = JsonFactory.jsonObject().put("arrangedEvents", JsonGenerator.generate(arrangedEvents));
+    public ServiceResult allConferences() {
+        List<Conference> conferences = ServiceLocator.conferenceHolder().allConferences();
+        JsonObject result = JsonFactory.jsonObject().put("conferences", JsonGenerator.generate(conferences));
         return ServiceResult.ok(result);
     }
 
-    public ServiceResult allSessionsForArrangedEvent(String arrangedEventId) {
+    public ServiceResult allSessionsForConference(String conferenceId) {
         List<Session> sessions;
-        if (arrangedEventId == null) {
+        if (conferenceId == null) {
             sessions = new ArrayList<>();
         } else {
            sessions = ServiceLocator.sessionHolder().allSessions().stream()
-                    .filter(session -> arrangedEventId.equals(session.getArrangedEventId()))
+                    .filter(session -> conferenceId.equals(session.getConferenceId()))
                     .collect(Collectors.toList());
 
         }

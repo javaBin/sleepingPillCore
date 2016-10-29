@@ -1,15 +1,12 @@
 package no.java.sleepingpill.core;
 
-import no.java.sleepingpill.core.event.ArrangedEvent;
-import no.java.sleepingpill.core.event.ArrangedEventHolder;
+import no.java.sleepingpill.core.event.Conference;
+import no.java.sleepingpill.core.event.ConferenceHolder;
 import no.java.sleepingpill.core.servlet.DataServlet;
-import org.assertj.core.api.Assertions;
-import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
 import org.jsonbuddy.parse.JsonParser;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -91,11 +88,11 @@ public class SessionSubmissionTest {
     }
 
     private String addNewSessionGetId() throws IOException, ServletException {
-        ArrangedEvent arrangedEvent = ArrangedEventHolder.instance().allArrangedEvents().get(0);
+        Conference conference = ConferenceHolder.instance().allConferences().get(0);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        when(request.getPathInfo()).thenReturn("/event/" + arrangedEvent.id + "/" + "session");
+        when(request.getPathInfo()).thenReturn("/event/" + conference.id + "/" + "session");
         when(request.getMethod()).thenReturn("POST");
         JsonObject input = jsonObject()
                 .put("data", jsonObject()

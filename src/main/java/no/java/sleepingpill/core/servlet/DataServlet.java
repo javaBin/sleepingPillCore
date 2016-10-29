@@ -70,7 +70,7 @@ public class DataServlet extends HttpServlet {
                     serviceResult = SessionService.instance().updateSession(sessionid, payload);
                     break;
                 case ALL_EVENTS:
-                    serviceResult = SessionService.instance().allArrangedEvents();
+                    serviceResult = SessionService.instance().allConferences();
                     break;
                 default:
                     throw new UnsupportedOperationException("Unknown operation " + operationOptional.get());
@@ -95,10 +95,10 @@ public class DataServlet extends HttpServlet {
                     serviceResult = SessionService.instance().sessionById(pathInfo.substring(pathInfo.lastIndexOf("/") + 1));
                     break;
                 case ALL_EVENTS:
-                    serviceResult = SessionService.instance().allArrangedEvents();
+                    serviceResult = SessionService.instance().allConferences();
                     break;
                 case SESSION_IN_EVENT:
-                    serviceResult = SessionService.instance().allSessionsForArrangedEvent(extractGroup(ServletOperation.SESSION_IN_EVENT, pathInfo, 1));
+                    serviceResult = SessionService.instance().allSessionsForConference(extractGroup(ServletOperation.SESSION_IN_EVENT, pathInfo, 1));
                     break;
                 default:
                     throw new UnsupportedOperationException("Unknown operation " + operationOptional.get());

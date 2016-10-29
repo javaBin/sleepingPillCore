@@ -24,8 +24,8 @@ public class RegisterEmail {
     public Event createEvent() {
         this.id = Optional.of(this.id.orElse(IdGenerator.newId()));
         JsonObject data = JsonFactory.jsonObject()
-                .put("email",email)
-                .put("id",id.get());
-        return new Event(EventType.EMAIL_CONFIRMED,null,data);
+                .put("email", email)
+                .put("id", id.get());
+        return new Event(EventType.EMAIL_CONFIRMED, data);
     }
 }

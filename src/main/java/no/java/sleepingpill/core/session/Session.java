@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Session extends DataObject {
-    private final String arrangedEventId;
+    private final String conferenceId;
     private volatile SessionStatus sessionStatus = SessionStatus.DRAFT;
 
-    public Session(String id, String arrangedEventId) {
+    public Session(String id, String conferenceId) {
         super(id);
-        this.arrangedEventId = arrangedEventId;
+        this.conferenceId = conferenceId;
     }
 
     @Override
@@ -25,8 +25,8 @@ public class Session extends DataObject {
         return super.getData();
     }
 
-    public String getArrangedEventId() {
-        return arrangedEventId;
+    public String getConferenceId() {
+        return conferenceId;
     }
 
     public JsonObject asSingleSessionJson() {

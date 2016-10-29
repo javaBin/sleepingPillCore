@@ -12,11 +12,11 @@ import java.util.Optional;
 
 public class SessionHolder implements EventListener {
 
+    private List<Session> sessions = new ArrayList<>();
+
     public static SessionHolder instance() {
         return ServiceLocator.sessionHolder();
     }
-
-    private List<Session> sessions = new ArrayList<>();
 
     @Override
     public void eventAdded(Event event) {
@@ -28,8 +28,9 @@ public class SessionHolder implements EventListener {
         }
     }
 
-    public void clear(){
-        sessions.clear();;
+    public void clear() {
+        sessions.clear();
+        ;
     }
 
     private void handleUpdateSession(Event event) {
@@ -44,7 +45,8 @@ public class SessionHolder implements EventListener {
 
     private void handleNewSession(Event event) {
         String sessionId = event.data.requiredString("sessionId");
-        Session session = new Session(sessionId, event.arrangedEventId);
+        String conferenceId = event.data.requiredString("conferenceId");
+        Session session = new Session(sessionId, conferenceId);
         session.addData(event.data);
         sessions.add(session);
     }

@@ -3,7 +3,6 @@ package no.java.sleepingpill.core.session;
 import no.java.sleepingpill.core.ServiceResult;
 import no.java.sleepingpill.core.commands.CreateNewSession;
 import org.jsonbuddy.JsonArray;
-import org.jsonbuddy.JsonObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +19,7 @@ public class SessionServiceTest {
     public void setup(){
         SessionHolder.instance().clear();
         CreateNewSession createNewSession = new CreateNewSession();
-        createNewSession.setArrangedEventId(ARRANGED_EVENT_ID);
+        createNewSession.setConferenceId(ARRANGED_EVENT_ID);
         createNewSession.setPostedByMail(Optional.of(POSTED_BY));
         SessionHolder.instance().eventAdded(createNewSession.createEvent());
         SessionHolder.instance().eventAdded(createNewSession.createEvent());
@@ -43,13 +42,13 @@ public class SessionServiceTest {
     }
 
     @Test
-    public void allArrangedEvents_state_result() throws Exception {
+    public void allConferences_state_result() throws Exception {
 
     }
 
     @Test
-    public void allSessionsForArrangedEvent_noMatch_ok() throws Exception {
-        ServiceResult serviceResult = SessionService.instance().allSessionsForArrangedEvent("");
+    public void allSessionsForConference_noMatch_ok() throws Exception {
+        ServiceResult serviceResult = SessionService.instance().allSessionsForConference("");
         assertTrue(serviceResult.getResult().isPresent());
         Optional<JsonArray> optSessions = serviceResult.getResult().get().arrayValue("sessions");
         assertTrue(optSessions.isPresent());
@@ -58,8 +57,8 @@ public class SessionServiceTest {
     }
 
     @Test
-    public void allSessionsForArrangedEvent_null_ok() throws Exception {
-        ServiceResult serviceResult = SessionService.instance().allSessionsForArrangedEvent(null);
+    public void allSessionsForConference_null_ok() throws Exception {
+        ServiceResult serviceResult = SessionService.instance().allSessionsForConference(null);
         assertTrue(serviceResult.getResult().isPresent());
         Optional<JsonArray> optSessions = serviceResult.getResult().get().arrayValue("sessions");
         assertTrue(optSessions.isPresent());
@@ -68,8 +67,8 @@ public class SessionServiceTest {
     }
 
     @Test
-    public void allSessionsForArrangedEvent_match_ok() throws Exception {
-        ServiceResult serviceResult = SessionService.instance().allSessionsForArrangedEvent(ARRANGED_EVENT_ID);
+    public void allSessionsForConference_match_ok() throws Exception {
+        ServiceResult serviceResult = SessionService.instance().allSessionsForConference(ARRANGED_EVENT_ID);
         assertTrue(serviceResult.getResult().isPresent());
         Optional<JsonArray> optSessions = serviceResult.getResult().get().arrayValue("sessions");
         assertTrue(optSessions.isPresent());

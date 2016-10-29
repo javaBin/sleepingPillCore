@@ -17,21 +17,21 @@ import static org.jsonbuddy.JsonFactory.jsonObject;
 public class ExampleClient {
     private static String SERVER_ADDRESS= "http://localhost:8082/data";
 
-    public JsonArray allArrangedEvents() throws Exception {
+    public JsonArray allConferences() throws Exception {
         URL url = new URL(SERVER_ADDRESS + "/event");
         try (InputStream inputStream = url.openConnection().getInputStream()) {
             JsonObject jsonObject = JsonParser.parseToObject(inputStream);
-            return jsonObject.requiredArray("arrangedEvents");
+            return jsonObject.requiredArray("conferences");
         }
     }
 
-    public String addNewSession(String arrangedEventId) throws Exception {
+    public String addNewSession(String conferenceId) throws Exception {
         JsonObject input = jsonObject()
                 .put("data", jsonObject()
                         .put("title", jsonObject().put("value", "My title").put("privateData", false)));
         System.out.println("Posting: " + input);
 
-        URLConnection conn = new URL(SERVER_ADDRESS + "/event/" + arrangedEventId + "/session").openConnection();
+        URLConnection conn = new URL(SERVER_ADDRESS + "/event/" + conferenceId + "/session").openConnection();
         conn.setDoOutput(true);
         try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(),"utf-8"))) {
             input.toJson(printWriter);
@@ -74,8 +74,8 @@ public class ExampleClient {
 
     public static void main(String[] args) throws Exception {
         ExampleClient exampleClient = new ExampleClient();
-        String arrangedEventId = exampleClient.allArrangedEvents().get(0, JsonObject.class).requiredString("id");
-        String newSessionId = exampleClient.addNewSession(arrangedEventId);
+        String conferenceId = exampleClient.allConferences().get(0, JsonObject.class).requiredString("id");
+        String newSessionId = exampleClient.addNewSession(conferenceId);
         exampleClient.updateSession(newSessionId);
         JsonObject session = exampleClient.readSession(newSessionId);
         System.out.println("Current session data:");

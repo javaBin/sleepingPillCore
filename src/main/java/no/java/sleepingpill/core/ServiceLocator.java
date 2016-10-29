@@ -1,8 +1,7 @@
 package no.java.sleepingpill.core;
 
-import no.java.sleepingpill.core.event.ArrangedEventHolder;
-import no.java.sleepingpill.core.event.DummyArrangedEventHolder;
-import no.java.sleepingpill.core.event.Event;
+import no.java.sleepingpill.core.event.ConferenceHolder;
+import no.java.sleepingpill.core.event.DummyConferenceHolder;
 import no.java.sleepingpill.core.event.EventHandler;
 import no.java.sleepingpill.core.exceptions.InternalError;
 import no.java.sleepingpill.core.session.SessionHolder;
@@ -10,22 +9,24 @@ import no.java.sleepingpill.core.submitters.EmailHolder;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 public class ServiceLocator implements AutoCloseable {
-    private static final Map<Long,ServiceLocator> transactions = new HashMap<>();
+    private static final Map<Long, ServiceLocator> transactions = new HashMap<>();
 
-    private static volatile ArrangedEventHolder arrangedEventHolder;
+    private static volatile ConferenceHolder conferenceHolder;
     private static volatile SessionHolder sessionHolder;
     private static volatile EventHandler eventHandler;
     private static volatile EmailHolder emailHolder;
 
-    public static synchronized ArrangedEventHolder arrangedEventHolder() {
-        if (arrangedEventHolder == null) {
-            arrangedEventHolder = new DummyArrangedEventHolder();
+    private ServiceLocator() {
+
+    }
+
+    public static synchronized ConferenceHolder conferenceHolder() {
+        if (conferenceHolder == null) {
+            conferenceHolder = new DummyConferenceHolder();
         }
-        return arrangedEventHolder;
+        return conferenceHolder;
     }
 
     public static synchronized SessionHolder sessionHolder() {
@@ -53,30 +54,11 @@ public class ServiceLocator implements AutoCloseable {
 
     @SuppressWarnings("unused")
     private static void cleanAll() {
-        arrangedEventHolder = null;
+        conferenceHolder = null;
         sessionHolder = null;
         eventHandler = null;
         emailHolder = null;
     }
-
-
-
-    @Override
-    public void close()  {
-        ServiceLocator removed;
-        synchronized (transactions) {
-            removed = transactions.remove(Thread.currentThread().getId());
-        }
-        if (removed == null) {
-            throw new InternalError("Trying to close when transaction not started");
-        }
-
-    }
-
-    private ServiceLocator() {
-
-    }
-
 
     public static ServiceLocator startTransaction() {
         long id = Thread.currentThread().getId();
@@ -92,11 +74,20 @@ public class ServiceLocator implements AutoCloseable {
         return serviceLocator;
     }
 
+    @Override
+    public void close() {
+        ServiceLocator removed;
+        synchronized (transactions) {
+            removed = transactions.remove(Thread.currentThread().getId());
+        }
+        if (removed == null) {
+            throw new InternalError("Trying to close when transaction not started");
+        }
 
+    }
 
     public void rollback() {
     }
-
 
 
 }

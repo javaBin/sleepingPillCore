@@ -12,23 +12,23 @@ import java.util.Map;
 
 public class UpdateSession implements HasDataInput {
     private final String sessionId;
-    private final String arrangedEventId;
-    private final Map<String,DataField> data = new HashMap<>();
+    private final String conferenceId;
+    private final Map<String, DataField> data = new HashMap<>();
 
-    public UpdateSession(String sessionId, String arrangedEventId) {
+    public UpdateSession(String sessionId, String conferenceId) {
         this.sessionId = sessionId;
-        this.arrangedEventId = arrangedEventId;
+        this.conferenceId = conferenceId;
     }
 
-    public void addData(String key,DataField dataField) {
-        data.put(key,dataField);
+    public void addData(String key, DataField dataField) {
+        data.put(key, dataField);
     }
 
     public Event createEvent() {
         JsonObject jsonObject = JsonFactory.jsonObject()
                 .put("data", JsonGenerator.generate(data))
                 .put("sessionId", sessionId);
-        Event event = new Event(EventType.UPDATE_SESSION, arrangedEventId, jsonObject);
+        Event event = new Event(EventType.UPDATE_SESSION, jsonObject);
         return event;
     }
 }

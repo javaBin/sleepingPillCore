@@ -16,11 +16,11 @@ public class DataField implements OverridesJsonGenerator {
     }
 
     public static DataField simplePublicStringValue(String value) {
-        return new DataField(JsonFactory.jsonText(value),false);
+        return new DataField(JsonFactory.jsonString(value),false);
     }
 
     public static DataField simplePrivateStringValue(String value) {
-        return new DataField(JsonFactory.jsonText(value),true);
+        return new DataField(JsonFactory.jsonString(value),true);
     }
 
     public boolean isPrivateData() {

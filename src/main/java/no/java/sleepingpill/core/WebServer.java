@@ -7,13 +7,13 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.flywaydb.core.Flyway;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.time.LocalDateTime;
-import java.util.Locale;
 
 public class WebServer {
+    private static Logger logger = org.slf4j.LoggerFactory.getLogger(WebServer.class);
     private static Server server;
 
     public static void main(String[] argv) throws Exception {
@@ -27,6 +27,10 @@ public class WebServer {
         }
     }
 
+    static boolean isDevEnviroment() {
+        return new File("pom.xml").exists();
+    }
+
     private void onlyLogWarningsFromJetty() {
         org.eclipse.jetty.util.log.Log.setLog(LoggerFactory.jettyLogger());
         org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger("org.eclipse.jetty");
@@ -36,7 +40,6 @@ public class WebServer {
         ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) logger;
         logbackLogger.setLevel(ch.qos.logback.classic.Level.WARN);
     }
-
 
     protected void start() throws Exception {
         onlyLogWarningsFromJetty();
@@ -54,11 +57,8 @@ public class WebServer {
 
     @SuppressWarnings("unused") // No db yet...
     private void migrateDb() {
-        Flyway flyway = new Flyway();
-        flyway.setDataSource(Postgres.createSource());
-        flyway.migrate();
+        logger.info("DB-Migration: Not yet implemented");
     }
-
 
     protected WebAppContext getHandler() {
         WebAppContext webAppContext = new WebAppContext();
@@ -81,15 +81,9 @@ public class WebServer {
         return webAppContext;
     }
 
-
-
     @SuppressWarnings("UnusedDeclaration")
     protected void stop() throws Exception {
         server.stop();
-    }
-
-    static boolean isDevEnviroment() {
-        return new File("pom.xml").exists();
     }
 
 }

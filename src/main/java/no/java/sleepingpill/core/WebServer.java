@@ -1,15 +1,20 @@
 package no.java.sleepingpill.core;
 
+import no.java.sleepingpill.core.database.DBEventReader;
+import no.java.sleepingpill.core.database.DBUtil;
+import no.java.sleepingpill.core.event.EventListener;
 import no.java.sleepingpill.core.servlet.Configuration;
 import no.java.sleepingpill.core.servlet.DataServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.flywaydb.core.Flyway;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+
+import static no.java.sleepingpill.core.ServiceLocator.eventHandler;
 
 public class WebServer {
     private static Server server;
@@ -25,25 +30,36 @@ public class WebServer {
         }
     }
 
+    static boolean isDevEnviroment() {
+        return new File("pom.xml").exists();
+    }
 
     protected void start() throws Exception {
         //Locale.setDefault(new Locale(Configuration.getLocale()));
-        //migrateDb();
+        migrateDb();
+        loadInitialEvents();
+        eventHandler().getEventListeners().stream()
+                .forEach(EventListener::sagaInitialized);
+
         server = new Server(Configuration.serverPort());
         server.setHandler(getHandler());
+
         server.start();
 
         System.out.println(server.getURI() + " at " + LocalDateTime.now());
         System.out.println("Path=" + new File(".").getAbsolutePath());
     }
 
-    @SuppressWarnings("unused") // No db yet...
-    private void migrateDb() {
-        Flyway flyway = new Flyway();
-        flyway.setDataSource(Postgres.createSource());
-        flyway.migrate();
+    void migrateDb() throws SQLException {
+        if (!DBUtil.dbIsUpToDate()) {
+            DBUtil.initDB();
+        }
     }
 
+    void loadInitialEvents() {
+        new DBEventReader().events().stream().
+                forEach(e -> eventHandler().addEvent(e));
+    }
 
     protected WebAppContext getHandler() {
         WebAppContext webAppContext = new WebAppContext();
@@ -66,14 +82,9 @@ public class WebServer {
         return webAppContext;
     }
 
-
     @SuppressWarnings("UnusedDeclaration")
     protected void stop() throws Exception {
         server.stop();
-    }
-
-    static boolean isDevEnviroment() {
-        return new File("pom.xml").exists();
     }
 
 }

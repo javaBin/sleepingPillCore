@@ -5,3 +5,6 @@ server:
   adminConnectors:
   - type: http
     port: 9003
+
+dbURL=jdbc:h2:file:./ems-database
+

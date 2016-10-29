@@ -16,6 +16,14 @@ public class SessionController {
 
     public SessionController(SessionService sessionService) {
         this.sessionService = sessionService;
+    }
+
+
+    public SessionController() {
+        this(SessionService.instance());
+    }
+
+    public void initSpark(){
         get("/data/session", (req, res) -> {
             String id = req.queryParams("conferenceId");
             return sessionService.allSessionsForConference(id);
@@ -46,10 +54,6 @@ public class SessionController {
         after((req, res) -> {
             res.type("application/json");
         });
-    }
 
-
-    public SessionController() {
-        this(SessionService.instance());
     }
 }

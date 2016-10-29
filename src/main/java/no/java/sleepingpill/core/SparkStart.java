@@ -9,8 +9,8 @@ import static spark.Spark.port;
 public class SparkStart {
     public static void main(String[] args) {
         port(8082);
-        new SubmitterController();
-        new ConferenceController();
-        new SessionController();
+        new SubmitterController().initSpark();
+        new ConferenceController().initSpark();
+        new SessionController().initSpark();
     }
 }

@@ -11,12 +11,14 @@ public class ConferenceController {
 
     public ConferenceController(SessionService sessionService) {
         this.sessionService = sessionService;
-        get("/data/conference", (req, res) -> sessionService.allConferences(), jsonBuddyString());
     }
 
     public ConferenceController(){
         this(SessionService.instance());
     }
 
+    public void initSpark(){
+        get("/data/conference", (req, res) -> sessionService.allConferences(), jsonBuddyString());
+    }
 
 }

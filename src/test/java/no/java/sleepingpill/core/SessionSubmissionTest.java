@@ -1,8 +1,8 @@
 package no.java.sleepingpill.core;
 
 import no.java.sleepingpill.core.controller.SessionController;
-import no.java.sleepingpill.core.event.Conference;
-import no.java.sleepingpill.core.event.ConferenceHolder;
+import no.java.sleepingpill.core.conference.Conference;
+import no.java.sleepingpill.core.conference.ConferenceHolder;
 import org.jsonbuddy.JsonObject;
 import org.junit.Test;
 import spark.Request;

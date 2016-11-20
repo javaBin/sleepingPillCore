@@ -1,4 +1,4 @@
-package no.java.sleepingpill.core.event;
+package no.java.sleepingpill.core.conference;
 
 import no.java.sleepingpill.core.ServiceLocator;
 

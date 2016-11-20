@@ -6,7 +6,7 @@ import no.java.sleepingpill.core.commands.CreateNewSession;
 import no.java.sleepingpill.core.commands.HasDataInput;
 import no.java.sleepingpill.core.commands.NewSpeaker;
 import no.java.sleepingpill.core.commands.UpdateSession;
-import no.java.sleepingpill.core.event.Conference;
+import no.java.sleepingpill.core.conference.Conference;
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventHandler;
 import org.jsonbuddy.JsonArray;

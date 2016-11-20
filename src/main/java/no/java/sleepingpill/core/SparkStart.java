@@ -5,7 +5,6 @@ import no.java.sleepingpill.core.controller.SessionController;
 import no.java.sleepingpill.core.controller.SubmitterController;
 import no.java.sleepingpill.core.database.DBEventReader;
 import no.java.sleepingpill.core.database.DBUtil;
-import no.java.sleepingpill.core.event.Conference;
 import no.java.sleepingpill.core.event.EventListener;
 import no.java.sleepingpill.core.servlet.Configuration;
 

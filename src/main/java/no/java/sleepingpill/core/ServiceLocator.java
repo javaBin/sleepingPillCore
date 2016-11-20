@@ -1,8 +1,8 @@
 package no.java.sleepingpill.core;
 
 import no.java.sleepingpill.core.database.DBEventListener;
-import no.java.sleepingpill.core.event.ConferenceHolder;
-import no.java.sleepingpill.core.event.DummyConferenceHolder;
+import no.java.sleepingpill.core.conference.ConferenceHolder;
+import no.java.sleepingpill.core.conference.DummyConferenceHolder;
 import no.java.sleepingpill.core.event.EventHandler;
 import no.java.sleepingpill.core.exceptions.InternalError;
 import no.java.sleepingpill.core.session.SessionHolder;

@@ -1,4 +1,4 @@
-package no.java.sleepingpill.core.event;
+package no.java.sleepingpill.core.conference;
 
 import java.util.Collections;
 import java.util.List;

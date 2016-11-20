@@ -3,7 +3,7 @@ package no.java.sleepingpill.core.session;
 import no.java.sleepingpill.core.CleanSetupTest;
 import no.java.sleepingpill.core.ServiceLocator;
 import no.java.sleepingpill.core.ServiceResult;
-import no.java.sleepingpill.core.event.Conference;
+import no.java.sleepingpill.core.conference.Conference;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonObject;
 import org.junit.Test;

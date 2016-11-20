@@ -1,36 +1,23 @@
 package no.java.sleepingpill.core;
 
+import no.java.sleepingpill.core.controller.SessionController;
 import no.java.sleepingpill.core.event.Conference;
 import no.java.sleepingpill.core.event.ConferenceHolder;
 import org.jsonbuddy.JsonObject;
-import org.jsonbuddy.parse.JsonParser;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import spark.Request;
+import spark.Response;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.lang.reflect.Method;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jsonbuddy.JsonFactory.jsonObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Ignore
 public class SessionSubmissionTest extends CleanSetupTest {
 
-
-    private static class DataServlet {
-
-        public void service(HttpServletRequest request, HttpServletResponse response) {
-
-        }
-    }
-
-    private DataServlet dataServlet = new DataServlet();
 
     @Test
     public void shouldCreateSession() throws Exception {
@@ -51,21 +38,20 @@ public class SessionSubmissionTest extends CleanSetupTest {
     public void shouldCreateAndUpdateSession() throws Exception {
         String sessionId = addNewSessionGetId();
 
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        when(request.getPathInfo()).thenReturn("/session/" + sessionId);
-        when(request.getMethod()).thenReturn("PUT");
-
-        when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
-
         JsonObject input = jsonObject()
                 .put("data", jsonObject()
                         .put("title", jsonObject().put("value", "Changed title").put("privateData", false))
                         .put("outline", jsonObject().put("value", "Here is my outline").put("privateData", true))
                 );
-        when(request.getReader()).thenReturn(new BufferedReader(new StringReader(input.toJson())));
 
-        dataServlet.service(request,response);
+        Request req = mock(Request.class);
+        Response resp = mock(Response.class);
+
+        when(req.params(":id")).thenReturn(sessionId);
+        when(req.body()).thenReturn(input.toJson());
+
+        SessionController sessionController = new SessionController();
+        sessionController.putUpdateSession(req, resp);
 
         JsonObject updatedSession = readSession(sessionId);
 
@@ -75,36 +61,34 @@ public class SessionSubmissionTest extends CleanSetupTest {
     }
 
     private JsonObject readSession(String sessionId) throws IOException, ServletException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        when(request.getPathInfo()).thenReturn("/session/" + sessionId);
-        when(request.getMethod()).thenReturn("GET");
-        StringWriter sessionData = new StringWriter();
-        when(response.getWriter()).thenReturn(new PrintWriter(sessionData));
+        Request req = mock(Request.class);
+        Response resp = mock(Response.class);
+        when(req.params(":id")).thenReturn(sessionId);
 
-        dataServlet.service(request,response);
+        SessionController sessionController = new SessionController();
+        ServiceResult serviceResult = sessionController.getSessionById(req, resp);
 
-        return JsonParser.parseToObject(sessionData.toString());
+
+        return serviceResult.getResult().get();
     }
 
     private String addNewSessionGetId() throws IOException, ServletException {
         Conference conference = ConferenceHolder.instance().allConferences().get(0);
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
+        SessionController sessionController = new SessionController();
 
-        when(request.getPathInfo()).thenReturn("/event/" + conference.id + "/" + "session");
-        when(request.getMethod()).thenReturn("POST");
+        Request req = mock(Request.class);
+        Response resp = mock(Response.class);
+
         JsonObject input = jsonObject()
                 .put("data", jsonObject()
                         .put("title", jsonObject().put("value", "My title").put("privateData", false)));
-        when(request.getReader()).thenReturn(new BufferedReader(new StringReader(input.toJson())));
 
-        StringWriter output = new StringWriter();
-        when(response.getWriter()).thenReturn(new PrintWriter(output));
+        when(req.params(":conferenceId")).thenReturn(conference.id);
+        when(req.body()).thenReturn(input.toJson());
 
-        dataServlet.service(request,response);
+        ServiceResult serviceResult = sessionController.postAddSession(req, resp);
 
-        JsonObject result = JsonParser.parseToObject(output.toString());
+        JsonObject result = serviceResult.getResult().get();
         return result.requiredString("id");
     }
 }

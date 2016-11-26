@@ -4,7 +4,9 @@ import no.java.sleepingpill.core.CleanSetupTest;
 import no.java.sleepingpill.core.ServiceLocator;
 import no.java.sleepingpill.core.ServiceResult;
 import no.java.sleepingpill.core.conference.Conference;
+import no.java.sleepingpill.core.conference.ConferenceService;
 import org.jsonbuddy.JsonArray;
+import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
 import org.junit.Test;
 
@@ -17,8 +19,8 @@ import static org.jsonbuddy.JsonFactory.jsonObject;
 public class SessionStateServiceTest extends CleanSetupTest {
 
     private String createASession() {
-        List<Conference> arrangedEvents = ServiceLocator.conferenceHolder().allConferences();
-        String arrengedEventId = arrangedEvents.get(0).id;
+        JsonObject createConfJson = JsonFactory.jsonObject().put("name", "Javazone 2017").put("slug", "jz17");
+        String arrengedEventId = ConferenceService.instance().addConference(createConfJson).getResult().get().requiredString("id");
         JsonObject dataObject = jsonObject()
                 .put("title", jsonObject().put("value", "My title").put("privateData", false))
                 .put("abstract", jsonObject().put("value", "This is the abstract").put("privateData", false))

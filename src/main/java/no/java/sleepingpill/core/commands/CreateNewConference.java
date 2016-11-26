@@ -36,4 +36,8 @@ public class CreateNewConference {
         dataObj.put("slug",slug);
         return new Event(EventType.NEW_CONFERENCE,dataObj);
     }
+
+    public String getId() {
+        return conferenceId.orElseThrow(() -> new RuntimeException("Id not set yet"));
+    }
 }

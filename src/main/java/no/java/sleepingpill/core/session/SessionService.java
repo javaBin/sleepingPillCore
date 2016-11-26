@@ -93,11 +93,6 @@ public class SessionService {
         return ServiceResult.ok(JsonFactory.jsonObject());
     }
 
-    public ServiceResult allConferences() {
-        List<Conference> conferences = ServiceLocator.conferenceHolder().allConferences();
-        JsonObject result = JsonFactory.jsonObject().put("conferences", JsonGenerator.generate(conferences));
-        return ServiceResult.ok(result);
-    }
 
     public ServiceResult allSessionsForConference(String conferenceId) {
         List<Session> sessions;

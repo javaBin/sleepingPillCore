@@ -1,5 +1,6 @@
 package no.java.sleepingpill.core;
 
+import no.java.sleepingpill.core.controller.ConferenceController;
 import no.java.sleepingpill.core.controller.SessionController;
 import no.java.sleepingpill.core.conference.Conference;
 import no.java.sleepingpill.core.conference.ConferenceHolder;
@@ -18,10 +19,18 @@ import static org.mockito.Mockito.when;
 
 public class SessionSubmissionTest extends CleanSetupTest {
 
+    @Test
+    public void shouldCreateConference() throws Exception {
+        String conferenceid = createNewConferenceGetId();
+        assertThat(conferenceid).isNotNull();
+    }
+
+
 
     @Test
     public void shouldCreateSession() throws Exception {
-        String sessionId = addNewSessionGetId();
+        String conferenceid = createNewConferenceGetId();
+        String sessionId = addNewSessionGetId(conferenceid);
         assertThat(sessionId).isNotNull();
 
         JsonObject session = readSession(sessionId);
@@ -36,7 +45,8 @@ public class SessionSubmissionTest extends CleanSetupTest {
 
     @Test
     public void shouldCreateAndUpdateSession() throws Exception {
-        String sessionId = addNewSessionGetId();
+        String conferenceid = createNewConferenceGetId();
+        String sessionId = addNewSessionGetId(conferenceid);
 
         JsonObject input = jsonObject()
                 .put("data", jsonObject()
@@ -72,8 +82,25 @@ public class SessionSubmissionTest extends CleanSetupTest {
         return serviceResult.getResult().get();
     }
 
-    private String addNewSessionGetId() throws IOException, ServletException {
-        Conference conference = ConferenceHolder.instance().allConferences().get(0);
+    private String createNewConferenceGetId() {
+        Request req = mock(Request.class);
+        Response resp = mock(Response.class);
+
+        JsonObject input = jsonObject()
+                .put("name", "Javazone 2017")
+                .put("slug", "javazone2017")
+                ;
+        when(req.body()).thenReturn(input.toJson());
+        ConferenceController conferenceController = new ConferenceController();
+
+        ServiceResult serviceResult = conferenceController.postAddConference(req, resp);
+
+        String id = serviceResult.getResult().get().requiredString("id");
+
+        return id;
+    }
+
+    private String addNewSessionGetId(String conferenceid) throws IOException, ServletException {
         SessionController sessionController = new SessionController();
 
         Request req = mock(Request.class);
@@ -83,7 +110,7 @@ public class SessionSubmissionTest extends CleanSetupTest {
                 .put("data", jsonObject()
                         .put("title", jsonObject().put("value", "My title").put("privateData", false)));
 
-        when(req.params(":conferenceId")).thenReturn(conference.id);
+        when(req.params(":conferenceId")).thenReturn(conferenceid);
         when(req.body()).thenReturn(input.toJson());
 
         ServiceResult serviceResult = sessionController.postAddSession(req, resp);

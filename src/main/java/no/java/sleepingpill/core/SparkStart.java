@@ -32,6 +32,7 @@ public class SparkStart {
         new SubmitterController().initSpark();
         new ConferenceController().initSpark();
         new SessionController().initSpark();
+
     }
 
     public static void setConfigFile(String[] argv) {

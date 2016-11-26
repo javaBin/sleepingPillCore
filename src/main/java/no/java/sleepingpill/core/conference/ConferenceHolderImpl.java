@@ -7,7 +7,7 @@ import no.java.sleepingpill.core.event.EventType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConferenceHolderImpl implements ConferenceHolder,EventListener {
+public class ConferenceHolderImpl implements ConferenceHolder {
     private List<Conference> conferences = new ArrayList<>();
 
     @Override

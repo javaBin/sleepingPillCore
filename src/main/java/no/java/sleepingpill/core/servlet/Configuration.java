@@ -86,6 +86,10 @@ public class Configuration {
         return instance().readValue("logLevel", "DEBUG");
     }
 
+    public static boolean useDummyConferenceHolder() {
+        return "true".equals(instance().readValue("useDummyConferenceHolder","false"));
+    }
+
     public static String logfilePattern() {
         return instance().readValue("logfilePattern", null);
     }

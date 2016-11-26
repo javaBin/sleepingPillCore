@@ -25,6 +25,28 @@ public class ExampleClient {
         }
     }
 
+    public String addNewConference() throws Exception {
+        JsonObject input = jsonObject()
+                .put("name", "Javazone 2017")
+                .put("slug", "javazone2017")
+                ;
+        System.out.println("Posting: " + input);
+
+        HttpURLConnection conn = (HttpURLConnection) new URL(SERVER_ADDRESS + "/conference").openConnection();
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(),"utf-8"))) {
+            input.toJson(printWriter);
+        }
+        try (InputStream is = conn.getInputStream()) {
+            JsonObject parse = JsonParser.parseToObject(is);
+            System.out.println("result from add conference:");
+            System.out.println(parse);
+            return parse.requiredString("id");
+        }
+
+    }
+
     public String addNewSession(String conferenceId) throws Exception {
         JsonObject input = jsonObject()
                 .put("data", jsonObject()
@@ -74,7 +96,7 @@ public class ExampleClient {
 
     public static void main(String[] args) throws Exception {
         ExampleClient exampleClient = new ExampleClient();
-        String conferenceId = exampleClient.allConferences().get(0, JsonObject.class).requiredString("id");
+        String conferenceId = exampleClient.addNewConference();
         String newSessionId = exampleClient.addNewSession(conferenceId);
         exampleClient.updateSession(newSessionId);
         JsonObject session = exampleClient.readSession(newSessionId);

@@ -20,7 +20,7 @@ public class Configuration {
         return instance;
     }
 
-    private static Map<String, String> readValues(String filename) {
+    public static Map<String, String> readValues(String filename) {
         Map<String, String> result = new HashMap<>();
 
         if (filename == null || filename.isEmpty()) {
@@ -71,40 +71,33 @@ public class Configuration {
     }
 
     public static String dbURL() {
-        return instance().readValue("dbURL", "jdbc:h2:mem:ems;DB_CLOSE_DELAY=-1");
+        return readValue("dbURL", "jdbc:h2:mem:ems;DB_CLOSE_DELAY=-1");
     }
 
     public static String dbUser() {
-        return instance().readValue("dbUser", "sa");
+        return readValue("dbUser", "sa");
     }
 
     public static String dbPassword() {
-        return instance().readValue("dbPassword", "");
+        return readValue("dbPassword", "");
     }
 
     public static String logLevel() {
-        return instance().readValue("logLevel", "DEBUG");
+        return readValue("logLevel", "DEBUG");
     }
 
     public static boolean useDummyConferenceHolder() {
-        return "true".equals(instance().readValue("useDummyConferenceHolder","false"));
+        return "true".equals(readValue("useDummyConferenceHolder","false"));
     }
 
     public static String logfilePattern() {
-        return instance().readValue("logfilePattern", null);
+        return readValue("logfilePattern", null);
     }
 
-    private String readValue(String key, String defaultValue) {
-        String val = values.get(key);
+    private static String readValue(String key, String defaultValue) {
+        String val = instance().values.get(key);
         return val != null ? val : defaultValue;
     }
 
 
-    public static String emmsUser() {
-        return instance().readValue("emsUser",null);
-    }
-
-    public static String emsPassword() {
-        return instance().readValue("emsPassword",null);
-    }
 }

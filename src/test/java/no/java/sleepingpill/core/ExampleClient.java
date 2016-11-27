@@ -1,5 +1,6 @@
 package no.java.sleepingpill.core;
 
+import no.java.sleepingpill.core.util.DataObjects;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonNode;
 import org.jsonbuddy.JsonObject;
@@ -11,6 +12,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Optional;
 
 import static org.jsonbuddy.JsonFactory.jsonObject;
 
@@ -25,11 +27,10 @@ public class ExampleClient {
         }
     }
 
+
+
     public String addNewConference() throws Exception {
-        JsonObject input = jsonObject()
-                .put("name", "Javazone 2017")
-                .put("slug", "javazone2017")
-                ;
+        JsonObject input = DataObjects.newConferenceObj("Javazone 2017","javazone2017",Optional.empty());
         System.out.println("Posting: " + input);
 
         HttpURLConnection conn = (HttpURLConnection) new URL(SERVER_ADDRESS + "/conference").openConnection();

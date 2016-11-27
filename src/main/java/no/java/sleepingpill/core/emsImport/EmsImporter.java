@@ -1,18 +1,21 @@
-package no.java.sleepingpill.core.util;
+package no.java.sleepingpill.core.emsImport;
 
-import no.java.sleepingpill.core.WebServer;
-import no.java.sleepingpill.core.servlet.Configuration;
+import no.java.sleepingpill.core.Configuration;
+import no.java.sleepingpill.core.util.Base64Util;
+import no.java.sleepingpill.core.util.DataObjects;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
 import org.jsonbuddy.parse.JsonParser;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,6 +23,10 @@ import static org.jsonbuddy.JsonFactory.jsonObject;
 
 public class EmsImporter {
     private static final String SUBMIT_LOC = "http://localhost:8082/data/conference/6c599656fdd846468bbcab66cfffbbc0/session";
+
+    public EmsImporter(String filepath) {
+        FILEPATH = filepath;
+    }
 
     public void readEmsData(String arrangedEventUrl) {
         //readFromEms(arrangedEventUrl);
@@ -37,7 +44,7 @@ public class EmsImporter {
                         return;
                     }
 
-                    JsonObject jsonObject = readFromEms(addr);
+                    JsonObject jsonObject = readFromEms(addr,true);
                     printToFile(jsonObject, filename);
                 });
         });
@@ -55,6 +62,8 @@ public class EmsImporter {
             this.name = name;
             this.privateData = privateData;
         }
+
+
     }
 
     private static final Map<String,EmsMapping> mapconfig = mapconf();
@@ -112,8 +121,8 @@ public class EmsImporter {
         return result;
     }
 
-    private JsonObject readFromEms(String arrangedEventUrl) {
-        URLConnection urlConnection = openConnection(arrangedEventUrl, true);
+    private JsonObject readFromEms(String emsUrl, boolean useAuthorization) {
+        URLConnection urlConnection = openConnection(emsUrl,useAuthorization);
         try (InputStream is = urlConnection.getInputStream()) {
             return JsonParser.parseToObject(is);
         } catch (IOException e) {
@@ -130,7 +139,7 @@ public class EmsImporter {
             throw new RuntimeException(e);
         }
     }
-    private static final String FILEPATH = "/Users/anderskarlsen/Dropbox/javabin/sleepingpilldata/";
+    private final String FILEPATH;
 
     private void printToFile(JsonObject all, String name) {
         try (PrintWriter wr = new PrintWriter(FILEPATH + name, "UTF-8")) {
@@ -148,7 +157,7 @@ public class EmsImporter {
             URLConnection urlConnection = url.openConnection();
 
             if (useAuthorization) {
-                String authString = Configuration.emmsUser() + ":" + Configuration.emsPassword();
+                String authString = EmsImportConfig.emsUser() + ":" + EmsImportConfig.emsPassword();
                 String authStringEnc = Base64Util.encode(authString);
                 urlConnection.setRequestProperty("Authorization", "Basic " + authStringEnc);
             }
@@ -159,15 +168,67 @@ public class EmsImporter {
         }
     }
 
+    public List<EmsConference> readAndCreateConferences() {
+        JsonObject readFromEms = readFromEms(EmsImportConfig.emsAddress(), false);
+        JsonArray emsConferences = readFromEms.requiredObject("collection").requiredArray("items");
+        List<JsonObject> matchingConferences = emsConferences.objectStream()
+                .filter(this::matchesSelectedConference)
+                .collect(Collectors.toList());
+        List<EmsConference> result = new ArrayList<>();
+
+        for (JsonObject conferenceObj : matchingConferences) {
+            String href = conferenceObj.requiredString("href");
+            String id = href.substring(href.lastIndexOf("/") +1 );
+
+            JsonArray dataArray = conferenceObj.requiredArray("data");
+            String name = dataArray.objectStream().filter(ob -> ob.requiredString("name").equals("name")).map(ob -> ob.requiredString("value")).findAny().get();
+            String slug = dataArray.objectStream().filter(ob -> ob.requiredString("name").equals("slug")).map(ob -> ob.requiredString("value")).findAny().get();
+
+            JsonObject payload = DataObjects.newConferenceObj(name, slug, Optional.of(id));
+
+            postData("/conference",payload);
+
+            result.add(new EmsConference(href,id));
+        }
+
+        return result;
+    }
+
+    private void postData(String path,JsonObject payload) {
+        try {
+            HttpURLConnection conn = (HttpURLConnection) new URL(EmsImportConfig.serverAddress() + path).openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(),"utf-8"))) {
+                payload.toJson(printWriter);
+            }
+            try (InputStream is = conn.getInputStream()) {
+                JsonParser.parse(is);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+    private boolean matchesSelectedConference(JsonObject jsonObject) {
+        return jsonObject.requiredArray("data").objectStream()
+                .anyMatch(coob -> coob.requiredString("name").equals("name") && EmsImportConfig.fetchConferences().contains(coob.requiredString("value")));
+
+    }
+
+
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
             System.out.println("Supply configfile");
             return;
         }
-        WebServer.setConfigFile(args);
-        EmsImporter emsImporter = new EmsImporter();
+        EmsImportConfig.setConfigFileName(args[0]);
+        EmsImporter emsImporter = new EmsImporter(EmsImportConfig.outputFilePath());
+        emsImporter.readAndCreateConferences();
         //emsImporter.readEmsData("http://javazone.no/ems/server/events/3baa25d3-9cca-459a-90d7-9fc349209289/sessions");
-        emsImporter.readEmsFromFile("all.json");
+        //emsImporter.readEmsFromFile("all.json");
     }
 
 }

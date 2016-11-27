@@ -107,6 +107,8 @@ public class EmsImporter {
                 });
     }
 
+
+
     public JsonObject dataForSession(JsonArray dataArray) {
         JsonObject result = JsonFactory.jsonObject();
         dataArray.objectStream()
@@ -180,6 +182,8 @@ public class EmsImporter {
             String href = conferenceObj.requiredString("href");
             String id = href.substring(href.lastIndexOf("/") +1 );
 
+
+
             JsonArray dataArray = conferenceObj.requiredArray("data");
             String name = dataArray.objectStream().filter(ob -> ob.requiredString("name").equals("name")).map(ob -> ob.requiredString("value")).findAny().get();
             String slug = dataArray.objectStream().filter(ob -> ob.requiredString("name").equals("slug")).map(ob -> ob.requiredString("value")).findAny().get();
@@ -188,7 +192,12 @@ public class EmsImporter {
 
             postData("/conference",payload);
 
-            result.add(new EmsConference(href,id));
+            String sessionCollection = conferenceObj.requiredArray("links").objectStream()
+                    .filter(ob -> ob.requiredString("rel").equals("session collection"))
+                    .map(ob -> ob.requiredString("href"))
+                    .findAny().get();
+
+            result.add(new EmsConference(sessionCollection,id));
         }
 
         return result;
@@ -218,6 +227,34 @@ public class EmsImporter {
 
     }
 
+    public void readEmsAndSubmit(EmsConference emsConference) {
+        JsonObject all = readFromEms(emsConference.sessionRef, true);
+        String addTalkLoc = EmsImportConfig.serverAddress() + "/conference/" + emsConference.id + "/session";
+
+        all.requiredObject("collection").requiredArray("items").objectStream()
+                .map(item -> item.requiredArray("data"))
+                .map(this::dataForSession)
+                .forEach(dataobj -> {
+                    JsonObject input = jsonObject()
+                            .put("data", dataobj);
+                    URLConnection conn = openConnection(addTalkLoc, false);
+                    conn.setDoOutput(true);
+                    try {
+                        try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(),"utf-8"))) {
+                            input.toJson(printWriter);
+                        }
+                        try (InputStream is = conn.getInputStream()) {
+                            JsonObject parse = JsonParser.parseToObject(is);
+                            System.out.println("result from add session:");
+                            System.out.println(parse);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                });
+    }
+
 
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
@@ -226,7 +263,8 @@ public class EmsImporter {
         }
         EmsImportConfig.setConfigFileName(args[0]);
         EmsImporter emsImporter = new EmsImporter(EmsImportConfig.outputFilePath());
-        emsImporter.readAndCreateConferences();
+        List<EmsConference> emsConferences = emsImporter.readAndCreateConferences();
+        emsConferences.forEach(emsImporter::readEmsAndSubmit);
         //emsImporter.readEmsData("http://javazone.no/ems/server/events/3baa25d3-9cca-459a-90d7-9fc349209289/sessions");
         //emsImporter.readEmsFromFile("all.json");
     }

@@ -2,7 +2,7 @@ package no.java.sleepingpill.core.database;
 
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventType;
-import no.java.sleepingpill.core.servlet.Configuration;
+import no.java.sleepingpill.core.Configuration;
 import org.jsonbuddy.parse.JsonParser;
 import org.slf4j.Logger;
 

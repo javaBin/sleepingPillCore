@@ -1,4 +1,4 @@
-package no.java.sleepingpill.core.servlet;
+package no.java.sleepingpill.core;
 
 import java.io.*;
 import java.util.HashMap;

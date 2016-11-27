@@ -1,17 +1,14 @@
 package no.java.sleepingpill.core;
 
 import no.java.sleepingpill.core.conference.ConferenceHolderImpl;
-import no.java.sleepingpill.core.conference.ConferenceService;
 import no.java.sleepingpill.core.database.DBEventListener;
 import no.java.sleepingpill.core.conference.ConferenceHolder;
 import no.java.sleepingpill.core.conference.DummyConferenceHolder;
 import no.java.sleepingpill.core.event.EventHandler;
 import no.java.sleepingpill.core.exceptions.InternalError;
-import no.java.sleepingpill.core.servlet.Configuration;
 import no.java.sleepingpill.core.session.SessionHolder;
 import no.java.sleepingpill.core.submitters.EmailHolder;
 
-import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,6 +1,6 @@
 package no.java.sleepingpill.core.database;
 
-import no.java.sleepingpill.core.servlet.Configuration;
+import no.java.sleepingpill.core.Configuration;
 import org.slf4j.Logger;
 
 import java.sql.*;

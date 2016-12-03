@@ -2,6 +2,7 @@ package no.java.sleepingpill.core;
 
 import no.java.sleepingpill.core.util.DataObjects;
 import org.jsonbuddy.JsonArray;
+import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonNode;
 import org.jsonbuddy.JsonObject;
 import org.jsonbuddy.parse.JsonParser;
@@ -49,9 +50,15 @@ public class ExampleClient {
     }
 
     public String addNewSession(String conferenceId) throws Exception {
+        JsonObject speakerObj = JsonFactory.jsonObject()
+                .put("name","Darth Vader")
+                .put("email","darth@deathstar.com")
+                .put("data",JsonFactory.jsonObject().put("bio",JsonFactory.jsonObject().put("value","My bio").put("privateData",false)));
         JsonObject input = jsonObject()
                 .put("data", jsonObject()
-                        .put("title", jsonObject().put("value", "My title").put("privateData", false)));
+                        .put("title", jsonObject().put("value", "My title").put("privateData", false)))
+                .put("speakers",JsonFactory.jsonArray().add(speakerObj));
+
         System.out.println("Posting: " + input);
 
         URLConnection conn = new URL(SERVER_ADDRESS + "/conference/" + conferenceId + "/session").openConnection();

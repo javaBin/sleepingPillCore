@@ -5,6 +5,7 @@ import no.java.sleepingpill.core.event.EventHandler;
 import no.java.sleepingpill.core.session.DataField;
 import no.java.sleepingpill.core.session.Session;
 import no.java.sleepingpill.core.session.SessionHolder;
+import no.java.sleepingpill.core.session.Speaker;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,6 +32,7 @@ public class CreateNewSessionTest {
         NewSpeaker newSpeaker = new NewSpeaker();
         newSpeaker.setEmail("darth@deathstar.com");
         newSpeaker.setName("Darth Vader");
+        newSpeaker.addData("bio",DataField.simplePublicStringValue("Here is my bio"));
 
         newSession.addSpeaker(newSpeaker);
         newSession.addData("title", DataField.simplePublicStringValue("How to choke"));
@@ -45,6 +47,14 @@ public class CreateNewSessionTest {
 
         assertThat(session.getId()).isEqualTo(sessionId);
         validateValue(session, "title", "How to choke");
+        List<Speaker> speakers = session.getSpeakers();
+        assertThat(speakers).hasSize(1);
+        Speaker speaker = speakers.get(0);
+
+        assertThat(speaker.getId()).isNotNull();
+        assertThat(speaker.getName()).isEqualTo("Darth Vader");
+
+
     }
 
     @Test

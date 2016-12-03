@@ -1,6 +1,7 @@
 package no.java.sleepingpill.core.commands;
 
 import no.java.sleepingpill.core.session.DataField;
+import no.java.sleepingpill.core.session.SessionService;
 import no.java.sleepingpill.core.util.IdGenerator;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonNode;
@@ -59,11 +60,11 @@ public class NewSpeaker implements HasDataInput {
             fields.put("name", DataField.simplePublicStringValue(name.get()));
         }
         if (email.isPresent()) {
-            fields.put("email", DataField.simplePublicStringValue(email.get()));
+            fields.put("email", DataField.simplePrivateStringValue(email.get()));
         }
 
         JsonObject result = (JsonObject) JsonGenerator.generate(fields);
-        result.put("data",JsonGenerator.generate(dataFields));
+        result.put(SessionService.DATA_OBJECT,JsonGenerator.generate(dataFields));
 
         return result;
     }

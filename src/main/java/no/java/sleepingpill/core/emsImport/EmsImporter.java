@@ -84,7 +84,6 @@ public class EmsImporter {
     public void readEmsFromFile(String filnavn) {
         JsonObject all = readFile(filnavn);
         all.requiredObject("collection").requiredArray("items").objectStream()
-                .map(item -> item.requiredArray("data"))
                 .map(this::dataForSession)
                 .forEach(dataobj -> {
                     JsonObject input = jsonObject()
@@ -109,7 +108,8 @@ public class EmsImporter {
 
 
 
-    public JsonObject dataForSession(JsonArray dataArray) {
+    public JsonObject dataForSession(JsonObject sessionObject) {
+        JsonArray dataArray = sessionObject.requiredArray("data");
         JsonObject result = JsonFactory.jsonObject();
         dataArray.objectStream()
                 .filter(ob -> mapconfig.containsKey(ob.requiredString("name")))
@@ -120,6 +120,19 @@ public class EmsImporter {
                             .put("privateData", emsMapping.privateData);
                     result.put(emsMapping.name,valobj);
                 });
+        JsonArray speakers = JsonFactory.jsonArray();
+
+        String speakerUrl = sessionObject.requiredArray("links").objectStream()
+                .filter(ob -> ob.requiredString("rel").equals("speaker collection"))
+                .map(ob -> ob.requiredString("href"))
+                .findAny().get();
+        JsonObject emsSpeaker = readFromEms(speakerUrl, true);
+        JsonArray speakerNode = emsSpeaker.requiredObject("collection").requiredArray("items");
+        speakerNode.objectStream().forEach(speakerObj -> {
+
+        });
+
+        result.put("speakers",speakers);
         return result;
     }
 
@@ -232,7 +245,6 @@ public class EmsImporter {
         String addTalkLoc = EmsImportConfig.serverAddress() + "/conference/" + emsConference.id + "/session";
 
         all.requiredObject("collection").requiredArray("items").objectStream()
-                .map(item -> item.requiredArray("data"))
                 .map(this::dataForSession)
                 .forEach(dataobj -> {
                     JsonObject input = jsonObject()

@@ -2,9 +2,11 @@ package no.java.sleepingpill.core.session;
 
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
+import org.jsonbuddy.JsonNode;
 import org.jsonbuddy.JsonObject;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Session extends DataObject {
     private final String conferenceId;
@@ -16,10 +18,6 @@ public class Session extends DataObject {
         this.conferenceId = conferenceId;
     }
 
-    @Override
-    public String getId() {
-        return super.getId();
-    }
 
     @Override
     public Map<String, DataField> getData() {
@@ -31,7 +29,13 @@ public class Session extends DataObject {
     }
 
     public JsonObject asSingleSessionJson() {
-        return dataAsJson();
+        JsonObject result = JsonFactory.jsonObject()
+                .put("id", getId())
+                .put("speakers", JsonArray.fromNodeStream(speakers.stream().map(Speaker::singleSessionData)))
+                .put("data", dataAsJson())
+                .put("status",sessionStatus)
+                ;
+        return result;
     }
 
     public SessionStatus getSessionStatus() {

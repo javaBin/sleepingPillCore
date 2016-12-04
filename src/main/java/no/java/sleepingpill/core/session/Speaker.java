@@ -1,6 +1,7 @@
 package no.java.sleepingpill.core.session;
 
 import no.java.sleepingpill.core.util.IdGenerator;
+import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
 
 public class Speaker extends DataObject {
@@ -30,5 +31,14 @@ public class Speaker extends DataObject {
 
     public String getEmail() {
         return email;
+    }
+
+    public JsonObject singleSessionData() {
+        JsonObject json = JsonFactory.jsonObject()
+                .put("name", name)
+                .put("email", email)
+                .put("id", getId())
+                .put("data", super.dataAsJson());
+        return json;
     }
 }

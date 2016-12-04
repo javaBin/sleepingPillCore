@@ -1,6 +1,7 @@
 package no.java.sleepingpill.core;
 
 import no.java.sleepingpill.core.controller.ConferenceController;
+import no.java.sleepingpill.core.controller.ExceptionHandler;
 import no.java.sleepingpill.core.controller.SessionController;
 import no.java.sleepingpill.core.controller.SubmitterController;
 import no.java.sleepingpill.core.database.DBEventReader;
@@ -31,7 +32,7 @@ public class SparkStart {
         new SubmitterController().initSpark();
         new ConferenceController().initSpark();
         new SessionController().initSpark();
-
+        new ExceptionHandler().initSparkExceptionHandling();
     }
 
     public static void setConfigFile(String[] argv) {

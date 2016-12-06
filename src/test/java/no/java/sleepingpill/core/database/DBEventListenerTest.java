@@ -3,6 +3,7 @@ package no.java.sleepingpill.core.database;
 import no.java.sleepingpill.core.commands.CreateNewSession;
 import no.java.sleepingpill.core.event.Event;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.sql.SQLException;
@@ -10,9 +11,7 @@ import java.sql.SQLException;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-/**
- * Created by narve on 29/10/16.
- */
+@Ignore("DB not included as of now")
 public class DBEventListenerTest {
 
     private DBEventListener listener;

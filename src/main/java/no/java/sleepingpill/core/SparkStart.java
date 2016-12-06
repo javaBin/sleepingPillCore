@@ -20,9 +20,11 @@ public class SparkStart {
     }
 
     private void start() {
-        migrateDb();
-        loadInitialEvents();
-        eventHandler().getEventListeners().forEach(EventListener::sagaInitialized);
+        boolean useDb = migrateDb();
+        if (useDb) {
+            loadInitialEvents();
+            eventHandler().getEventListeners().forEach(EventListener::sagaInitialized);
+        }
 
         setupAndStartSpark();
     }
@@ -41,7 +43,10 @@ public class SparkStart {
         }
     }
 
-    void migrateDb()  {
+    boolean migrateDb()  {
+        if (Configuration.dbURL() == null) {
+            return false;
+        }
         try {
             if (!DBUtil.dbIsUpToDate()) {
                 DBUtil.initDB();
@@ -49,6 +54,7 @@ public class SparkStart {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return true;
     }
 
     void loadInitialEvents() {

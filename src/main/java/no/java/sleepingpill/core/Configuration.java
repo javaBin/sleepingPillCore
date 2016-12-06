@@ -70,16 +70,17 @@ public class Configuration {
         return "http://localhost:8082/data/";
     }
 
+
     public static String dbURL() {
-        return readValue("dbURL", "jdbc:h2:mem:ems;DB_CLOSE_DELAY=-1");
+        return readValue("dbURL", null);
     }
 
     public static String dbUser() {
-        return readValue("dbUser", "sa");
+        return readValue("dbUser", null);
     }
 
     public static String dbPassword() {
-        return readValue("dbPassword", "");
+        return readValue("dbPassword", null);
     }
 
     public static String logLevel() {

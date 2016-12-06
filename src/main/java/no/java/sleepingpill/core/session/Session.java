@@ -24,6 +24,11 @@ public class Session extends DataObject {
         return super.getData();
     }
 
+    @Override // Needed for json generation
+    public String getId() {
+        return super.getId();
+    }
+
     public String getConferenceId() {
         return conferenceId;
     }

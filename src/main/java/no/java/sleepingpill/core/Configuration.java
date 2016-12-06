@@ -100,4 +100,11 @@ public class Configuration {
     }
 
 
+    public static int maxSessionsToImport() {
+        String num = readValue("maxSessionsToImport",null);
+        if (num == null) {
+            return Integer.MAX_VALUE;
+        }
+        return Integer.parseInt(num);
+    }
 }

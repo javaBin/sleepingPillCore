@@ -1,6 +1,7 @@
 package no.java.sleepingpill.core.emsImport;
 
 import no.java.sleepingpill.core.Configuration;
+import no.java.sleepingpill.core.session.DataField;
 import no.java.sleepingpill.core.util.Base64Util;
 import no.java.sleepingpill.core.util.DataObjects;
 import org.jsonbuddy.JsonArray;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -110,7 +112,7 @@ public class EmsImporter {
 
     public JsonObject dataForSession(JsonObject sessionObject) {
         JsonArray dataArray = sessionObject.requiredArray("data");
-        JsonObject result = JsonFactory.jsonObject();
+        JsonObject dataObject = JsonFactory.jsonObject();
         dataArray.objectStream()
                 .filter(ob -> mapconfig.containsKey(ob.requiredString("name")))
                 .forEach(ob -> {
@@ -118,9 +120,8 @@ public class EmsImporter {
                     JsonObject valobj = JsonFactory.jsonObject()
                             .put("value", ob.requiredString("value"))
                             .put("privateData", emsMapping.privateData);
-                    result.put(emsMapping.name,valobj);
+                    dataObject.put(emsMapping.name,valobj);
                 });
-        JsonArray speakers = JsonFactory.jsonArray();
 
         String speakerUrl = sessionObject.requiredArray("links").objectStream()
                 .filter(ob -> ob.requiredString("rel").equals("speaker collection"))
@@ -128,12 +129,36 @@ public class EmsImporter {
                 .findAny().get();
         JsonObject emsSpeaker = readFromEms(speakerUrl, true);
         JsonArray speakerNode = emsSpeaker.requiredObject("collection").requiredArray("items");
-        speakerNode.objectStream().forEach(speakerObj -> {
+        JsonArray speakers = JsonArray.fromNodeStream(speakerNode.objectStream().map(speakerObj -> {
+            JsonArray dataValues = speakerObj.requiredArray("data");
+            String name = itemValue(dataValues, "name").orElseThrow(() -> new RuntimeException("Could not find speaker name"));
+            String email = itemValue(dataValues, "email").orElseThrow(() -> new RuntimeException("Could not find speaker email"));
+            Optional<String> zip = itemValue(dataValues, "zip-code").filter(s -> !s.isEmpty());
+            String bio = itemValue(dataValues, "bio").orElseThrow(() -> new RuntimeException("Could not find speaker bio"));
 
-        });
+            JsonObject dataobj = JsonFactory.jsonObject()
+                    .put("bio", DataField.simplePublicStringValue(bio).jsonValue());
+            if (zip.isPresent()) {
+                dataobj.put("zip-code", DataField.simplePrivateStringValue(zip.get()).jsonValue());
+            }
+            JsonObject speakerJson = JsonFactory.jsonObject()
+                    .put("name", name)
+                    .put("email", email)
+                    .put("data", dataobj);
 
-        result.put("speakers",speakers);
-        return result;
+            return speakerJson;
+        }));
+
+        return JsonFactory.jsonObject()
+                .put("data",dataObject)
+                .put("speakers",speakers);
+    }
+
+    private static Optional<String> itemValue(JsonArray items,String key) {
+        return items.objectStream()
+                .filter(ob -> key.equals(ob.requiredString("name")))
+                .map(ob -> ob.requiredString("value"))
+                .findAny();
     }
 
     private JsonObject readFromEms(String emsUrl, boolean useAuthorization) {
@@ -243,12 +268,15 @@ public class EmsImporter {
     public void readEmsAndSubmit(EmsConference emsConference) {
         JsonObject all = readFromEms(emsConference.sessionRef, true);
         String addTalkLoc = EmsImportConfig.serverAddress() + "/conference/" + emsConference.id + "/session";
+        AtomicInteger counter = new AtomicInteger();
 
         all.requiredObject("collection").requiredArray("items").objectStream()
-                .map(this::dataForSession)
-                .forEach(dataobj -> {
-                    JsonObject input = jsonObject()
-                            .put("data", dataobj);
+                .forEach(emsses -> {
+                    int num = counter.incrementAndGet();
+                    if (num > Configuration.maxSessionsToImport()) {
+                        return;
+                    }
+                    JsonObject input = dataForSession(emsses);
                     URLConnection conn = openConnection(addTalkLoc, false);
                     conn.setDoOutput(true);
                     try {

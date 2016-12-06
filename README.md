@@ -4,28 +4,40 @@ Work in progress.
 
 Session register for Cake and Submitit.
 
-Pushing to Elastic Beanstalk
---------
-Install Elastic Beanstalk cli
-http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3.html
+# Deployment to AWS
 
-Generate my key
-```ssh-keygen -f ~/.ssh/javabin-aws```
+## First time: configure AWS
 
-Attach the key to a new group
-```eb init sleepingpill --region eu-west-1 --keyname javabin-aws --platform java-8```
+Install `aws` and `eb` command line tools:
+
+```
+brew install awscli
+brew install aws-elasticbeanstalk
+```
 
 
-```eb create pill-prod --region eu-west-1 --instance_type t2.micro --keyname javabin-aws --platform java-8 --scale 1```
+Edit/add the file `~/.aws/credentials` and add these lines
 
-Set up AWS credentials
-----------------------
-Credentials
-create aws credentials file ~/.aws/credentials
+```
+[javabin]
+aws_access_key_id = <ADD YOURS HERE>
+aws_secret_access_key = <ADD YOURS HERE>
+```
 
-'''
-[default]
-aws_access_key_id= AKI......
-aws_secret_access_key=....
-region=eu-west-1
-'''
+Initialize your environment: 
+```
+eb init --region eu-central-1 --profile javabin
+```
+
+Just select the existing sleepingPillCore environment
+
+## Every time: deployment
+
+`./deploy.sh`
+
+## Creating a new environment
+
+You could probably just use test/prod which exists. If you need a new, do this and follow the instructions
+```
+eb create --region eu-central-1 --profile javabin
+```

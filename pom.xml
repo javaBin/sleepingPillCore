@@ -127,7 +127,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>no.java.sleepingpill.core.WebServer</mainClass>
+                            <mainClass>no.java.sleepingpill.core.SparkStart</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

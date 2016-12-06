@@ -63,7 +63,7 @@ public class Configuration {
     }
 
     public static int serverPort() {
-        return Integer.parseInt(readValue("serverPort","8082"));
+        return Integer.parseInt(readValue("serverPort","5000"));
     }
 
     public static String myLocation() {

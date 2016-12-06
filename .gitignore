@@ -3,3 +3,8 @@
 target/
 .DS_Store
 ems-database.mv.db
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

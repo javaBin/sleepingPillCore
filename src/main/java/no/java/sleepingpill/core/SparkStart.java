@@ -7,21 +7,25 @@ import no.java.sleepingpill.core.controller.SubmitterController;
 import no.java.sleepingpill.core.database.DBEventReader;
 import no.java.sleepingpill.core.database.DBUtil;
 import no.java.sleepingpill.core.event.EventListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 
 import static no.java.sleepingpill.core.ServiceLocator.eventHandler;
 import static spark.Spark.port;
 public class SparkStart {
+    private static final Logger logger = LoggerFactory.getLogger(SparkStart.class);
     public static void main(String[] args) {
         setConfigFile(args);
         new SparkStart().start();
+        logger.info("Running on port " + Configuration.serverPort());
 
     }
 
     private void start() {
-        boolean useDb = migrateDb();
-        if (useDb) {
+        if (Configuration.dbURL() != null) {
+            migrateDb();
             loadInitialEvents();
             eventHandler().getEventListeners().forEach(EventListener::sagaInitialized);
         }
@@ -43,10 +47,8 @@ public class SparkStart {
         }
     }
 
-    boolean migrateDb()  {
-        if (Configuration.dbURL() == null) {
-            return false;
-        }
+    private void migrateDb()  {
+
         try {
             if (!DBUtil.dbIsUpToDate()) {
                 DBUtil.initDB();
@@ -54,7 +56,6 @@ public class SparkStart {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return true;
     }
 
     void loadInitialEvents() {

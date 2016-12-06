@@ -63,7 +63,7 @@ public class Configuration {
     }
 
     public static int serverPort() {
-        return 8082;
+        return Integer.parseInt(readValue("serverPort","8082"));
     }
 
     public static String myLocation() {
@@ -98,6 +98,7 @@ public class Configuration {
         String val = instance().values.get(key);
         return val != null ? val : defaultValue;
     }
+
 
 
     public static int maxSessionsToImport() {

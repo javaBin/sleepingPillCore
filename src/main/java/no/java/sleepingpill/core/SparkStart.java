@@ -28,7 +28,7 @@ public class SparkStart {
     }
 
     private void setupAndStartSpark() {
-        port(8082);
+        port(Configuration.serverPort());
         new SubmitterController().initSpark();
         new ConferenceController().initSpark();
         new SessionController().initSpark();

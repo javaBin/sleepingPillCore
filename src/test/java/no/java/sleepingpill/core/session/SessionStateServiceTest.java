@@ -1,16 +1,12 @@
 package no.java.sleepingpill.core.session;
 
 import no.java.sleepingpill.core.CleanSetupTest;
-import no.java.sleepingpill.core.ServiceLocator;
 import no.java.sleepingpill.core.ServiceResult;
-import no.java.sleepingpill.core.conference.Conference;
 import no.java.sleepingpill.core.conference.ConferenceService;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
 import org.junit.Test;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jsonbuddy.JsonFactory.jsonArray;
@@ -32,8 +28,8 @@ public class SessionStateServiceTest extends CleanSetupTest {
                 .put("data", jsonObject().put("bio", jsonObject().put("value", "I was Any before").put("privateData", false)))
         );
         JsonObject input = jsonObject()
-                .put(SessionService.VALUE_KEY, dataObject)
-                .put(SessionService.SPEAKER_ARRAY,speakers);
+                .put(SessionVariables.VALUE_KEY, dataObject)
+                .put(SessionVariables.SPEAKER_ARRAY,speakers);
         ServiceResult serviceResult = SessionService.instance().addSession(arrengedEventId, input);
         return serviceResult.getResult().get().requiredString("id");
     }

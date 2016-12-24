@@ -1,18 +1,15 @@
 package no.java.sleepingpill.core.commands;
 
 import no.java.sleepingpill.core.session.DataField;
-import no.java.sleepingpill.core.session.SessionService;
+import no.java.sleepingpill.core.session.SessionVariables;
 import no.java.sleepingpill.core.util.IdGenerator;
-import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonNode;
 import org.jsonbuddy.JsonObject;
 import org.jsonbuddy.pojo.JsonGenerator;
-import org.jsonbuddy.pojo.OverridesJsonGenerator;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 public class NewSpeaker implements HasDataInput {
     private Optional<String> id = Optional.empty();
@@ -64,7 +61,7 @@ public class NewSpeaker implements HasDataInput {
         }
 
         JsonObject result = (JsonObject) JsonGenerator.generate(fields);
-        result.put(SessionService.DATA_OBJECT,JsonGenerator.generate(dataFields));
+        result.put(SessionVariables.DATA_OBJECT,JsonGenerator.generate(dataFields));
 
         return result;
     }

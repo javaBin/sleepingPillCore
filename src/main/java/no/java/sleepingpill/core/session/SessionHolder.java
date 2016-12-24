@@ -47,7 +47,7 @@ public class SessionHolder implements EventListener {
         String conferenceId = event.data.requiredString("conferenceId");
         Session session = new Session(sessionId, conferenceId);
         session.addData(event.data);
-        event.data.stringValue(SessionService.SESSION_STATUS)
+        event.data.stringValue(SessionVariables.SESSION_STATUS)
                 .map(SessionStatus::valueOf)
                 .ifPresent(session::setSessionStatus);
         sessions.add(session);

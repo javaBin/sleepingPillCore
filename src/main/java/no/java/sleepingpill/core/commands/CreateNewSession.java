@@ -4,8 +4,8 @@ import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventType;
 import no.java.sleepingpill.core.exceptions.InternalError;
 import no.java.sleepingpill.core.session.DataField;
-import no.java.sleepingpill.core.session.SessionService;
 import no.java.sleepingpill.core.session.SessionStatus;
+import no.java.sleepingpill.core.session.SessionVariables;
 import no.java.sleepingpill.core.util.IdGenerator;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
@@ -45,10 +45,10 @@ public class CreateNewSession implements HasDataInput {
         JsonObject dataObj = JsonFactory.jsonObject();
         dataObj.put("conferenceId", conferenceId);
         dataObj.put("sessionId", sessionId.get());
-        dataObj.put(SessionService.SPEAKER_ARRAY, JsonArray.fromNodeStream(speakers.stream().map(NewSpeaker::asNewEvent)));
-        dataObj.put(SessionService.DATA_OBJECT, JsonGenerator.generate(data));
+        dataObj.put(SessionVariables.SPEAKER_ARRAY, JsonArray.fromNodeStream(speakers.stream().map(NewSpeaker::asNewEvent)));
+        dataObj.put(SessionVariables.DATA_OBJECT, JsonGenerator.generate(data));
         postedByMail.ifPresent(s -> dataObj.put("postedByMail", s));
-        sessionStatus.ifPresent(status -> dataObj.put(SessionService.SESSION_STATUS,status.toString()));
+        sessionStatus.ifPresent(status -> dataObj.put(SessionVariables.SESSION_STATUS,status.toString()));
 
         return new Event(EventType.NEW_SESSION, dataObj);
     }

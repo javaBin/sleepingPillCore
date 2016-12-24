@@ -6,7 +6,6 @@ import no.java.sleepingpill.core.commands.CreateNewSession;
 import no.java.sleepingpill.core.commands.HasDataInput;
 import no.java.sleepingpill.core.commands.NewSpeaker;
 import no.java.sleepingpill.core.commands.UpdateSession;
-import no.java.sleepingpill.core.conference.Conference;
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventHandler;
 import org.jsonbuddy.JsonArray;
@@ -23,12 +22,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SessionService {
-    public static final String DATA_OBJECT = "data";
-    public static final String SPEAKER_ARRAY = "speakers";
-    public static final String POSTED_BY_MAIL = "postedBy";
-    public static final String VALUE_KEY = "value";
-    public static final String PRIVATE_FLAG = "privateData";
-    public static final String SESSION_STATUS = "status";
 
     private static final SessionService instance = new SessionService();
 
@@ -37,9 +30,9 @@ public class SessionService {
     }
 
     public ServiceResult addSession(String conferenceId, JsonObject incomingJson) {
-        JsonObject talkData = incomingJson.objectValue(DATA_OBJECT).orElse(JsonFactory.jsonObject());
-        JsonArray speakers = incomingJson.arrayValue(SPEAKER_ARRAY).orElse(JsonFactory.jsonArray());
-        Optional<String> postedBy = incomingJson.stringValue(POSTED_BY_MAIL);
+        JsonObject talkData = incomingJson.objectValue(SessionVariables.DATA_OBJECT).orElse(JsonFactory.jsonObject());
+        JsonArray speakers = incomingJson.arrayValue(SessionVariables.SPEAKER_ARRAY).orElse(JsonFactory.jsonArray());
+        Optional<String> postedBy = incomingJson.stringValue(SessionVariables.POSTED_BY_MAIL);
 
         CreateNewSession createNewSession = new CreateNewSession();
         createNewSession.setConferenceId(conferenceId);
@@ -49,7 +42,7 @@ public class SessionService {
             NewSpeaker newSpeaker = new NewSpeaker();
             newSpeaker.setName(speakobj.stringValue("name"));
             newSpeaker.setEmail(speakobj.stringValue("email"));
-            addData(speakobj.objectValue(DATA_OBJECT).orElse(JsonFactory.jsonObject()), newSpeaker);
+            addData(speakobj.objectValue(SessionVariables.DATA_OBJECT).orElse(JsonFactory.jsonObject()), newSpeaker);
             return newSpeaker;
         }).forEach(createNewSession::addSpeaker);
 
@@ -64,8 +57,8 @@ public class SessionService {
     private void addData(JsonObject talkData, HasDataInput hasDataInput) {
         for (String key : talkData.keys()) {
             JsonObject valueObject = talkData.requiredObject(key);
-            JsonNode jsonValue = valueObject.value(VALUE_KEY).orElse(new JsonNull());
-            boolean privateValue = valueObject.booleanValue(PRIVATE_FLAG).orElse(false);
+            JsonNode jsonValue = valueObject.value(SessionVariables.VALUE_KEY).orElse(new JsonNull());
+            boolean privateValue = valueObject.booleanValue(SessionVariables.PRIVATE_FLAG).orElse(false);
             hasDataInput.addData(key, new DataField(jsonValue, privateValue));
         }
     }
@@ -83,7 +76,7 @@ public class SessionService {
         if (!session.isPresent()) {
             return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown sessionid " + sessionId);
         }
-        JsonObject talkData = payload.objectValue(DATA_OBJECT).orElse(JsonFactory.jsonObject());
+        JsonObject talkData = payload.objectValue(SessionVariables.DATA_OBJECT).orElse(JsonFactory.jsonObject());
 
         UpdateSession updateSession = new UpdateSession(sessionId, session.get().getConferenceId());
         addData(talkData, updateSession);

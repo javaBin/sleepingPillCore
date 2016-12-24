@@ -2,9 +2,7 @@ package no.java.sleepingpill.core;
 
 import no.java.sleepingpill.core.controller.ConferenceController;
 import no.java.sleepingpill.core.controller.SessionController;
-import no.java.sleepingpill.core.conference.Conference;
-import no.java.sleepingpill.core.conference.ConferenceHolder;
-import no.java.sleepingpill.core.session.SessionService;
+import no.java.sleepingpill.core.session.SessionVariables;
 import org.jsonbuddy.JsonObject;
 import org.junit.Test;
 import spark.Request;
@@ -39,7 +37,7 @@ public class SessionSubmissionTest extends CleanSetupTest {
     }
 
     private void assertValueContent(JsonObject session,String key,String expVal,boolean expPrivate) {
-        JsonObject dataObj = session.requiredObject(SessionService.DATA_OBJECT);
+        JsonObject dataObj = session.requiredObject(SessionVariables.DATA_OBJECT);
         JsonObject titleObject = dataObj.requiredObject(key);
         assertThat(titleObject.requiredString("value")).isEqualTo(expVal);
         assertThat(titleObject.requiredBoolean("privateData")).isEqualTo(expPrivate);

@@ -2,11 +2,9 @@ package no.java.sleepingpill.core.session;
 
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
-import org.jsonbuddy.JsonNode;
 import org.jsonbuddy.JsonObject;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 public class Session extends DataObject {
     private final String conferenceId;
@@ -50,7 +48,7 @@ public class Session extends DataObject {
     @Override
     public void addData(JsonObject update) {
         super.addData(update);
-        Optional<JsonArray> optSpeaker = update.arrayValue(SessionService.SPEAKER_ARRAY);
+        Optional<JsonArray> optSpeaker = update.arrayValue(SessionVariables.SPEAKER_ARRAY);
         optSpeaker.ifPresent(jsonNodes -> jsonNodes.objectStream().forEach(jsp -> speakers.add(Speaker.fromJson(getId(), jsp))));
 
     }

@@ -37,6 +37,9 @@ public class SessionService {
         CreateNewSession createNewSession = new CreateNewSession();
         createNewSession.setConferenceId(conferenceId);
         createNewSession.setPostedByMail(postedBy);
+        createNewSession.setSessionStatus(
+                incomingJson.stringValue(SessionVariables.SESSION_STATUS)
+                .map(SessionStatus::valueOf));
 
         speakers.objects(speakobj -> {
             NewSpeaker newSpeaker = new NewSpeaker();

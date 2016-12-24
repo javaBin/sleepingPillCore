@@ -2,6 +2,7 @@ package no.java.sleepingpill.core;
 
 import no.java.sleepingpill.core.controller.ConferenceController;
 import no.java.sleepingpill.core.controller.SessionController;
+import no.java.sleepingpill.core.session.SessionStatus;
 import no.java.sleepingpill.core.session.SessionVariables;
 import org.jsonbuddy.JsonObject;
 import org.junit.Test;
@@ -36,7 +37,34 @@ public class SessionSubmissionTest extends CleanSetupTest {
         assertValueContent(session,"title","My title",false);
     }
 
-    private void assertValueContent(JsonObject session,String key,String expVal,boolean expPrivate) {
+    @Test
+    public void shouldCreateSessionWithStatus() throws Exception {
+        String conferenceid = createNewConferenceGetId();
+        SessionController sessionController = new SessionController();
+
+        Request req = mock(Request.class);
+        Response resp = mock(Response.class);
+
+        JsonObject input = jsonObject()
+                .put("data", jsonObject()
+                        .put("title", jsonObject().put("value", "My title").put("privateData", false)))
+                .put("status","HISTORIC");
+
+        when(req.params(":conferenceId")).thenReturn(conferenceid);
+        when(req.body()).thenReturn(input.toJson());
+
+        ServiceResult serviceResult = sessionController.postAddSession(req, resp);
+
+        JsonObject result = serviceResult.getResult().get();
+        String sessionId = result.requiredString("id");
+
+        JsonObject session = readSession(sessionId);
+
+        assertThat(session.requiredString("status")).isEqualTo(SessionStatus.HISTORIC.toString());
+
+    }
+
+    private void assertValueContent(JsonObject session, String key, String expVal, boolean expPrivate) {
         JsonObject dataObj = session.requiredObject(SessionVariables.DATA_OBJECT);
         JsonObject titleObject = dataObj.requiredObject(key);
         assertThat(titleObject.requiredString("value")).isEqualTo(expVal);

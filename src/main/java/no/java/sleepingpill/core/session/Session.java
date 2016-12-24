@@ -58,4 +58,9 @@ public class Session extends DataObject {
     public List<Speaker> getSpeakers() {
         return new ArrayList<>(speakers);
     }
+
+    public Session setSessionStatus(SessionStatus sessionStatus) {
+        this.sessionStatus = sessionStatus;
+        return this;
+    }
 }

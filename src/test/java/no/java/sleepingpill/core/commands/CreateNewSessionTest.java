@@ -2,10 +2,7 @@ package no.java.sleepingpill.core.commands;
 
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventHandler;
-import no.java.sleepingpill.core.session.DataField;
-import no.java.sleepingpill.core.session.Session;
-import no.java.sleepingpill.core.session.SessionHolder;
-import no.java.sleepingpill.core.session.Speaker;
+import no.java.sleepingpill.core.session.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -87,7 +84,32 @@ public class CreateNewSessionTest {
         validateValue(session, "title", "How to choke");
         validateValue(session, "description", "Updated description");
         validateValue(session, "audience", "Do not need one");
+        assertThat(session.getSessionStatus()).isEqualTo(SessionStatus.DRAFT);
 
+    }
+
+    @Test
+    public void shouldCreateHistoricSession() throws Exception {
+        CreateNewSession newSession = new CreateNewSession().setConferenceId("eventx");
+        NewSpeaker newSpeaker = new NewSpeaker();
+        newSpeaker.setEmail("darth@deathstar.com");
+        newSpeaker.setName("Darth Vader");
+
+        newSession.addSpeaker(newSpeaker);
+        newSession.addData("title", DataField.simplePublicStringValue("How to choke"));
+        newSession.addData("description", DataField.simplePublicStringValue("Initial description"));
+        newSession.setSessionStatus(Optional.of(SessionStatus.HISTORIC));
+
+        Event event = newSession.createEvent();
+        String sessionId = newSession.getSessionId();
+        eventHandler.addEvent(event);
+
+        List<Session> sessions = sessionHolder.allSessions();
+        assertThat(sessions).hasSize(1);
+        Session session = sessions.get(0);
+
+        assertThat(session.getId()).isEqualTo(sessionId);
+        assertThat(session.getSessionStatus()).isEqualTo(SessionStatus.HISTORIC);
 
     }
 

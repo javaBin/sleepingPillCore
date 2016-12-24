@@ -4,6 +4,8 @@ import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventType;
 import no.java.sleepingpill.core.exceptions.InternalError;
 import no.java.sleepingpill.core.session.DataField;
+import no.java.sleepingpill.core.session.SessionService;
+import no.java.sleepingpill.core.session.SessionStatus;
 import no.java.sleepingpill.core.util.IdGenerator;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
@@ -18,6 +20,7 @@ public class CreateNewSession implements HasDataInput {
     private List<NewSpeaker> speakers = new ArrayList<>();
     private Map<String, DataField> data = new HashMap<>();
     private Optional<String> postedByMail = Optional.empty();
+    private Optional<SessionStatus> sessionStatus = Optional.empty();
 
     public CreateNewSession setConferenceId(String conferenceId) {
         this.conferenceId = conferenceId;
@@ -42,11 +45,10 @@ public class CreateNewSession implements HasDataInput {
         JsonObject dataObj = JsonFactory.jsonObject();
         dataObj.put("conferenceId", conferenceId);
         dataObj.put("sessionId", sessionId.get());
-        dataObj.put("speakers", JsonArray.fromNodeStream(speakers.stream().map(NewSpeaker::asNewEvent)));
-        dataObj.put("data", JsonGenerator.generate(data));
-        if (postedByMail.isPresent()) {
-            dataObj.put("postedByMail", postedByMail.get());
-        }
+        dataObj.put(SessionService.SPEAKER_ARRAY, JsonArray.fromNodeStream(speakers.stream().map(NewSpeaker::asNewEvent)));
+        dataObj.put(SessionService.DATA_OBJECT, JsonGenerator.generate(data));
+        postedByMail.ifPresent(s -> dataObj.put("postedByMail", s));
+        sessionStatus.ifPresent(status -> dataObj.put(SessionService.SESSION_STATUS,status.toString()));
 
         return new Event(EventType.NEW_SESSION, dataObj);
     }
@@ -57,6 +59,11 @@ public class CreateNewSession implements HasDataInput {
 
     public CreateNewSession setSessionId(String sessionId) {
         this.sessionId = Optional.of(sessionId);
+        return this;
+    }
+
+    public CreateNewSession setSessionStatus(Optional<SessionStatus> sessionStatus) {
+        this.sessionStatus = sessionStatus;
         return this;
     }
 }

@@ -28,6 +28,7 @@ public class SessionService {
     public static final String POSTED_BY_MAIL = "postedBy";
     public static final String VALUE_KEY = "value";
     public static final String PRIVATE_FLAG = "privateData";
+    public static final String SESSION_STATUS = "status";
 
     private static final SessionService instance = new SessionService();
 

@@ -44,7 +44,7 @@ public class CreateNewSession implements HasDataInput {
         this.sessionId = Optional.of(sessionId.orElse(IdGenerator.newId()));
         JsonObject dataObj = JsonFactory.jsonObject();
         dataObj.put("conferenceId", conferenceId);
-        dataObj.put("sessionId", sessionId.get());
+        dataObj.put(SessionVariables.SESSION_ID, sessionId.get());
         dataObj.put(SessionVariables.SPEAKER_ARRAY, JsonArray.fromNodeStream(speakers.stream().map(NewSpeaker::asNewEvent)));
         dataObj.put(SessionVariables.DATA_OBJECT, JsonGenerator.generate(data));
         postedByMail.ifPresent(s -> dataObj.put("postedByMail", s));

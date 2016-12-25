@@ -33,7 +33,7 @@ public class SessionHolder implements EventListener {
     }
 
     private void handleUpdateSession(Event event) {
-        String sessionId = event.data.requiredString("sessionId");
+        String sessionId = event.data.requiredString(SessionVariables.SESSION_ID);
         Session session = sessions.stream()
                 .filter(se -> se.getId().equals(sessionId))
                 .findAny()
@@ -45,7 +45,7 @@ public class SessionHolder implements EventListener {
     }
 
     private void handleNewSession(Event event) {
-        String sessionId = event.data.requiredString("sessionId");
+        String sessionId = event.data.requiredString(SessionVariables.SESSION_ID);
         String conferenceId = event.data.requiredString("conferenceId");
         Session session = new Session(sessionId, conferenceId);
         session.addData(event.data);

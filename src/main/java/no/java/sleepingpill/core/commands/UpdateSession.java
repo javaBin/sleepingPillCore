@@ -31,7 +31,7 @@ public class UpdateSession implements HasDataInput {
     public Event createEvent() {
         JsonObject jsonObject = JsonFactory.jsonObject()
                 .put(SessionVariables.DATA_OBJECT, JsonGenerator.generate(data))
-                .put("sessionId", sessionId);
+                .put(SessionVariables.SESSION_ID, sessionId);
         sessionStatus.ifPresent(status -> jsonObject.put(SessionVariables.SESSION_STATUS,status.toString()));
         Event event = new Event(EventType.UPDATE_SESSION, jsonObject);
         return event;

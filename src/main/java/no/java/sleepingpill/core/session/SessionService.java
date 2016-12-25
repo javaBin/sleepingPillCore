@@ -83,6 +83,9 @@ public class SessionService {
 
         UpdateSession updateSession = new UpdateSession(sessionId, session.get().getConferenceId());
         addData(talkData, updateSession);
+        payload.stringValue(SessionVariables.SESSION_STATUS)
+                .map(SessionStatus::valueOf)
+                .ifPresent(updateSession::setSessionStatus);
 
         Event event = updateSession.createEvent();
         EventHandler.instance().addEvent(event);

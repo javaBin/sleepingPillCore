@@ -76,17 +76,19 @@ public class SessionSubmissionTest extends CleanSetupTest {
         String conferenceid = createNewConferenceGetId();
         String sessionId = addNewSessionGetId(conferenceid);
 
-        JsonObject input = jsonObject()
+        JsonObject updateInputJson = jsonObject()
                 .put("data", jsonObject()
                         .put("title", jsonObject().put("value", "Changed title").put("privateData", false))
                         .put("outline", jsonObject().put("value", "Here is my outline").put("privateData", true))
-                );
+                )
+                .put("status","SUBMITTED")
+                ;
 
         Request req = mock(Request.class);
         Response resp = mock(Response.class);
 
         when(req.params(":id")).thenReturn(sessionId);
-        when(req.body()).thenReturn(input.toJson());
+        when(req.body()).thenReturn(updateInputJson.toJson());
 
         SessionController sessionController = new SessionController();
         sessionController.putUpdateSession(req, resp);
@@ -95,6 +97,8 @@ public class SessionSubmissionTest extends CleanSetupTest {
 
         assertValueContent(updatedSession,"title","Changed title",false);
         assertValueContent(updatedSession,"outline","Here is my outline",true);
+
+        assertThat(updatedSession.requiredString("status")).isEqualTo("SUBMITTED");
 
     }
 

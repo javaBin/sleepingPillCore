@@ -44,12 +44,16 @@ public class CreateNewSessionTest {
 
         assertThat(session.getId()).isEqualTo(sessionId);
         validateValue(session, "title", "How to choke");
+        assertThat(session.getSessionStatus()).isEqualTo(SessionStatus.DRAFT);
+
         List<Speaker> speakers = session.getSpeakers();
         assertThat(speakers).hasSize(1);
         Speaker speaker = speakers.get(0);
 
         assertThat(speaker.getId()).isNotNull();
         assertThat(speaker.getName()).isEqualTo("Darth Vader");
+
+
 
 
     }
@@ -72,6 +76,7 @@ public class CreateNewSessionTest {
         UpdateSession updateSession = new UpdateSession(sessionId, "eventx");
         updateSession.addData("description", DataField.simplePublicStringValue("Updated description"));
         updateSession.addData("audience", DataField.simplePublicStringValue("Do not need one"));
+        updateSession.setSessionStatus(SessionStatus.SUBMITTED);
 
         Event updateSessionEvent = updateSession.createEvent();
         eventHandler.addEvent(updateSessionEvent);
@@ -81,10 +86,10 @@ public class CreateNewSessionTest {
         Session session = sessions.get(0);
 
         assertThat(session.getId()).isEqualTo(sessionId);
+        assertThat(session.getSessionStatus()).isEqualTo(SessionStatus.SUBMITTED);
         validateValue(session, "title", "How to choke");
         validateValue(session, "description", "Updated description");
         validateValue(session, "audience", "Do not need one");
-        assertThat(session.getSessionStatus()).isEqualTo(SessionStatus.DRAFT);
 
     }
 

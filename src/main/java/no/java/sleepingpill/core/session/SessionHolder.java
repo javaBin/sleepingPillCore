@@ -39,7 +39,9 @@ public class SessionHolder implements EventListener {
                 .findAny()
                 .orElseThrow(() -> new InternalError("Unknown session id in update " + sessionId));
         session.addData(event.data);
-
+        event.data.stringValue(SessionVariables.SESSION_STATUS)
+                .map(SessionStatus::valueOf)
+                .ifPresent(session::setSessionStatus);
     }
 
     private void handleNewSession(Event event) {

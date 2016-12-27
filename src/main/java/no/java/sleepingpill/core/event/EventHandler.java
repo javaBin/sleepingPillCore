@@ -13,7 +13,16 @@ public class EventHandler {
     private static final AtomicLong idGenerator = new AtomicLong(0);
 
     public static long nextId() {
-        return idGenerator.incrementAndGet();
+        synchronized (idGenerator) {
+            long current = idGenerator.get();
+            long newVal;
+            do {
+                newVal = System.currentTimeMillis();
+                idGenerator.set(newVal);
+            } while (newVal == current);
+            return newVal;
+        }
+
     }
 
     public static EventHandler instance() {

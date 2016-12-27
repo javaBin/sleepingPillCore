@@ -5,12 +5,14 @@ import no.java.sleepingpill.core.controller.ExceptionHandler;
 import no.java.sleepingpill.core.controller.SessionController;
 import no.java.sleepingpill.core.controller.SubmitterController;
 import no.java.sleepingpill.core.database.DBEventReader;
-import no.java.sleepingpill.core.database.DBUtil;
+import no.java.sleepingpill.core.database.Postgres;
+import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventListener;
+import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
+import java.util.List;
 
 import static no.java.sleepingpill.core.ServiceLocator.eventHandler;
 import static spark.Spark.port;
@@ -24,10 +26,13 @@ public class SparkStart {
     }
 
     private void start() {
-        if (Configuration.dbURL() != null) {
+        if (Configuration.dbServer() != null) {
+            logger.info("Setting up db");
             migrateDb();
             loadInitialEvents();
             eventHandler().getEventListeners().forEach(EventListener::sagaInitialized);
+        } else {
+            logger.warn("Running without persistance. Data will be lost when server shuts down");
         }
 
         setupAndStartSpark();
@@ -48,19 +53,18 @@ public class SparkStart {
     }
 
     private void migrateDb()  {
-
-        try {
-            if (!DBUtil.dbIsUpToDate()) {
-                DBUtil.initDB();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        Flyway flyway = new Flyway();
+        flyway.setDataSource(Postgres.source());
+        if (Configuration.cleanDb()) {
+            logger.warn("Cleaning db");
+            flyway.clean();
         }
+        flyway.migrate();
     }
 
     void loadInitialEvents() {
-        new DBEventReader().events().stream().
-                forEach(e -> eventHandler().addEvent(e));
+        List<Event> events = new DBEventReader().events();
+        events.forEach(e -> eventHandler().addEvent(e));
     }
 
 }

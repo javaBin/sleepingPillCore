@@ -2,7 +2,7 @@ package no.java.sleepingpill.core.database;
 
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventType;
-import no.java.sleepingpill.core.Configuration;
+import org.jsonbuddy.JsonObject;
 import org.jsonbuddy.parse.JsonParser;
 import org.slf4j.Logger;
 
@@ -11,56 +11,38 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import static no.java.sleepingpill.core.database.DBUtil.close;
-import static no.java.sleepingpill.core.database.DBUtil.getConnection;
+import java.util.Optional;
 
 public class DBEventReader {
     private static Logger logger = org.slf4j.LoggerFactory.getLogger(DBEventReader.class);
+    private final static String SELECT_SQL = "select id,conferenceid,eventtype,payload from event";
 
     public List<Event> events() {
-        logger.info( "Loading events from db using url {}", Configuration.dbURL());
-        Connection c = null;
-        PreparedStatement ps = null;
-        ResultSet rs;
+        logger.info( "Loading events from db");
+        try (
+                Connection connection = Postgres.openConnection();
+                PreparedStatement statement = connection.prepareStatement(SELECT_SQL);
+                ResultSet resultSet = statement.executeQuery()) {
 
-        List<Event> list = new ArrayList<>();
-        try {
-            c = getConnection();
-            String sql = "" +
-                    "SELECT " +
-                    " id, event_type, event_date, event_submitter, json_data " +
-                    "FROM event " +
-                    "ORDER BY id";
-            ps = c.prepareStatement(sql);
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                list.add(createEvent(rs));
+            List<Event> result = new ArrayList<>();
+            while (resultSet.next()) {
+                result.add(createEvent(resultSet));
             }
-            logger.info( "Done loading {} events from db using url {}", list.size(), Configuration.dbURL());
-            return list;
-        } catch (SQLException ex) {
-            logger.error("Event insert failed: " + ex.toString());
-            throw new RuntimeException(ex);
-        } finally {
-            close(c, ps, null);
+            logger.info(String.format("Loaded %d events from db",result.size()));
+            return result;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     private Event createEvent(ResultSet rs) throws SQLException {
         long id = rs.getLong(1);
-        String type = rs.getString(2);
-        String date = rs.getString(3);
-        String submitter = rs.getString(4);
-        String json = rs.getString(5);
-        Event e = new Event(
-                EventType.valueOf(type),
-                id,
-                JsonParser.parseToObject(json)
-        );
-        return e;
+        Optional<String> conferenceid = Optional.ofNullable(rs.getString(2));
+        EventType eventType = EventType.valueOf(rs.getString(3));
+        JsonObject payload = JsonParser.parseToObject(rs.getString(4));
+        return new Event(eventType,id,payload,conferenceid);
     }
 
 

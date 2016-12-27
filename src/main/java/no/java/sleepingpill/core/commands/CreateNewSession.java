@@ -50,7 +50,7 @@ public class CreateNewSession implements HasDataInput {
         postedByMail.ifPresent(s -> dataObj.put("postedByMail", s));
         sessionStatus.ifPresent(status -> dataObj.put(SessionVariables.SESSION_STATUS,status.toString()));
 
-        return new Event(EventType.NEW_SESSION, dataObj);
+        return new Event(EventType.NEW_SESSION, dataObj,Optional.of(conferenceId));
     }
 
     public String getSessionId() {

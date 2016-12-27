@@ -45,7 +45,9 @@ public class ServiceLocator implements AutoCloseable {
             eventHandler = new EventHandler();
             eventHandler.addEventListener(SessionHolder.instance());
             eventHandler.addEventListener(EmailHolder.instance());
-            eventHandler.addEventListener(new DBEventListener());
+            if (Configuration.persistToDb()) {
+                eventHandler.addEventListener(new DBEventListener());
+            }
             eventHandler.addEventListener(ServiceLocator.conferenceHolder());
         }
         return eventHandler;

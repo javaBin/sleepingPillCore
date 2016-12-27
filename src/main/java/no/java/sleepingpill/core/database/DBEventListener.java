@@ -7,49 +7,37 @@ import org.slf4j.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.Clock;
 
-import static no.java.sleepingpill.core.database.DBUtil.close;
-import static no.java.sleepingpill.core.database.DBUtil.getConnection;
 
 public class DBEventListener implements EventListener {
     private static Logger logger = org.slf4j.LoggerFactory.getLogger(DBEventListener.class);
 
-    boolean active = false;
+    boolean sagaIsInitalized = false;
 
     @Override
     public void sagaInitialized() {
-        active = true;
+        sagaIsInitalized = true;
         logger.info("Event storing activated");
     }
 
+    private final static String INSERT_SQL = "insert into event(id,conferenceid,eventtype,payload) values (?,?,?,?)";
+
     @Override
     public void eventAdded(Event event) {
-        if (!active) {
+        if (!sagaIsInitalized) {
             return;
         }
-
-        Connection c = null;
-        PreparedStatement ps = null;
-        String json = event.data.toJson();
-
-        try {
-            c = getConnection();
-            String sql = "INSERT INTO event ( event_date, event_type, event_submitter, json_data ) " +
-                    "VALUES (?, ?, ?, ?)";
-            ps = c.prepareStatement(sql);
-            ps.setTimestamp(1, new Timestamp(Clock.systemUTC().instant().toEpochMilli()));
-            ps.setString(2, event.eventType.name());
-            ps.setString(3, "N/A");
-            ps.setString(4, json);
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            logger.error("Event insert failed: " + ex.toString());
-            throw new RuntimeException(ex);
-        } finally {
-            close(c, ps, null);
+        try (Connection connection = Postgres.openConnection(); PreparedStatement statement = connection.prepareStatement(INSERT_SQL)) {
+            statement.setLong(1,event.index);
+            statement.setString(2,event.conferenceId.orElse(null));
+            statement.setString(3,event.eventType.toString());
+            statement.setString(4,event.data.toJson());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
+
+
     }
 
 }

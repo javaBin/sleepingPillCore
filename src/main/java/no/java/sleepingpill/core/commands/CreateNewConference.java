@@ -34,7 +34,7 @@ public class CreateNewConference {
         dataObj.put("id",conferenceId.get());
         dataObj.put("name",name);
         dataObj.put("slug",slug);
-        return new Event(EventType.NEW_CONFERENCE,dataObj);
+        return new Event(EventType.NEW_CONFERENCE,dataObj,conferenceId);
     }
 
     public String getId() {

@@ -26,6 +26,6 @@ public class RegisterEmail {
         JsonObject data = JsonFactory.jsonObject()
                 .put("email", email)
                 .put("id", id.get());
-        return new Event(EventType.EMAIL_CONFIRMED, data);
+        return new Event(EventType.EMAIL_CONFIRMED, data,Optional.empty());
     }
 }

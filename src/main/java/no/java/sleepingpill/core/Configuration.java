@@ -70,10 +70,18 @@ public class Configuration {
         return "http://localhost:8082/data/";
     }
 
-
-    public static String dbURL() {
-        return readValue("dbURL", null);
+    public static boolean persistToDb() {
+        return "true".equals(readValue("persistToDb","false"));
     }
+
+    public static String dbServer() {
+        return readValue("dbServer", "localhost");
+    }
+
+    public static String dbName() {
+        return readValue("dbName", "postgres");
+    }
+
 
     public static String dbUser() {
         return readValue("dbUser", null);
@@ -83,6 +91,21 @@ public class Configuration {
         return readValue("dbPassword", null);
     }
 
+    public static int dbPort() {
+        return Integer.parseInt(readValue("dbPort","5432"));
+    }
+
+    public static int maxDbConnections() {
+        return Integer.parseInt(readValue("maxDbConnections","10"));
+    }
+
+
+    public static boolean cleanDb() {
+        return "true".equals(readValue("cleanDb","false"));
+    }
+
+
+
     public static String logLevel() {
         return readValue("logLevel", "DEBUG");
     }
@@ -90,6 +113,8 @@ public class Configuration {
     public static boolean useDummyConferenceHolder() {
         return "true".equals(readValue("useDummyConferenceHolder","false"));
     }
+
+
 
     public static String logfilePattern() {
         return readValue("logfilePattern", null);
@@ -109,4 +134,5 @@ public class Configuration {
         }
         return Integer.parseInt(num);
     }
+
 }

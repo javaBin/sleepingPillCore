@@ -2,6 +2,8 @@ package no.java.sleepingpill.core.emsImport;
 
 import no.java.sleepingpill.core.Configuration;
 import no.java.sleepingpill.core.session.DataField;
+import no.java.sleepingpill.core.session.SessionStatus;
+import no.java.sleepingpill.core.session.SessionVariables;
 import no.java.sleepingpill.core.util.Base64Util;
 import no.java.sleepingpill.core.util.DataObjects;
 import org.jsonbuddy.JsonArray;
@@ -123,6 +125,9 @@ public class EmsImporter {
                     dataObject.put(emsMapping.name,valobj);
                 });
 
+        SessionStatus sessionStatus = Optional.of("true").equals(itemValue(dataArray,"published")) &&
+        Optional.of("approved").equals(itemValue(dataArray,"state"))
+        ? SessionStatus.HISTORIC : SessionStatus.REJECTED;
         String speakerUrl = sessionObject.requiredArray("links").objectStream()
                 .filter(ob -> ob.requiredString("rel").equals("speaker collection"))
                 .map(ob -> ob.requiredString("href"))
@@ -150,8 +155,9 @@ public class EmsImporter {
         }));
 
         return JsonFactory.jsonObject()
-                .put("data",dataObject)
-                .put("speakers",speakers);
+                .put(SessionVariables.DATA_OBJECT,dataObject)
+                .put(SessionVariables.SPEAKER_ARRAY,speakers)
+                .put(SessionVariables.SESSION_STATUS,sessionStatus.toString());
     }
 
     private static Optional<String> itemValue(JsonArray items,String key) {

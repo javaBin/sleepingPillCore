@@ -26,7 +26,7 @@ public class SparkStart {
     }
 
     private void start() {
-        if (Configuration.dbServer() != null) {
+        if (Configuration.persistToDb()) {
             logger.info("Setting up db");
             migrateDb();
             loadInitialEvents();

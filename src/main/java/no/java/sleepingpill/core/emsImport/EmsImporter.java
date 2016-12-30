@@ -279,7 +279,7 @@ public class EmsImporter {
         all.requiredObject("collection").requiredArray("items").objectStream()
                 .forEach(emsses -> {
                     int num = counter.incrementAndGet();
-                    if (num > Configuration.maxSessionsToImport()) {
+                    if (num > EmsImportConfig.maxSessionsToImport()) {
                         return;
                     }
                     JsonObject input = dataForSession(emsses);

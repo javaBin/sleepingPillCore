@@ -51,6 +51,15 @@ public class EmsImportConfig {
         return readValue("serverAddress","http://localhost:8082/data");
     }
 
+    public static int maxSessionsToImport() {
+        String num = readValue("maxSessionsToImport",null);
+        if (num == null) {
+            return Integer.MAX_VALUE;
+        }
+        return Integer.parseInt(num);
+    }
+
+
     public static Set<String> fetchConferences() {
         return new HashSet<>(Collections.singletonList("JavaZone 2016"));
     }

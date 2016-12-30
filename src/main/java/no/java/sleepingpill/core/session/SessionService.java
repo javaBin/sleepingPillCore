@@ -105,7 +105,7 @@ public class SessionService {
 
         }
 
-        JsonObject result = JsonFactory.jsonObject().put("sessions", JsonGenerator.generate(sessions));
+        JsonObject result = JsonFactory.jsonObject().put("sessions", JsonArray.fromNodeStream(sessions.stream().map(Session::asSingleSessionJson)));
         return ServiceResult.ok(result);
     }
 

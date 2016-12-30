@@ -81,7 +81,12 @@ public class EmsImporter {
                 new EmsMapping("audience","intendedAudience",false),
                 new EmsMapping("slug","slug",false),
                 new EmsMapping("equipment","equiplment",true),
-                new EmsMapping("title","title",false))
+                new EmsMapping("title","title",false),
+                new EmsMapping("keywords","keywords",false),
+                new EmsMapping("tags","tags",true),
+                new EmsMapping("lang","language",false)
+
+                )
               .collect(Collectors.toMap(m->m.emsname,m->m));
     }
 
@@ -117,12 +122,8 @@ public class EmsImporter {
         JsonObject dataObject = JsonFactory.jsonObject();
         dataArray.objectStream()
                 .filter(ob -> mapconfig.containsKey(ob.requiredString("name")))
-                .forEach(ob -> {
-                    EmsMapping emsMapping = mapconfig.get(ob.requiredString("name"));
-                    JsonObject valobj = JsonFactory.jsonObject()
-                            .put("value", ob.requiredString("value"))
-                            .put("privateData", emsMapping.privateData);
-                    dataObject.put(emsMapping.name,valobj);
+                .forEach(emsDataObject -> {
+                    addValueFromEms(dataObject, emsDataObject);
                 });
 
         SessionStatus sessionStatus = Optional.of("true").equals(itemValue(dataArray,"published")) &&
@@ -158,6 +159,24 @@ public class EmsImporter {
                 .put(SessionVariables.DATA_OBJECT,dataObject)
                 .put(SessionVariables.SPEAKER_ARRAY,speakers)
                 .put(SessionVariables.SESSION_STATUS,sessionStatus.toString());
+    }
+
+    private void addValueFromEms(JsonObject dataObject, JsonObject emsDataObject) {
+        EmsMapping emsMapping = mapconfig.get(emsDataObject.requiredString("name"));
+        JsonObject valobj = JsonFactory.jsonObject()
+                .put("privateData", emsMapping.privateData);
+
+        Optional<String> stringval = emsDataObject.stringValue("value");
+        if (stringval.isPresent()) {
+            valobj.put("value", stringval.get());
+            dataObject.put(emsMapping.name,valobj);
+            return;
+        }
+        Optional<JsonArray> arrayValue = emsDataObject.arrayValue("array");
+        if (arrayValue.isPresent()) {
+            valobj.put("value",arrayValue.get());
+            dataObject.put(emsMapping.name,valobj);
+        }
     }
 
     private static Optional<String> itemValue(JsonArray items,String key) {

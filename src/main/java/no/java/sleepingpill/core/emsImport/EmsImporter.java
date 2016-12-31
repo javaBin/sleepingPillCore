@@ -15,10 +15,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -134,19 +131,17 @@ public class EmsImporter {
                 .map(ob -> ob.requiredString("href"))
                 .findAny().get();
         JsonObject emsSpeaker = readFromEms(speakerUrl, true);
-        JsonArray speakerNode = emsSpeaker.requiredObject("collection").requiredArray("items");
+        JsonArray speakerNode = emsSpeaker.objectValue("collection").orElse(JsonFactory.jsonObject()).arrayValue("items").orElse(JsonFactory.jsonArray());
         JsonArray speakers = JsonArray.fromNodeStream(speakerNode.objectStream().map(speakerObj -> {
             JsonArray dataValues = speakerObj.requiredArray("data");
             String name = itemValue(dataValues, "name").orElseThrow(() -> new RuntimeException("Could not find speaker name"));
             String email = itemValue(dataValues, "email").orElseThrow(() -> new RuntimeException("Could not find speaker email"));
             Optional<String> zip = itemValue(dataValues, "zip-code").filter(s -> !s.isEmpty());
-            String bio = itemValue(dataValues, "bio").orElseThrow(() -> new RuntimeException("Could not find speaker bio"));
+            String bio = itemValue(dataValues, "bio").orElse("Speaker bio not present");
 
             JsonObject dataobj = JsonFactory.jsonObject()
                     .put("bio", DataField.simplePublicStringValue(bio).jsonValue());
-            if (zip.isPresent()) {
-                dataobj.put("zip-code", DataField.simplePrivateStringValue(zip.get()).jsonValue());
-            }
+            zip.ifPresent(s -> dataobj.put("zip-code", DataField.simplePrivateStringValue(s).jsonValue()));
             JsonObject speakerJson = JsonFactory.jsonObject()
                     .put("name", name)
                     .put("email", email)
@@ -181,7 +176,7 @@ public class EmsImporter {
 
     private static Optional<String> itemValue(JsonArray items,String key) {
         return items.objectStream()
-                .filter(ob -> key.equals(ob.requiredString("name")))
+                .filter(ob -> Optional.of(key).equals(ob.stringValue("name")) && ob.stringValue("value").isPresent())
                 .map(ob -> ob.requiredString("value"))
                 .findAny();
     }
@@ -285,8 +280,14 @@ public class EmsImporter {
 
 
     private boolean matchesSelectedConference(JsonObject jsonObject) {
+        Set<String> conferenceList = EmsImportConfig.fetchConferences();
+        if (conferenceList.isEmpty()) {
+            return true;
+        }
         return jsonObject.requiredArray("data").objectStream()
-                .anyMatch(coob -> coob.requiredString("name").equals("name") && EmsImportConfig.fetchConferences().contains(coob.requiredString("value")));
+                .anyMatch(coob -> {
+                    return coob.requiredString("name").equals("name") && conferenceList.contains(coob.requiredString("value"));
+                });
 
     }
 
@@ -295,7 +296,7 @@ public class EmsImporter {
         String addTalkLoc = EmsImportConfig.serverAddress() + "/conference/" + emsConference.id + "/session";
         AtomicInteger counter = new AtomicInteger();
 
-        all.requiredObject("collection").requiredArray("items").objectStream()
+        all.objectValue("collection").orElse(JsonFactory.jsonObject()).arrayValue("items").orElse(JsonFactory.jsonArray()).objectStream()
                 .forEach(emsses -> {
                     int num = counter.incrementAndGet();
                     if (num > EmsImportConfig.maxSessionsToImport()) {

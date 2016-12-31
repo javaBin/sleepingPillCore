@@ -2,10 +2,7 @@ package no.java.sleepingpill.core.emsImport;
 
 import no.java.sleepingpill.core.Configuration;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class EmsImportConfig {
     private static String configFileName;
@@ -61,7 +58,12 @@ public class EmsImportConfig {
 
 
     public static Set<String> fetchConferences() {
-        return new HashSet<>(Collections.singletonList("JavaZone 2016"));
+        String val = readValue("fetchConferences",null);
+        if (val == null) {
+            return Collections.emptySet();
+        }
+
+        return new HashSet<>(Arrays.asList(val.split(",")));
     }
 
     public static String emsAddress() {

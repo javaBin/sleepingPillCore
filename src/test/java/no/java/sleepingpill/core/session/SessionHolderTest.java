@@ -3,8 +3,6 @@ package no.java.sleepingpill.core.session;
 
 import no.java.sleepingpill.core.commands.CreateNewSession;
 import no.java.sleepingpill.core.commands.NewSpeaker;
-import no.java.sleepingpill.core.event.Event;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.util.List;

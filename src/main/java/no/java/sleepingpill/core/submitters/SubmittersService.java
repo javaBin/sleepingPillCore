@@ -4,10 +4,14 @@ import no.java.sleepingpill.core.ServiceResult;
 import no.java.sleepingpill.core.commands.RegisterEmail;
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventHandler;
+import no.java.sleepingpill.core.session.Session;
+import no.java.sleepingpill.core.session.SessionHolder;
+import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Optional;
 
 public class SubmittersService {
@@ -32,4 +36,9 @@ public class SubmittersService {
         return ServiceResult.ok(res);
     }
 
+    public ServiceResult allSessionsForEmail(String email) {
+        List<Session> sessions = SessionHolder.instance().sessionsByEmail(email);
+        JsonArray jsonArray = JsonArray.fromNodeStream(sessions.stream().map(Session::asSingleSessionJson));
+        return ServiceResult.ok(JsonFactory.jsonObject().put("sessions",jsonArray));
+    }
 }

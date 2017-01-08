@@ -32,12 +32,14 @@ public class CreateNewSession implements HasDataInput {
         return this;
     }
 
-    public void addSpeaker(NewSpeaker speaker) {
+    public CreateNewSession addSpeaker(NewSpeaker speaker) {
         speakers.add(speaker);
+        return this;
     }
 
-    public void addData(String key, DataField dataField) {
+    public CreateNewSession addData(String key, DataField dataField) {
         data.put(key, dataField);
+        return this;
     }
 
     public Event createEvent() {
@@ -47,7 +49,7 @@ public class CreateNewSession implements HasDataInput {
         dataObj.put(SessionVariables.SESSION_ID, sessionId.get());
         dataObj.put(SessionVariables.SPEAKER_ARRAY, JsonArray.fromNodeStream(speakers.stream().map(NewSpeaker::asNewEvent)));
         dataObj.put(SessionVariables.DATA_OBJECT, JsonGenerator.generate(data));
-        postedByMail.ifPresent(s -> dataObj.put("postedByMail", s));
+        postedByMail.ifPresent(s -> dataObj.put(SessionVariables.POSTED_BY_MAIL, s));
         sessionStatus.ifPresent(status -> dataObj.put(SessionVariables.SESSION_STATUS,status.toString()));
 
         return new Event(EventType.NEW_SESSION, dataObj,Optional.of(conferenceId));

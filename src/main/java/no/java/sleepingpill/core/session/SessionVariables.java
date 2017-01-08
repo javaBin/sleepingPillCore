@@ -8,6 +8,7 @@ public class SessionVariables {
     public static final String PRIVATE_FLAG = "privateData";
     public static final String SESSION_STATUS = "status";
     public static final String SESSION_ID = "sessionId";
+    public static final String CONFERENCE_ID = "conferenceId";
 
     private SessionVariables() {
         throw new IllegalAccessError("No instance allowed");

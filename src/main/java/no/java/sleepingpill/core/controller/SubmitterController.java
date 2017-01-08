@@ -1,7 +1,6 @@
 package no.java.sleepingpill.core.controller;
 
 import no.java.sleepingpill.core.ServiceResult;
-import no.java.sleepingpill.core.session.SessionService;
 import no.java.sleepingpill.core.submitters.SubmittersService;
 import org.jsonbuddy.JsonObject;
 import org.jsonbuddy.parse.JsonParser;
@@ -12,7 +11,7 @@ import static no.java.sleepingpill.core.util.JsonUtil.jsonBuddyString;
 import static spark.Spark.post;
 
 public class SubmitterController {
-    private SubmittersService submittersService;
+    private final SubmittersService submittersService;
     public SubmitterController(SubmittersService submittersService) {
         this.submittersService = submittersService;
 
@@ -23,7 +22,7 @@ public class SubmitterController {
     }
 
     public void initSpark(){
-        post("/data/submitter", this::confirmEmail, jsonBuddyString());
+        post(HttpPaths.SUBMITTER_POST_ADD_NEW, this::confirmEmail, jsonBuddyString());
     }
 
     public ServiceResult confirmEmail(Request req, Response res) {

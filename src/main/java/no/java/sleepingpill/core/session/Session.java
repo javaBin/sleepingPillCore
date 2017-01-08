@@ -8,12 +8,14 @@ import java.util.*;
 
 public class Session extends DataObject {
     private final String conferenceId;
+    private final Optional<String> addedByEmail;
     private volatile SessionStatus sessionStatus = SessionStatus.DRAFT;
     private List<Speaker> speakers = new ArrayList<>();
 
-    public Session(String id, String conferenceId) {
+    public Session(String id, String conferenceId,Optional<String> addedByEmail) {
         super(id);
         this.conferenceId = conferenceId;
+        this.addedByEmail = addedByEmail;
     }
 
 
@@ -33,11 +35,13 @@ public class Session extends DataObject {
 
     public JsonObject asSingleSessionJson() {
         JsonObject result = JsonFactory.jsonObject()
-                .put("id", getId())
-                .put("speakers", JsonArray.fromNodeStream(speakers.stream().map(Speaker::singleSessionData)))
-                .put("data", dataAsJson())
-                .put("status",sessionStatus)
+                .put(SessionVariables.SESSION_ID, getId())
+                .put(SessionVariables.SPEAKER_ARRAY, JsonArray.fromNodeStream(speakers.stream().map(Speaker::singleSessionData)))
+                .put(SessionVariables.DATA_OBJECT, dataAsJson())
+                .put(SessionVariables.SESSION_STATUS,sessionStatus)
+                .put(SessionVariables.CONFERENCE_ID,conferenceId)
                 ;
+        addedByEmail.ifPresent(mail -> result.put(SessionVariables.POSTED_BY_MAIL,mail));
         return result;
     }
 
@@ -60,5 +64,17 @@ public class Session extends DataObject {
     public Session setSessionStatus(SessionStatus sessionStatus) {
         this.sessionStatus = sessionStatus;
         return this;
+    }
+
+    public boolean isRelatedToEmail(String email) {
+        if (email == null) {
+            return false;
+        }
+        if (addedByEmail.filter(ab -> ab.equalsIgnoreCase(email)).isPresent()) {
+            return true;
+        }
+        boolean match = speakers.stream()
+                .anyMatch(sp -> email.equalsIgnoreCase(sp.getEmail()));
+        return match;
     }
 }

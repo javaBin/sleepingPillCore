@@ -24,8 +24,8 @@ public class ConferenceController {
     }
 
     public void initSpark(){
-        get("/data/conference", this::getAllConferences, jsonBuddyString());
-        post("/data/conference",this::postAddConference, jsonBuddyString());
+        get(HttpPaths.CONFERENCE_GET, this::getAllConferences, jsonBuddyString());
+        post(HttpPaths.CONFERENCE_POST,this::postAddConference, jsonBuddyString());
     }
 
     public ServiceResult getAllConferences(Request req, Response res) {

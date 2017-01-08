@@ -24,8 +24,9 @@ public class UpdateSession implements HasDataInput {
         this.conferenceId = conferenceId;
     }
 
-    public void addData(String key, DataField dataField) {
+    public UpdateSession addData(String key, DataField dataField) {
         data.put(key, dataField);
+        return this;
     }
 
     public Event createEvent() {

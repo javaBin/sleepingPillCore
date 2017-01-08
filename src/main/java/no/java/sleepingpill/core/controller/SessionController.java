@@ -27,15 +27,15 @@ public class SessionController {
     }
 
     public void initSpark(){
-        get("/data/session", this::getAllSessionsForConference, jsonBuddyString());
+        get(HttpPaths.SESSION_GET_ALL_FOR_CONFERENCE_BY_ID, this::getAllSessionsForConference, jsonBuddyString());
 
-        get("/data/conference/:conferenceId/session", this::getAllSessionsForConferenceSession, jsonBuddyString());
+        get(HttpPaths.SESSION_GET_ALL_BY_CONFERENCE, this::getAllSessionsForConferenceSession, jsonBuddyString());
 
-        get("/data/session/:id", this::getSessionById, jsonBuddyString());
+        get(HttpPaths.SESSION_GET_SINGLE, this::getSessionById, jsonBuddyString());
 
-        post("/data/conference/:conferenceId/session", this::postAddSession, jsonBuddyString());
+        post(HttpPaths.SESSION_POST_ADD_NEW, this::postAddSession, jsonBuddyString());
 
-        put("/data/session/:id", this::putUpdateSession, jsonBuddyString());
+        put(HttpPaths.SESSION_PUT_UPDATE, this::putUpdateSession, jsonBuddyString());
 
         after((req, res) -> {
             res.type("application/json");

@@ -46,8 +46,9 @@ public class NewSpeaker implements HasDataInput {
         return this;
     }
 
-    public void addData(String key,DataField dataField) {
+    public NewSpeaker addData(String key,DataField dataField) {
         dataFields.put(key,dataField);
+        return this;
     }
 
     public JsonNode asNewEvent() {

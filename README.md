@@ -45,7 +45,7 @@ The deploy needs the ansible vault password to be able to decrypt the property f
 
 ## SSH to the instance
 
-You need the ssh key. Get the files `aws-eb` and `aws-eb.pub` from someone who have them already, and place them in `~/.ssh`
+You need the ssh key. Get the private and public key (`javabin` and `javabin.pub`) from someone who have them already, and place them in `~/.ssh`
 
 Then you just do:
 ```

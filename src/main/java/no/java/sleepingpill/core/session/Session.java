@@ -10,7 +10,7 @@ public class Session extends DataObject {
     private final String conferenceId;
     private final Optional<String> addedByEmail;
     private volatile SessionStatus sessionStatus = SessionStatus.DRAFT;
-    private List<Speaker> speakers = new ArrayList<>();
+    private volatile List<Speaker> speakers = new ArrayList<>();
 
     public Session(String id, String conferenceId,Optional<String> addedByEmail) {
         super(id);
@@ -53,8 +53,32 @@ public class Session extends DataObject {
     public void addData(JsonObject update) {
         super.addData(update);
         Optional<JsonArray> optSpeaker = update.arrayValue(SessionVariables.SPEAKER_ARRAY);
-        optSpeaker.ifPresent(jsonNodes -> jsonNodes.objectStream().forEach(jsp -> speakers.add(Speaker.fromJson(getId(), jsp))));
+        //optSpeaker.ifPresent(jsonNodes -> jsonNodes.objectStream().forEach(jsp -> speakers.add(Speaker.fromJson(getId(), jsp))));
+        optSpeaker.ifPresent(this::updateSpeakers);
 
+    }
+
+    private void updateSpeakers(JsonArray updatedSpeakersJson) {
+        List<Speaker> updatedSpeakers = new ArrayList<>();
+
+        for (Speaker exisisting : this.speakers) {
+            Optional<JsonObject> updateOnSpeaker = updatedSpeakersJson.objectStream()
+                    .filter(ob -> ob.objectValue("id").orElse(JsonFactory.jsonObject()).stringValue("value").equals(Optional.of(exisisting.getId())))
+                    .findAny();
+            updateOnSpeaker.map(exisisting::update).ifPresent(updatedSpeakers::add);
+        }
+
+        updatedSpeakersJson.objectStream()
+                .filter(ob -> speakerExists(updatedSpeakers, ob))
+                .forEach(ob -> updatedSpeakers.add(Speaker.fromJson(getId(),ob)));
+
+
+        this.speakers = updatedSpeakers;
+    }
+
+    private boolean speakerExists(List<Speaker> updatedSpeakers, JsonObject ob) {
+        Optional<String> id = ob.objectValue("id").map(vo -> vo.stringValue("value").orElse(null));
+        return !updatedSpeakers.stream().filter(speak -> Optional.of(speak.getId()).equals(id)).findAny().isPresent();
     }
 
     public List<Speaker> getSpeakers() {

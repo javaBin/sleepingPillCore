@@ -17,7 +17,7 @@ import java.util.*;
 public class CreateNewSession implements HasDataInput {
     private Optional<String> sessionId = Optional.empty();
     private String conferenceId;
-    private List<NewSpeaker> speakers = new ArrayList<>();
+    private List<SpeakerData> speakers = new ArrayList<>();
     private Map<String, DataField> data = new HashMap<>();
     private Optional<String> postedByMail = Optional.empty();
     private Optional<SessionStatus> sessionStatus = Optional.empty();
@@ -32,7 +32,7 @@ public class CreateNewSession implements HasDataInput {
         return this;
     }
 
-    public CreateNewSession addSpeaker(NewSpeaker speaker) {
+    public CreateNewSession addSpeaker(SpeakerData speaker) {
         speakers.add(speaker);
         return this;
     }
@@ -47,7 +47,7 @@ public class CreateNewSession implements HasDataInput {
         JsonObject dataObj = JsonFactory.jsonObject();
         dataObj.put("conferenceId", conferenceId);
         dataObj.put(SessionVariables.SESSION_ID, sessionId.get());
-        dataObj.put(SessionVariables.SPEAKER_ARRAY, JsonArray.fromNodeStream(speakers.stream().map(NewSpeaker::asNewEvent)));
+        dataObj.put(SessionVariables.SPEAKER_ARRAY, JsonArray.fromNodeStream(speakers.stream().map(SpeakerData::eventData)));
         dataObj.put(SessionVariables.DATA_OBJECT, JsonGenerator.generate(data));
         postedByMail.ifPresent(s -> dataObj.put(SessionVariables.POSTED_BY_MAIL, s));
         sessionStatus.ifPresent(status -> dataObj.put(SessionVariables.SESSION_STATUS,status.toString()));

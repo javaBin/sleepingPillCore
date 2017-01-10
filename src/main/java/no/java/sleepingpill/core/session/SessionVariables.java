@@ -9,6 +9,8 @@ public class SessionVariables {
     public static final String SESSION_STATUS = "status";
     public static final String SESSION_ID = "sessionId";
     public static final String CONFERENCE_ID = "conferenceId";
+    public static final String SPEAKER_NAME = "name";
+    public static final String SPEAKER_EMAIL = "email";
 
     private SessionVariables() {
         throw new IllegalAccessError("No instance allowed");

@@ -4,7 +4,7 @@ import no.java.sleepingpill.core.ServiceLocator;
 import no.java.sleepingpill.core.ServiceResult;
 import no.java.sleepingpill.core.commands.CreateNewSession;
 import no.java.sleepingpill.core.commands.HasDataInput;
-import no.java.sleepingpill.core.commands.NewSpeaker;
+import no.java.sleepingpill.core.commands.SpeakerData;
 import no.java.sleepingpill.core.commands.UpdateSession;
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventHandler;
@@ -13,7 +13,6 @@ import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonNode;
 import org.jsonbuddy.JsonNull;
 import org.jsonbuddy.JsonObject;
-import org.jsonbuddy.pojo.JsonGenerator;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -42,11 +41,11 @@ public class SessionService {
                 .map(SessionStatus::valueOf));
 
         speakers.objects(speakobj -> {
-            NewSpeaker newSpeaker = new NewSpeaker();
-            newSpeaker.setName(speakobj.stringValue("name"));
-            newSpeaker.setEmail(speakobj.stringValue("email"));
-            addData(speakobj.objectValue(SessionVariables.DATA_OBJECT).orElse(JsonFactory.jsonObject()), newSpeaker);
-            return newSpeaker;
+            SpeakerData speakerData = new SpeakerData();
+            speakerData.setName(speakobj.stringValue("name"));
+            speakerData.setEmail(speakobj.stringValue("email"));
+            addData(speakobj.objectValue(SessionVariables.DATA_OBJECT).orElse(JsonFactory.jsonObject()), speakerData);
+            return speakerData;
         }).forEach(createNewSession::addSpeaker);
 
 
@@ -79,13 +78,9 @@ public class SessionService {
         if (!session.isPresent()) {
             return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown sessionid " + sessionId);
         }
-        JsonObject talkData = payload.objectValue(SessionVariables.DATA_OBJECT).orElse(JsonFactory.jsonObject());
 
-        UpdateSession updateSession = new UpdateSession(sessionId, session.get().getConferenceId());
-        addData(talkData, updateSession);
-        payload.stringValue(SessionVariables.SESSION_STATUS)
-                .map(SessionStatus::valueOf)
-                .ifPresent(updateSession::setSessionStatus);
+        UpdateSession updateSession = UpdateSession.fromInputJson(payload,session.get());
+
 
         Event event = updateSession.createEvent();
         EventHandler.instance().addEvent(event);

@@ -26,12 +26,12 @@ public class CreateNewSessionTest {
     @Test
     public void shouldCreateASession() throws Exception {
         CreateNewSession newSession = new CreateNewSession().setConferenceId("eventx");
-        NewSpeaker newSpeaker = new NewSpeaker();
-        newSpeaker.setEmail("darth@deathstar.com");
-        newSpeaker.setName("Darth Vader");
-        newSpeaker.addData("bio",DataField.simplePublicStringValue("Here is my bio"));
+        SpeakerData speakerData = new SpeakerData();
+        speakerData.setEmail("darth@deathstar.com");
+        speakerData.setName("Darth Vader");
+        speakerData.addData("bio",DataField.simplePublicStringValue("Here is my bio"));
 
-        newSession.addSpeaker(newSpeaker);
+        newSession.addSpeaker(speakerData);
         newSession.addData("title", DataField.simplePublicStringValue("How to choke"));
 
         Event event = newSession.createEvent();
@@ -61,11 +61,11 @@ public class CreateNewSessionTest {
     @Test
     public void shouldCreateAndUpdateASession() throws Exception {
         CreateNewSession newSession = new CreateNewSession().setConferenceId("eventx");
-        NewSpeaker newSpeaker = new NewSpeaker();
-        newSpeaker.setEmail("darth@deathstar.com");
-        newSpeaker.setName("Darth Vader");
+        SpeakerData speakerData = new SpeakerData();
+        speakerData.setEmail("darth@deathstar.com");
+        speakerData.setName("Darth Vader");
 
-        newSession.addSpeaker(newSpeaker);
+        newSession.addSpeaker(speakerData);
         newSession.addData("title", DataField.simplePublicStringValue("How to choke"));
         newSession.addData("description", DataField.simplePublicStringValue("Initial description"));
 
@@ -96,11 +96,11 @@ public class CreateNewSessionTest {
     @Test
     public void shouldCreateHistoricSession() throws Exception {
         CreateNewSession newSession = new CreateNewSession().setConferenceId("eventx");
-        NewSpeaker newSpeaker = new NewSpeaker();
-        newSpeaker.setEmail("darth@deathstar.com");
-        newSpeaker.setName("Darth Vader");
+        SpeakerData speakerData = new SpeakerData();
+        speakerData.setEmail("darth@deathstar.com");
+        speakerData.setName("Darth Vader");
 
-        newSession.addSpeaker(newSpeaker);
+        newSession.addSpeaker(speakerData);
         newSession.addData("title", DataField.simplePublicStringValue("How to choke"));
         newSession.addData("description", DataField.simplePublicStringValue("Initial description"));
         newSession.setSessionStatus(Optional.of(SessionStatus.HISTORIC));

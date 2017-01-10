@@ -1,10 +1,9 @@
 package no.java.sleepingpill.core.session;
 
-import org.jsonbuddy.JsonFactory;
-import org.jsonbuddy.JsonNode;
-import org.jsonbuddy.JsonObject;
-import org.jsonbuddy.JsonString;
+import org.jsonbuddy.*;
 import org.jsonbuddy.pojo.OverridesJsonGenerator;
+
+import java.util.Objects;
 
 public class DataField implements OverridesJsonGenerator {
     private final JsonNode value;
@@ -13,6 +12,12 @@ public class DataField implements OverridesJsonGenerator {
     public DataField(JsonNode value, boolean privateData) {
         this.value = value;
         this.privateData = privateData;
+    }
+
+    public static DataField fromJson(JsonObject jsonObject) {
+        JsonNode value = jsonObject.value("value").orElseThrow(() -> new JsonValueNotPresentException("DataField missing key value"));
+        boolean privateData = jsonObject.requiredBoolean("privateData");
+        return new DataField(value, privateData);
     }
 
     public static DataField simplePublicStringValue(String value) {
@@ -39,5 +44,27 @@ public class DataField implements OverridesJsonGenerator {
         return JsonFactory.jsonObject()
                 .put("value",value.deepClone())
                 .put("privateData",privateData);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DataField)) return false;
+        DataField dataField = (DataField) o;
+        return privateData == dataField.privateData &&
+                Objects.equals(value, dataField.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, privateData);
+    }
+
+    @Override
+    public String toString() {
+        return "DataField{" +
+                "value=" + value +
+                ", privateData=" + privateData +
+                '}';
     }
 }

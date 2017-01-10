@@ -1,14 +1,43 @@
-#/bin/bash
+#!/usr/bin/env bash
 
-GREEN='\033[0;32m'
-NC='\033[0m' # No Color
 
-echo -e "${GREEN}Fetching your active Elastic Beanstalk environments...${NC}"
-eb list --profile javabin
-echo ""
-echo -e "${GREEN}Type name of the environment you want to deploy to:${NC}"
-echo -e "${GREEN}(just press enter if you want to deploy to the one with a star in front of it)${NC}"
-read ENVIRONMENT
-echo -e "${GREEN}Deploying backend to AWS $ENVIRONMENT${NC}"
+BASEDIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 
-eb deploy "$ENVIRONMENT"  --profile javabin
+# resolve symlinks
+while [ -h "$BASEDIR/$0" ]; do
+    DIR=$(dirname -- "$BASEDIR/$0")
+    SYM=$(readlink $BASEDIR/$0)
+    BASEDIR=$(cd $DIR && cd $(dirname -- "$SYM") && pwd)
+done
+cd ${BASEDIR}
+
+ENVS=$(eb list --profile javabin | sed 's/^\* //')
+
+if [[ ${1} != sleepingPillCore-* ]]; then
+  echo "Usage: ${0} sleepingPillCore-<environment>"
+  echo
+  echo "Available environments:"
+  echo "$ENVS"
+  exit 1
+elif [ $(echo "$ENVS" | grep "^$1$" -c) -eq 0 ]; then
+  echo "Environment not recognized: '$1'. Use one of the following:"
+  echo
+  echo "$ENVS"
+  exit 1
+fi
+
+BEANSTALK_ENV=$1
+ENV="$(echo $BEANSTALK_ENV | cut -d '-' -f 2)"
+
+echo "> preparing secret properties"
+
+ansible-vault view "config/$ENV.properties.encrypted" >> "config.properties"
+
+git add "config.properties"
+
+echo "> Starting deploy"
+eb deploy "$BEANSTALK_ENV" --staged --profile javabin
+
+git rm -f "config.properties"
+
+echo "Deploy complete."

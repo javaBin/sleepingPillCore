@@ -330,7 +330,7 @@ public class EmsImporter {
         EmsImportConfig.setConfigFileName(args[0]);
         EmsImporter emsImporter = new EmsImporter(EmsImportConfig.outputFilePath());
         List<EmsConference> emsConferences = emsImporter.readAndCreateConferences();
-        emsConferences.forEach(emsImporter::readEmsAndSubmit);
+        emsConferences.parallelStream().forEach(emsImporter::readEmsAndSubmit);
         //emsImporter.readEmsData("http://javazone.no/ems/server/events/3baa25d3-9cca-459a-90d7-9fc349209289/sessions");
         //emsImporter.readEmsFromFile("all.json");
     }

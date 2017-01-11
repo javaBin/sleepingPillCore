@@ -10,10 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class DBEventReader {
     private static Logger logger = org.slf4j.LoggerFactory.getLogger(DBEventReader.class);
@@ -30,6 +27,7 @@ public class DBEventReader {
             while (resultSet.next()) {
                 result.add(createEvent(resultSet));
             }
+            result.sort(Comparator.comparingLong(ev -> ev.index));
             logger.info(String.format("Loaded %d events from db",result.size()));
             return result;
         } catch (SQLException e) {

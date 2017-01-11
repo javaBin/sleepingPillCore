@@ -74,12 +74,27 @@ public class ExampleClient {
         }
     }
 
-    public void updateSession(String sessionId) throws Exception {
+    public void updateSession(String sessionId,String speakerid) throws Exception {
+        JsonObject luke = JsonFactory.jsonObject()
+                .put("name","Luke Skywalker")
+                .put("email","luke@deathstar.com")
+                .put("data",JsonFactory.jsonObject().put("bio",JsonFactory.jsonObject().put("value","My bio luke").put("privateData",false)));
+
+        JsonObject darthUpdate = JsonFactory.jsonObject()
+                .put("id", speakerid)
+                .put("data",JsonFactory.jsonObject()
+                        .put("postcode", JsonFactory.jsonObject().put("value","1098").put("privateData",true))
+                        .put("bio", JsonFactory.jsonObject().put("value","Darth updated bio gosh").put("privateData",false))
+                );
+        JsonArray speakers = JsonFactory.jsonArray()
+                .add(darthUpdate)
+                .add(luke);
         JsonObject input = jsonObject()
                 .put("data", jsonObject()
                         .put("title", jsonObject().put("value", "Changed title").put("privateData", false))
                         .put("outline", jsonObject().put("value", "Here is my outline").put("privateData", true))
-                );
+                )
+                .put("speakers",speakers);
         HttpURLConnection conn = (HttpURLConnection) new URL(SERVER_ADDRESS + "/session/" + sessionId).openConnection();
         conn.setRequestMethod("PUT");
         conn.setDoOutput(true);
@@ -106,8 +121,11 @@ public class ExampleClient {
         ExampleClient exampleClient = new ExampleClient();
         String conferenceId = exampleClient.addNewConference();
         String newSessionId = exampleClient.addNewSession(conferenceId);
-        exampleClient.updateSession(newSessionId);
         JsonObject session = exampleClient.readSession(newSessionId);
+        String speakerid = session.requiredArray("speakers").get(0,JsonObject.class).requiredString("id");
+
+        exampleClient.updateSession(newSessionId,speakerid);
+        session = exampleClient.readSession(newSessionId);
         System.out.println("Current session data:");
         System.out.println(session);
     }

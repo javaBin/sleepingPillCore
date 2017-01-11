@@ -56,7 +56,7 @@ public class ExampleClient {
                 .put("data",JsonFactory.jsonObject().put("bio",JsonFactory.jsonObject().put("value","My bio").put("privateData",false)));
         JsonObject input = jsonObject()
                 .put("data", jsonObject()
-                        .put("title", jsonObject().put("value", "My title").put("privateData", false)))
+                        .put("title", jsonObject().put("value", "My title is blåbærsyltetøy").put("privateData", false)))
                 .put("speakers",JsonFactory.jsonArray().add(speakerObj));
 
         System.out.println("Posting: " + input);

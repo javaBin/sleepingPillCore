@@ -76,7 +76,7 @@ public class EmsImporter {
                 new EmsMapping("published","published",false),
                 new EmsMapping("audience","intendedAudience",false),
                 new EmsMapping("slug","slug",false),
-                new EmsMapping("equipment","equiplment",true),
+                new EmsMapping("equipment","equipment",true),
                 new EmsMapping("title","title",false),
                 new EmsMapping("keywords","keywords",false),
                 new EmsMapping("tags","tags",true),
@@ -343,8 +343,6 @@ public class EmsImporter {
         }
         List<EmsConference> emsConferences = emsImporter.readAndCreateConferences();
         emsConferences.parallelStream().forEach(emsImporter::readEmsAndSubmit);
-        //emsImporter.readEmsData("http://javazone.no/ems/server/events/3baa25d3-9cca-459a-90d7-9fc349209289/sessions");
-        //emsImporter.readEmsFromFile("all.json");
     }
 
 }

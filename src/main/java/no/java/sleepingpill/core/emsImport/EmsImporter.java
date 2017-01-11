@@ -1,6 +1,5 @@
 package no.java.sleepingpill.core.emsImport;
 
-import no.java.sleepingpill.core.Configuration;
 import no.java.sleepingpill.core.session.DataField;
 import no.java.sleepingpill.core.session.SessionStatus;
 import no.java.sleepingpill.core.session.SessionVariables;
@@ -321,6 +320,15 @@ public class EmsImporter {
                 });
     }
 
+    public boolean isSleepingPillEmpty() throws Exception {
+        URL url = new URL(EmsImportConfig.serverAddress() + "/conference");
+        try (InputStream inputStream = url.openConnection().getInputStream()) {
+            JsonObject jsonObject = JsonParser.parseToObject(inputStream);
+            JsonArray conferences = jsonObject.requiredArray("conferences");
+            return conferences.isEmpty();
+        }
+    }
+
 
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
@@ -329,6 +337,10 @@ public class EmsImporter {
         }
         EmsImportConfig.setConfigFileName(args[0]);
         EmsImporter emsImporter = new EmsImporter(EmsImportConfig.outputFilePath());
+        if (!emsImporter.isSleepingPillEmpty()) {
+            System.out.println("SleepingPill is not empty. Aborting import");
+            return;
+        }
         List<EmsConference> emsConferences = emsImporter.readAndCreateConferences();
         emsConferences.parallelStream().forEach(emsImporter::readEmsAndSubmit);
         //emsImporter.readEmsData("http://javazone.no/ems/server/events/3baa25d3-9cca-459a-90d7-9fc349209289/sessions");

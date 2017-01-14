@@ -28,29 +28,8 @@ public class EmsImporter {
         FILEPATH = filepath;
     }
 
-    public void readEmsData(String arrangedEventUrl) {
-        //readFromEms(arrangedEventUrl);
-        JsonObject all = readFile("all.json");
-        //printToFile(all, "all.json");
-        JsonArray allSessions = all.requiredObject("collection").requiredArray("items");
-        allSessions.objectStream().forEach(ob -> {
-            ob.requiredArray("links").objectStream()
-                .filter(liob -> "speaker item".equals(liob.requiredString("rel")))
-                .forEach(liob -> {
-                    String addr = liob.requiredString("href");
-                    String id = addr.substring(addr.lastIndexOf("/") +1);
-                    String filename = id + ".json";
-                    if (new File(FILEPATH + filename).exists()) {
-                        return;
-                    }
-
-                    JsonObject jsonObject = readFromEms(addr,true);
-                    printToFile(jsonObject, filename);
-                });
-        });
 
 
-    }
 
     private static class EmsMapping {
         public final String emsname;
@@ -84,31 +63,6 @@ public class EmsImporter {
 
                 )
               .collect(Collectors.toMap(m->m.emsname,m->m));
-    }
-
-    public void readEmsFromFile(String filnavn) {
-        JsonObject all = readFile(filnavn);
-        all.requiredObject("collection").requiredArray("items").objectStream()
-                .map(this::dataForSession)
-                .forEach(dataobj -> {
-                    JsonObject input = jsonObject()
-                            .put("data", dataobj);
-                    URLConnection conn = openConnection(SUBMIT_LOC, false);
-                    conn.setDoOutput(true);
-                    try {
-                        try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(),"utf-8"))) {
-                            input.toJson(printWriter);
-                        }
-                        try (InputStream is = conn.getInputStream()) {
-                            JsonObject parse = JsonParser.parseToObject(is);
-                            System.out.println("result from add session:");
-                            System.out.println(parse);
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                });
     }
 
 
@@ -247,7 +201,7 @@ public class EmsImporter {
 
             JsonObject payload = DataObjects.newConferenceObj(name, slug, Optional.of(id));
 
-            postData("/conference",payload);
+            postData(EmsImportConfig.serverAddress() + "/conference",payload);
 
             String sessionCollection = conferenceObj.requiredArray("links").objectStream()
                     .filter(ob -> ob.requiredString("rel").equals("session collection"))
@@ -260,16 +214,19 @@ public class EmsImporter {
         return result;
     }
 
-    private void postData(String path,JsonObject payload) {
+    private JsonObject postData(String path,JsonObject payload) {
         try {
-            HttpURLConnection conn = (HttpURLConnection) new URL(EmsImportConfig.serverAddress() + path).openConnection();
+            HttpURLConnection conn = (HttpURLConnection) new URL(path).openConnection();
             conn.setRequestMethod("POST");
+            conn.setRequestProperty("Accept-Charset", "UTF-8");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("charset", "UTF-8");
             conn.setDoOutput(true);
             try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(),"utf-8"))) {
                 payload.toJson(printWriter);
             }
             try (InputStream is = conn.getInputStream()) {
-                JsonParser.parse(is);
+                return JsonParser.parseToObject(is);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -302,21 +259,10 @@ public class EmsImporter {
                         return;
                     }
                     JsonObject input = dataForSession(emsses);
-                    URLConnection conn = openConnection(addTalkLoc, false);
-                    conn.setDoOutput(true);
-                    try {
-                        try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(),"utf-8"))) {
-                            input.toJson(printWriter);
-                        }
-                        try (InputStream is = conn.getInputStream()) {
-                            JsonObject parse = JsonParser.parseToObject(is);
-                            System.out.println("result from add session:");
-                            System.out.println(parse);
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
 
+                    JsonObject parse = postData(addTalkLoc, input);
+                    System.out.println("result from add session:");
+                    System.out.println(parse);
                 });
     }
 
@@ -344,5 +290,7 @@ public class EmsImporter {
         List<EmsConference> emsConferences = emsImporter.readAndCreateConferences();
         emsConferences.parallelStream().forEach(emsImporter::readEmsAndSubmit);
     }
+
+
 
 }

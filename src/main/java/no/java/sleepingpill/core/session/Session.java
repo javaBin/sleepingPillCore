@@ -101,4 +101,17 @@ public class Session extends DataObject {
                 .anyMatch(sp -> email.equalsIgnoreCase(sp.getEmail()));
         return match;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Session session = (Session) o;
+        return Objects.equals(getId(), session.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }

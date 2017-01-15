@@ -2,10 +2,7 @@ package no.java.sleepingpill.core.session;
 
 import no.java.sleepingpill.core.ServiceLocator;
 import no.java.sleepingpill.core.ServiceResult;
-import no.java.sleepingpill.core.commands.CreateNewSession;
-import no.java.sleepingpill.core.commands.HasDataInput;
-import no.java.sleepingpill.core.commands.SpeakerData;
-import no.java.sleepingpill.core.commands.UpdateSession;
+import no.java.sleepingpill.core.commands.*;
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventHandler;
 import org.jsonbuddy.JsonArray;
@@ -104,4 +101,16 @@ public class SessionService {
         return ServiceResult.ok(result);
     }
 
+    public ServiceResult deleteSession(String sessionId) {
+        Optional<Session> session = SessionHolder.instance().sessionFromId(sessionId);
+        if (!session.isPresent()) {
+            return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown sessionid " + sessionId);
+        }
+
+        DeleteSession deleteSession = new DeleteSession(session.get().getConferenceId(), sessionId);
+        Event event = deleteSession.createEvent();
+        EventHandler.instance().addEvent(event);
+
+        return ServiceResult.ok(JsonFactory.jsonObject().put(SessionVariables.SESSION_ID,sessionId));
+    }
 }

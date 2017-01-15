@@ -9,10 +9,7 @@ import spark.Request;
 import spark.Response;
 
 import static no.java.sleepingpill.core.util.JsonUtil.jsonBuddyString;
-import static spark.Spark.after;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.put;
+import static spark.Spark.*;
 
 public class SessionController {
     private SessionService sessionService;
@@ -36,6 +33,10 @@ public class SessionController {
         post(HttpPaths.SESSION_POST_ADD_NEW, this::postAddSession, jsonBuddyString());
 
         put(HttpPaths.SESSION_PUT_UPDATE, this::putUpdateSession, jsonBuddyString());
+
+        delete(HttpPaths.SESSION_DELETE,this::deleteSesssion,jsonBuddyString());
+
+
 
         after((req, res) -> {
             res.type("application/json");
@@ -69,6 +70,11 @@ public class SessionController {
         String id = req.params(":id");
         JsonObject payload = JsonParser.parseToObject(req.body());
         return sessionService.updateSession(id, payload);
+    }
+
+    public ServiceResult deleteSesssion(Request req, Response res) {
+        String id = req.params(":id");
+        return sessionService.deleteSession(id);
     }
 
 }

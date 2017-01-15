@@ -4,5 +4,6 @@ public enum EventType {
     NEW_SESSION,
     UPDATE_SESSION,
     EMAIL_CONFIRMED,
-    NEW_CONFERENCE
+    NEW_CONFERENCE,
+    DELETE_SESSION
 }

@@ -37,6 +37,8 @@ public class SessionSubmissionTest extends CleanSetupTest {
         assertValueContent(session,"title","My title",false);
     }
 
+
+
     @Test
     public void shouldCreateSessionWithStatus() throws Exception {
         String conferenceid = createNewConferenceGetId();
@@ -149,5 +151,29 @@ public class SessionSubmissionTest extends CleanSetupTest {
 
         JsonObject result = serviceResult.getResult().get();
         return result.requiredString("id");
+    }
+
+    @Test
+    public void shouldDeleteSession() throws Exception {
+        String conferenceid = createNewConferenceGetId();
+        String sessionId = addNewSessionGetId(conferenceid);
+
+        Request req = mock(Request.class);
+        Response resp = mock(Response.class);
+        when(req.params(":id")).thenReturn(sessionId);
+
+        SessionController sessionController = new SessionController();
+        sessionController.deleteSesssion(req,resp);
+
+
+        req = mock(Request.class);
+        resp = mock(Response.class);
+        when(req.queryParams("conferenceId")).thenReturn(conferenceid);
+
+        ServiceResult allSessionsForConference = sessionController.getAllSessionsForConference(req, resp);
+
+        assertThat(allSessionsForConference.getResult().get().requiredArray("sessions")).isEmpty();
+
+
     }
 }

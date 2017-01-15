@@ -2,6 +2,7 @@ package no.java.sleepingpill.core.session;
 
 
 import no.java.sleepingpill.core.commands.CreateNewSession;
+import no.java.sleepingpill.core.commands.DeleteSession;
 import no.java.sleepingpill.core.commands.SpeakerData;
 import no.java.sleepingpill.core.commands.UpdateSession;
 import no.java.sleepingpill.core.event.Event;
@@ -160,4 +161,20 @@ public class SessionHolderTest {
 
     }
 
+    @Test
+    public void shouldDeleteSession() throws Exception {
+        CreateNewSession sessionOne = new CreateNewSession()
+                .setConferenceId(CONFERENCE_ID)
+                .addData("title", DataField.simplePublicStringValue("SessionOne"));
+
+        sessionHolder.eventAdded(sessionOne.createEvent());
+
+        DeleteSession deleteSession = new DeleteSession(CONFERENCE_ID,sessionOne.getSessionId());
+
+        sessionHolder.eventAdded(deleteSession.createEvent());
+
+        assertThat(sessionHolder.allSessions()).isEmpty();
+
+
+    }
 }

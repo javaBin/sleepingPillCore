@@ -3,6 +3,7 @@ package no.java.sleepingpill.core;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class Configuration {
     public static final String CONFIG_FILE_PROPERTY = "sleepingpillconfigfile";
@@ -60,6 +61,11 @@ public class Configuration {
             }
             return result.toString();
         }
+    }
+
+    private static String readValue(String key, String defaultValue) {
+        String val = instance().values.get(key);
+        return val != null ? val : defaultValue;
     }
 
     public static int serverPort() {
@@ -120,12 +126,10 @@ public class Configuration {
         return readValue("logfilePattern", null);
     }
 
-    private static String readValue(String key, String defaultValue) {
-        String val = instance().values.get(key);
-        return val != null ? val : defaultValue;
+
+
+
+    public static Optional<String> basicAuthLogins() {
+        return Optional.ofNullable(readValue("basicAuthLogins",null));
     }
-
-
-
-
 }

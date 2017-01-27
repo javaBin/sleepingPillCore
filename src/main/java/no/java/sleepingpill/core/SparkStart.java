@@ -40,6 +40,7 @@ public class SparkStart {
         new SubmitterController().initSpark();
         new ConferenceController().initSpark();
         new SessionController().initSpark();
+        new AttachmentController().initSpark();
         new ExceptionHandler().initSparkExceptionHandling();
         new BasicAuthController().initSpark();
     }

@@ -11,6 +11,8 @@ public class HttpPaths {
     public static final String SESSION_DELETE = "/data/session/:id";
     public static final String SUBMITTER_POST_ADD_NEW = "/data/submitter";
     public static final String SUBMITTER_GET_ALL_SESSIONS = "/data/submitter/:email/session";
+    public static final String ATTACHMENT_POST_ADD = "/data/attachment";
+    public static final String ATTACHMENT_GET_SINGLE = "/data/attachment/:id";
 
 
     private HttpPaths() {

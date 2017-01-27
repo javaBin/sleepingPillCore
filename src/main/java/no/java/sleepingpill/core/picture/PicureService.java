@@ -6,6 +6,7 @@ import no.java.sleepingpill.core.database.Postgres;
 import no.java.sleepingpill.core.util.IdGenerator;
 import org.jsonbuddy.JsonFactory;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,11 +27,13 @@ public class PicureService {
     private static String FETCH_SQL = "select content,contenttype from  PICTURE where id = ?";
 
     public ServiceResult addPicture(Picture picture) {
+        if (picture.content.length > Configuration.maxPictureSize()) {
+            return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST,String.format("To large picture. Max picture size is (%d bytes), was size %d bytes",Configuration.maxPictureSize(),picture.content.length));
+        }
         String id = IdGenerator.newId();
         if (!Configuration.persistToDb()) {
             dummyStore.put(id,picture);
             return ServiceResult.ok(JsonFactory.jsonObject().put("id",id));
-
         }
         try (Connection connection = Postgres.openConnection(); PreparedStatement statement = connection.prepareStatement(INSERT_SQL)) {
             statement.setString(1,id);

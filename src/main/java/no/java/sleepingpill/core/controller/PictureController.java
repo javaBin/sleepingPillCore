@@ -23,12 +23,12 @@ public class PictureController {
         get(HttpPaths.PICTURE_GET_SINGLE,this::readPicture);
     }
 
-    private ServiceResult readPicture(Request request, Response response) {
+    private Void readPicture(Request request, Response response) {
         String id = request.params(":id");
         Optional<Picture> pictureOpt = PicureService.get().getPicture(id);
 
         if (!pictureOpt.isPresent()) {
-            throw new ServiceResultException(ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST,"Unknown picture id " + id));
+            throw new ServiceResultException(ServiceResult.sendError(HttpServletResponse.SC_NOT_FOUND,"Unknown picture id " + id));
         }
 
         HttpServletResponse resp = response.raw();

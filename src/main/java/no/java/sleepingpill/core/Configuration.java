@@ -127,6 +127,10 @@ public class Configuration {
     }
 
 
+    public static int maxPictureSize() {
+        return Integer.parseInt(readValue("maxPictureSize","500000"));
+    }
+
 
 
     public static Optional<String> basicAuthLogins() {

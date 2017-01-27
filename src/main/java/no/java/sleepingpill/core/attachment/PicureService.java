@@ -3,22 +3,19 @@ package no.java.sleepingpill.core.attachment;
 import no.java.sleepingpill.core.Configuration;
 import no.java.sleepingpill.core.ServiceResult;
 import no.java.sleepingpill.core.database.Postgres;
-import no.java.sleepingpill.core.exceptions.InternalError;
 import no.java.sleepingpill.core.util.IdGenerator;
 import org.jsonbuddy.JsonFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class AttachmentService {
-    public static AttachmentService get() {
-        return new AttachmentService();
+public class PicureService {
+    public static PicureService get() {
+        return new PicureService();
     }
 
 

@@ -1,11 +1,9 @@
 package no.java.sleepingpill.core.controller;
 
 import no.java.sleepingpill.core.ServiceResult;
-import no.java.sleepingpill.core.attachment.AttachmentService;
-import no.java.sleepingpill.core.util.JsonUtil;
+import no.java.sleepingpill.core.attachment.PicureService;
 import spark.Request;
 import spark.Response;
-import spark.Spark;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -16,16 +14,16 @@ import static no.java.sleepingpill.core.util.JsonUtil.jsonBuddyString;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-public class AttachmentController {
+public class PictureController {
     public void initSpark() {
 
-        post(HttpPaths.ATTACHMENT_POST_ADD,this::addAttachment, jsonBuddyString());
-        get(HttpPaths.ATTACHMENT_GET_SINGLE,this::readAttachement);
+        post(HttpPaths.PICTURE_POST_ADD,this::addAttachment, jsonBuddyString());
+        get(HttpPaths.PICTURE_GET_SINGLE,this::readAttachement);
     }
 
     private ServiceResult readAttachement(Request request, Response response) {
         String id = request.params(":id");
-        Optional<byte[]> pictureOpt = AttachmentService.get().getPicture(id);
+        Optional<byte[]> pictureOpt = PicureService.get().getPicture(id);
         HttpServletResponse resp = response.raw();
 
         byte[] picture = pictureOpt.get();
@@ -42,7 +40,7 @@ public class AttachmentController {
 
     private ServiceResult addAttachment(Request request, Response response) {
         byte[] bytes = request.bodyAsBytes();
-        return AttachmentService.get().addPicture(bytes);
+        return PicureService.get().addPicture(bytes);
     }
 
 

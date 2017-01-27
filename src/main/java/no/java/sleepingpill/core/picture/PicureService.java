@@ -8,6 +8,7 @@ import org.jsonbuddy.JsonFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,6 +23,7 @@ public class PicureService {
     private static final ConcurrentMap<String,Picture> dummyStore = new ConcurrentHashMap<>();
 
     private static String INSERT_SQL = "insert into PICTURE(id,content,contenttype) values (?,?,?)";
+    private static String FETCH_SQL = "select content,contenttype from  PICTURE where id = ?";
 
     public ServiceResult addPicture(Picture picture) {
         String id = IdGenerator.newId();
@@ -43,7 +45,24 @@ public class PicureService {
     }
 
     public Optional<Picture> getPicture(String id) {
-        return Optional.ofNullable(dummyStore.get(id));
+        if (!Configuration.persistToDb()) {
+            return Optional.ofNullable(dummyStore.get(id));
+        }
+        try (Connection connection = Postgres.openConnection(); PreparedStatement statement = connection.prepareStatement(FETCH_SQL)) {
+            statement.setString(1,id);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (!rs.next()) {
+                    return Optional.empty();
+                }
+                byte[] content = rs.getBytes(1);
+                String contenttype = rs.getString(2);
+                return Optional.of(new Picture(content,contenttype));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
 
     }
 }

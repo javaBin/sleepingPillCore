@@ -1,7 +1,8 @@
 package no.java.sleepingpill.core.controller;
 
 import no.java.sleepingpill.core.ServiceResult;
-import no.java.sleepingpill.core.attachment.PicureService;
+import no.java.sleepingpill.core.picture.Picture;
+import no.java.sleepingpill.core.picture.PicureService;
 import spark.Request;
 import spark.Response;
 
@@ -23,14 +24,14 @@ public class PictureController {
 
     private ServiceResult readAttachement(Request request, Response response) {
         String id = request.params(":id");
-        Optional<byte[]> pictureOpt = PicureService.get().getPicture(id);
+        Optional<Picture> pictureOpt = PicureService.get().getPicture(id);
         HttpServletResponse resp = response.raw();
 
-        byte[] picture = pictureOpt.get();
-        resp.setContentType("image/jpeg");
-        resp.setContentLength(picture.length);
+        Picture picture = pictureOpt.get();
+        resp.setContentType(picture.contenttype);
+        resp.setContentLength(picture.content.length);
         try (OutputStream os = resp.getOutputStream()){
-             os.write(picture);
+             os.write(picture.content);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -40,7 +41,8 @@ public class PictureController {
 
     private ServiceResult addAttachment(Request request, Response response) {
         byte[] bytes = request.bodyAsBytes();
-        return PicureService.get().addPicture(bytes);
+        String contentType = Optional.ofNullable(request.contentType()).orElse("image/jpeg");
+        return PicureService.get().addPicture(new Picture(bytes,contentType));
     }
 
 

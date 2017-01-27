@@ -1,4 +1,4 @@
-package no.java.sleepingpill.core.attachment;
+package no.java.sleepingpill.core.picture;
 
 import no.java.sleepingpill.core.Configuration;
 import no.java.sleepingpill.core.ServiceResult;
@@ -19,20 +19,21 @@ public class PicureService {
     }
 
 
-    private static final ConcurrentMap<String,byte[]> dummyStore = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String,Picture> dummyStore = new ConcurrentHashMap<>();
 
-    private static String INSERT_SQL = "insert into ATTACHMENT(id,content) values (?,?)";
+    private static String INSERT_SQL = "insert into PICTURE(id,content,contenttype) values (?,?,?)";
 
-    public ServiceResult addPicture(byte[] content) {
+    public ServiceResult addPicture(Picture picture) {
         String id = IdGenerator.newId();
         if (!Configuration.persistToDb()) {
-            dummyStore.put(id,content);
+            dummyStore.put(id,picture);
             return ServiceResult.ok(JsonFactory.jsonObject().put("id",id));
 
         }
         try (Connection connection = Postgres.openConnection(); PreparedStatement statement = connection.prepareStatement(INSERT_SQL)) {
             statement.setString(1,id);
-            statement.setBytes(2,content);
+            statement.setBytes(2,picture.content);
+            statement.setString(3,picture.contenttype);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -41,7 +42,7 @@ public class PicureService {
 
     }
 
-    public Optional<byte[]> getPicture(String id) {
+    public Optional<Picture> getPicture(String id) {
         return Optional.ofNullable(dummyStore.get(id));
 
     }

@@ -45,6 +45,9 @@ public class PicureService {
     }
 
     public Optional<Picture> getPicture(String id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         if (!Configuration.persistToDb()) {
             return Optional.ofNullable(dummyStore.get(id));
         }

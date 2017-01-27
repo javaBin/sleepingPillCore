@@ -3,6 +3,7 @@ package no.java.sleepingpill.core.controller;
 
 import no.java.sleepingpill.core.exceptions.ErrorMessage;
 import no.java.sleepingpill.core.exceptions.PageNotFoundException;
+import no.java.sleepingpill.core.exceptions.ServiceResultException;
 import org.jsonbuddy.JsonValueNotPresentException;
 import org.jsonbuddy.parse.JsonParseException;
 import org.jsonbuddy.pojo.JsonGenerator;
@@ -29,6 +30,12 @@ public class ExceptionHandler {
         });
         delete("*", (request, response) -> {
             throw new PageNotFoundException();
+        });
+
+        exception(ServiceResultException.class,(e, request, response) -> {
+            ServiceResultException ex = (ServiceResultException) e;
+            response.status(ex.getServiceResult().getError());
+            response.body(ex.getServiceResult().getMessage());
         });
 
         exception(JsonParseException.class, (e, request, response) -> {

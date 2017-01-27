@@ -1,6 +1,7 @@
 package no.java.sleepingpill.core.controller;
 
 import no.java.sleepingpill.core.ServiceResult;
+import no.java.sleepingpill.core.exceptions.ServiceResultException;
 import no.java.sleepingpill.core.picture.Picture;
 import no.java.sleepingpill.core.picture.PicureService;
 import spark.Request;
@@ -18,15 +19,19 @@ import static spark.Spark.post;
 public class PictureController {
     public void initSpark() {
 
-        post(HttpPaths.PICTURE_POST_ADD,this::addAttachment, jsonBuddyString());
-        get(HttpPaths.PICTURE_GET_SINGLE,this::readAttachement);
+        post(HttpPaths.PICTURE_POST_ADD,this::addPicture, jsonBuddyString());
+        get(HttpPaths.PICTURE_GET_SINGLE,this::readPicture);
     }
 
-    private ServiceResult readAttachement(Request request, Response response) {
+    private ServiceResult readPicture(Request request, Response response) {
         String id = request.params(":id");
         Optional<Picture> pictureOpt = PicureService.get().getPicture(id);
-        HttpServletResponse resp = response.raw();
 
+        if (!pictureOpt.isPresent()) {
+            throw new ServiceResultException(ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST,"Unknown picture id " + id));
+        }
+
+        HttpServletResponse resp = response.raw();
         Picture picture = pictureOpt.get();
         resp.setContentType(picture.contenttype);
         resp.setContentLength(picture.content.length);
@@ -39,7 +44,7 @@ public class PictureController {
         return null;
     }
 
-    private ServiceResult addAttachment(Request request, Response response) {
+    private ServiceResult addPicture(Request request, Response response) {
         byte[] bytes = request.bodyAsBytes();
         String contentType = Optional.ofNullable(request.contentType()).orElse("image/jpeg");
         return PicureService.get().addPicture(new Picture(bytes,contentType));

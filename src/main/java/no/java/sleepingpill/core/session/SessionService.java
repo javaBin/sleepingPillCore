@@ -50,7 +50,8 @@ public class SessionService {
         Event event = createNewSession.createEvent();
         EventHandler.instance().addEvent(event);
 
-        return ServiceResult.ok(JsonFactory.jsonObject().put("id", createNewSession.getSessionId()));
+        return sessionById(createNewSession.getSessionId());
+
     }
 
     private void addData(JsonObject talkData, HasDataInput hasDataInput) {
@@ -82,7 +83,7 @@ public class SessionService {
         Event event = updateSession.createEvent();
         EventHandler.instance().addEvent(event);
 
-        return ServiceResult.ok(JsonFactory.jsonObject());
+        return sessionById(sessionId);
     }
 
 

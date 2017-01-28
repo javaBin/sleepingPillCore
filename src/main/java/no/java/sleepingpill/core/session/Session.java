@@ -35,6 +35,7 @@ public class Session extends DataObject {
 
     public JsonObject asSingleSessionJson() {
         JsonObject result = JsonFactory.jsonObject()
+                .put("id", getId())
                 .put(SessionVariables.SESSION_ID, getId())
                 .put(SessionVariables.SPEAKER_ARRAY, JsonArray.fromNodeStream(speakers.stream().map(Speaker::singleSessionData)))
                 .put(SessionVariables.DATA_OBJECT, dataAsJson())

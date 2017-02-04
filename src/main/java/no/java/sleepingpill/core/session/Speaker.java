@@ -68,4 +68,16 @@ public class Speaker extends DataObject {
         newSpeaker.addData(input);
         return newSpeaker;
     }
+
+    public JsonObject asPublicJson() {
+        JsonObject result = JsonFactory.jsonObject();
+        result.put(SessionVariables.SPEAKER_NAME,name);
+        result.put(SessionVariables.SESSION_ID,sessionId);
+
+        Map<String, DataField> data = getData();
+        for (String key : data.keySet()) {
+            data.get(key).readPublicData().ifPresent(da -> result.put(key,da));
+        }
+        return result;
+    }
 }

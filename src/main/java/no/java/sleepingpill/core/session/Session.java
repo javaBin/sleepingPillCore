@@ -2,6 +2,7 @@ package no.java.sleepingpill.core.session;
 
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
+import org.jsonbuddy.JsonNode;
 import org.jsonbuddy.JsonObject;
 
 import java.util.*;
@@ -45,6 +46,27 @@ public class Session extends DataObject {
         addedByEmail.ifPresent(mail -> result.put(SessionVariables.POSTED_BY_MAIL,mail));
         return result;
     }
+
+    public boolean isPublic() {
+        return sessionStatus == SessionStatus.APPROVED || sessionStatus == SessionStatus.HISTORIC;
+    }
+
+    public JsonObject asPublicSessionJson() {
+        if (!isPublic()) {
+            throw new RuntimeException("Tried to handle private session as public");
+        }
+        JsonObject result = JsonFactory.jsonObject();
+        result.put(SessionVariables.SESSION_ID,getId());
+        result.put(SessionVariables.CONFERENCE_ID,conferenceId);
+        Map<String, DataField> data = getData();
+        for (String key : data.keySet()) {
+            data.get(key).readPublicData().ifPresent(da -> result.put(key,da));
+        }
+        result.put(SessionVariables.SPEAKER_ARRAY,JsonArray.fromNodeStream(speakers.stream().map(Speaker::asPublicJson)));
+        return result;
+    }
+
+
 
     public SessionStatus getSessionStatus() {
         return sessionStatus;

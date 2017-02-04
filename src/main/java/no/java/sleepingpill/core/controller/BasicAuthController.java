@@ -35,7 +35,7 @@ public class BasicAuthController {
     }
 
     public void initSpark() {
-        before(this::basicAuthFilter);
+        before("/data/*",this::basicAuthFilter);
     }
 
     private void basicAuthFilter(Request request, Response response) {
@@ -44,7 +44,7 @@ public class BasicAuthController {
         }
         Optional<Credentials> credentials = credentialsWithBasicAuthentication(request);
         if (!credentials.isPresent() || !allowedLogins.contains(credentials.get())) {
-            halt(401,"Wrong basic auth");
+            halt(401,"Not authorized");
         }
 
     }

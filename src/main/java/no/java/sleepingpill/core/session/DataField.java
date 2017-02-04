@@ -4,6 +4,7 @@ import org.jsonbuddy.*;
 import org.jsonbuddy.pojo.OverridesJsonGenerator;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class DataField implements OverridesJsonGenerator {
     private final JsonNode value;
@@ -39,6 +40,10 @@ public class DataField implements OverridesJsonGenerator {
         return ((JsonString) value).stringValue();
     }
 
+    private JsonNode getValue() {
+        return value.deepClone();
+    }
+
     @Override
     public JsonObject jsonValue() {
         return JsonFactory.jsonObject()
@@ -53,6 +58,13 @@ public class DataField implements OverridesJsonGenerator {
         DataField dataField = (DataField) o;
         return privateData == dataField.privateData &&
                 Objects.equals(value, dataField.value);
+    }
+
+    public Optional<JsonNode> readPublicData() {
+        if (isPrivateData()) {
+            return Optional.empty();
+        }
+        return Optional.of(getValue());
     }
 
     @Override

@@ -41,8 +41,10 @@ public class SparkStart {
         new ConferenceController().initSpark();
         new SessionController().initSpark();
         new PictureController().initSpark();
-        new ExceptionHandler().initSparkExceptionHandling();
+        new PublicDataController().initSpark();
+
         new BasicAuthController().initSpark();
+        new ExceptionHandler().initSparkExceptionHandling();
     }
 
     public static void setConfigFile(String[] argv) {

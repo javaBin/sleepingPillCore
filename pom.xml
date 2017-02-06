@@ -4,7 +4,7 @@
 
     <groupId>no.java</groupId>
     <artifactId>sleepingPillCore</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -183,7 +183,7 @@
 
     <scm>
         <developerConnection>scm:git:git@github.com:javabin/sleepingPillCore.git</developerConnection>
-        <tag>1.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
 </project>

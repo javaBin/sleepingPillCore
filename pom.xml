@@ -12,6 +12,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
     </properties>
 
     
@@ -154,7 +155,15 @@
                 </executions>
             </plugin>
 
-            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <goals>install</goals>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
             
         </plugins>
 
@@ -173,5 +182,10 @@
         </repository>
 
     </repositories>
+
+    <scm>
+        <developerConnection>scm:git:git@github.com:javabin/sleepingPillCore.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
 </project>

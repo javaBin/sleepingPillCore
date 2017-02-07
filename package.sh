@@ -28,7 +28,7 @@ if [ ! -f ${secret_properties_file} ]; then
     exit 1
 fi
 
-cp $M2_REPO/no/java/${app}/${version}/${app}-${version}-jar-with-dependencies.jar ./app.jar
+cp ~/.m2/repository/no/java/${app}/${version}/${app}-${version}-jar-with-dependencies.jar ./app.jar
 if [ $? -ne 0 ]; then
   rm -f ${secret_properties_file}
   exit 1

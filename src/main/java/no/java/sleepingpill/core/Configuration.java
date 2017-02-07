@@ -85,7 +85,7 @@ public class Configuration {
     }
 
     public static String dbName() {
-        return readValue("dbName", "postgres");
+        return readValue("dbName", null);
     }
 
 
@@ -104,6 +104,7 @@ public class Configuration {
     public static int maxDbConnections() {
         return Integer.parseInt(readValue("maxDbConnections","10"));
     }
+
 
 
     public static boolean cleanDb() {

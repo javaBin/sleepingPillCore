@@ -76,6 +76,8 @@ public class EmsImporter {
                     addValueFromEms(dataObject, emsDataObject);
                 });
 
+        dataObject.put("emslocation",JsonFactory.jsonObject().put(SessionVariables.PRIVATE_FLAG,true).put(SessionVariables.VALUE_KEY,sessionObject.requiredString("href")));
+
         SessionStatus sessionStatus = Optional.of("true").equals(itemValue(dataArray,"published")) &&
         Optional.of("approved").equals(itemValue(dataArray,"state"))
         ? SessionStatus.HISTORIC : SessionStatus.REJECTED;
@@ -216,7 +218,7 @@ public class EmsImporter {
 
     private JsonObject postData(String path,JsonObject payload) {
         try {
-            HttpURLConnection conn = (HttpURLConnection) new URL(path).openConnection();
+            HttpURLConnection conn = openConnectionToSleepingPill(path);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Accept-Charset", "UTF-8");
             conn.setRequestProperty("Content-Type", "application/json");
@@ -267,11 +269,27 @@ public class EmsImporter {
     }
 
     public boolean isSleepingPillEmpty() throws Exception {
-        URL url = new URL(EmsImportConfig.serverAddress() + "/conference");
-        try (InputStream inputStream = url.openConnection().getInputStream()) {
+        String url = EmsImportConfig.serverAddress() + "/conference";
+        try (InputStream inputStream = openConnectionToSleepingPill(url).getInputStream()) {
             JsonObject jsonObject = JsonParser.parseToObject(inputStream);
             JsonArray conferences = jsonObject.requiredArray("conferences");
             return conferences.isEmpty();
+        }
+    }
+
+    private HttpURLConnection openConnectionToSleepingPill(String urlpath) {
+        try {
+            URL url = new URL(urlpath);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            String sleepingpillUser = EmsImportConfig.sleepingpillUser();
+            if (sleepingpillUser != null) {
+                String authString = sleepingpillUser + ":" + EmsImportConfig.sleepingpillPassword();
+                String authStringEnc = Base64Util.encode(authString);
+                urlConnection.setRequestProperty("Authorization", "Basic " + authStringEnc);
+            }
+            return urlConnection;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -289,8 +307,33 @@ public class EmsImporter {
         }
         List<EmsConference> emsConferences = emsImporter.readAndCreateConferences();
         emsConferences.parallelStream().forEach(emsImporter::readEmsAndSubmit);
+        emsImporter.addJavaZone2017();
     }
 
+    private void addJavaZone2017() throws Exception {
+        String conferenceaddr = EmsImportConfig.serverAddress() + "/conference";
+        try (InputStream is = openConnectionToSleepingPill(conferenceaddr).getInputStream()) {
+            JsonArray conferences = JsonParser.parseToObject(is).requiredArray("conferences");
+            if (conferences.objectStream().anyMatch(ob -> "Javazone 2017".equals(ob.requiredString("name")))) {
+                return;
+            }
+        }
+
+        JsonObject input = DataObjects.newConferenceObj("Javazone 2017","javazone_2017",Optional.of("30d5c2f1cb214fc8b0649a44fdf3b4bf"));
+
+        HttpURLConnection conn = openConnectionToSleepingPill(conferenceaddr);
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(conn.getOutputStream(),"utf-8"))) {
+            input.toJson(printWriter);
+        }
+        try (InputStream is = conn.getInputStream()) {
+            JsonObject parse = JsonParser.parseToObject(is);
+            System.out.println("result from add conference:");
+            System.out.println(parse);
+        }
+
+    }
 
 
 }

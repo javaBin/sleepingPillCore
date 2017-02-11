@@ -69,4 +69,12 @@ public class EmsImportConfig {
     public static String emsAddress() {
         return readValue("emaAddress","http://javazone.no/ems/server/events");
     }
+
+    public static String sleepingpillUser() {
+        return readValue("sleepingpillUser",null);
+    }
+
+    public static String sleepingpillPassword() {
+        return readValue("sleepingpillPassword",null);
+    }
 }

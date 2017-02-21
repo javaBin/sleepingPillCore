@@ -54,7 +54,7 @@ The API returns a list of the published talks for the year. The following format
 }
 ```
 
-**Important:** As there are some changes each year conserning what fields are included, the consumers of the API should handle any missing fields gracefully. For example, the field "twitter" on the speaker are new in 2017, and the field "level" is missing in 2016. The fields "title" and "abstract", and the field "name" on the speaker can be assumed to be present.
+**Important:** As there are some changes each year concerning which fields are included, the consumers of the API should handle any missing fields gracefully. For example, the field "twitter" on the speaker are new in 2017, and the field "level" is missing in 2016. The fields "title" and "abstract", and the field "name" on the speaker can be assumed to be present.
 
 ## What should you call the fields in your GUI?
 
@@ -65,14 +65,14 @@ The following table lists the different fields, and what name we are using to de
 | sessionId | _internal field, not for display_ | - |
 | title | Title | freetext | Select an expressive and snappy title that captures the content of your talk without being too long. Remember that the title must be attractive and should make people curious. |
 | abstract | Description | freetext | Give a concise description of the content and goals of your talk. Try not to exceed 300 words, as shorter and more to-the-point descriptions are more likely to be read by the participants. |
-| intendedAudience | freetext | Expected Audience and Code Level | Who should attend this session? How will the participants benefit from attending? Please indicate how code will factor into your presentation (for example "no code", "code in slides" or "live coding"). |
+| intendedAudience  | Expected Audience and Code Level | freetext | Who should attend this session? How will the participants benefit from attending? Please indicate how code will factor into your presentation (for example "no code", "code in slides" or "live coding"). |
 | language | Language | en / no | Which language will you be holding the talk in? It is permitted to use English in your slides, even though you may be talking in Norwegian, but you should write the rest of the abstract in the language you will speak in. We generally recommend that you hold the talk in the language you are most comfortable with. |
 | format | Presentation format | presentation / lightning-talk / workshop | In which format are you presenting your talk? Presentation, lightning talk or workshop? |
 | level | Experience level | beginner / intermediate / advanced | Who is your talk pitched at? Beginners, Experts or perhaps those in between? |
 | keywords | Keywords | list of strings | Suggest up to five keywords that describe your talk. These will be used by the program committee to group the talks into categories. We reserve the right to edit these suggestions to make them fit into this years selected categories. |
-| speaker -> name | Speakers name | freetext | - |
-| speaker -> bio | Short description of the speaker | freetext | - |
-| speaker -> twitter | Twitter handle | freetext | - |
+| speaker -> name | Speakers name | freetext | Your name |
+| speaker -> bio | Short description of the speaker | freetext | Short description of the speaker (try not to exceed 150 words) |
+| speaker -> twitter | Twitter handle | freetext | Twitter handle, starting with an @ |
 
 
 # Private API

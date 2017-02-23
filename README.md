@@ -9,20 +9,27 @@ Contains both a public API that can be consumed by anyone, and a private API use
 You can consume the published events from JavaZone by using the public JSON-api. There are no need for any authentication, just call the API using your favorite HTTP-client.
 
 **API for talks in production:**
+To fetch the conferences in the system use the following:
+https://sleepingpill.javazone.no/public/allSessions
 
-An endpoint for fetching all years with their slugs to be used in the end of the URL is coming. For now, use these URLs:
-
+This will give the following json:
+```javascript
+ {
+ "conferences": [
+     {
+     "name": "JavaZone 2016",
+     "slug": "javazone_2016"
+     },
+     {
+     "name": "JavaZone 2017",
+     "slug": "javazone_2017"
+     },
+     ....
+ ]}
+```
+To fetch the sessions for each conference add the conference slug to the url, for example:
 
 ```
-https://sleepingpill.javazone.no/public/allSessions/javazone_2008
-https://sleepingpill.javazone.no/public/allSessions/javazone_2009
-https://sleepingpill.javazone.no/public/allSessions/javazone_2010
-https://sleepingpill.javazone.no/public/allSessions/javazone_2011
-https://sleepingpill.javazone.no/public/allSessions/javazone_2012
-https://sleepingpill.javazone.no/public/allSessions/javazone_2013
-https://sleepingpill.javazone.no/public/allSessions/javazone_2014
-https://sleepingpill.javazone.no/public/allSessions/javazone_2015
-https://sleepingpill.javazone.no/public/allSessions/javazone_2016
 https://sleepingpill.javazone.no/public/allSessions/javazone_2017
 ```
 

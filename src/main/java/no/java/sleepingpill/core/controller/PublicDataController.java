@@ -13,10 +13,17 @@ public class PublicDataController {
 
     public void initSpark() {
         Spark.get(HttpPaths.PUBLIC_GET_SESSION_FOR_CONFERENCE,this::sessionsForConference,jsonBuddyString());
+        Spark.get(HttpPaths.PUBLIC_GET_CONFERENCES,this::allConferences,jsonBuddyString());
     }
 
     public ServiceResult sessionsForConference(Request req, Response res) {
         String conferenceSlug = req.params(":slug");
         return PublicSessionService.get().allSessionsForConference(conferenceSlug);
     }
+
+    public ServiceResult allConferences(Request req, Response res) {
+        return PublicSessionService.get().allConferences();
+    }
+
+
 }

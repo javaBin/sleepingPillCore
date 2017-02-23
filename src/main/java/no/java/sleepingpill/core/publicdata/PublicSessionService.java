@@ -9,6 +9,7 @@ import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Optional;
 
 public class PublicSessionService {
@@ -31,5 +32,13 @@ public class PublicSessionService {
                         .map(Session::asPublicSessionJson)
         );
         return ServiceResult.ok(JsonFactory.jsonObject().put("sessions",sessions));
+    }
+
+    public ServiceResult allConferences() {
+        List<Conference> conferences = ConferenceHolder.instance().allConferences();
+        JsonArray jsonNodes = JsonArray.fromNodeStream(conferences.stream()
+                .map(conf -> JsonFactory.jsonObject().put("name", conf.name).put("slug", conf.slug))
+        );
+        return ServiceResult.ok(JsonFactory.jsonObject().put("conferences",jsonNodes));
     }
 }

@@ -6,7 +6,10 @@ import no.java.sleepingpill.core.conference.ConferenceService;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
+import org.jsonbuddy.parse.JsonParser;
 import org.junit.Test;
+
+import javax.servlet.http.HttpServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jsonbuddy.JsonFactory.jsonArray;
@@ -39,5 +42,46 @@ public class SessionStateServiceTest extends CleanSetupTest {
         String sessionid = createASession();
         Session session = SessionHolder.instance().sessionFromId(sessionid).get();
         assertThat(session.getSessionStatus()).isEqualTo(SessionStatus.DRAFT);
+    }
+
+    @Test
+    public void shouldUpdateSession() throws Exception {
+        String sessionid = createASession();
+        ServiceResult serviceResult = SessionService.instance().sessionById(sessionid);
+        JsonObject sessionObject = serviceResult.getResult().get();
+        String lastUpdated = sessionObject.requiredString(SessionVariables.LAST_UPDATED);
+
+        JsonObject dataObject = jsonObject()
+                .put("title", jsonObject().put("value", "New title").put("privateData", false));
+
+        JsonObject input = jsonObject()
+                .put(SessionVariables.VALUE_KEY, dataObject)
+                .put(SessionVariables.LAST_UPDATED,lastUpdated);
+
+
+        ServiceResult updateSession = SessionService.instance().updateSession(sessionid, input);
+        assertThat(updateSession.getResult()).isPresent();
+    }
+
+    @Test
+    public void shouldReceiveErrorWhenWrongLastUpdate() throws Exception {
+        String sessionid = createASession();
+        ServiceResult serviceResult = SessionService.instance().sessionById(sessionid);
+        JsonObject sessionObject = serviceResult.getResult().get();
+        String lastUpdated = sessionObject.requiredString(SessionVariables.LAST_UPDATED);
+        String wrongLastUpdate = lastUpdated + "xx";
+
+        JsonObject dataObject = jsonObject()
+                .put("title", jsonObject().put("value", "New title").put("privateData", false));
+
+        JsonObject input = jsonObject()
+                .put(SessionVariables.VALUE_KEY, dataObject)
+                .put(SessionVariables.LAST_UPDATED,wrongLastUpdate);
+
+
+        ServiceResult updateSession = SessionService.instance().updateSession(sessionid, input);
+        assertThat(updateSession.getResult().isPresent()).isFalse();
+        assertThat(updateSession.getError()).isEqualTo(HttpServletResponse.SC_CONFLICT);
+
     }
 }

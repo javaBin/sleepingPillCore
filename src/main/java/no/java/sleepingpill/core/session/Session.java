@@ -1,5 +1,6 @@
 package no.java.sleepingpill.core.session;
 
+import no.java.sleepingpill.core.util.DateUtil;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonNode;
@@ -10,6 +11,7 @@ import java.util.*;
 public class Session extends DataObject {
     private final String conferenceId;
     private final Optional<String> addedByEmail;
+    private volatile String lastUpdated;
     private volatile SessionStatus sessionStatus = SessionStatus.DRAFT;
     private volatile List<Speaker> speakers = new ArrayList<>();
 
@@ -18,6 +20,7 @@ public class Session extends DataObject {
         this.conferenceId = conferenceId;
         this.addedByEmail = addedByEmail;
     }
+
 
 
     @Override
@@ -29,6 +32,7 @@ public class Session extends DataObject {
     public String getId() {
         return super.getId();
     }
+
 
     public String getConferenceId() {
         return conferenceId;
@@ -42,6 +46,7 @@ public class Session extends DataObject {
                 .put(SessionVariables.DATA_OBJECT, dataAsJson())
                 .put(SessionVariables.SESSION_STATUS,sessionStatus)
                 .put(SessionVariables.CONFERENCE_ID,conferenceId)
+                .put(SessionVariables.LAST_UPDATED,lastUpdated)
                 ;
         addedByEmail.ifPresent(mail -> result.put(SessionVariables.POSTED_BY_MAIL,mail));
         return result;
@@ -78,6 +83,7 @@ public class Session extends DataObject {
         Optional<JsonArray> optSpeaker = update.arrayValue(SessionVariables.SPEAKER_ARRAY);
         //optSpeaker.ifPresent(jsonNodes -> jsonNodes.objectStream().forEach(jsp -> speakers.add(Speaker.fromJson(getId(), jsp))));
         optSpeaker.ifPresent(this::updateSpeakers);
+        this.lastUpdated = update.stringValue(SessionVariables.LAST_UPDATED).orElse(DateUtil.get().generateLastUpdated());
 
     }
 
@@ -136,5 +142,14 @@ public class Session extends DataObject {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+    public String getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public Session setLastUpdated(String lastUpdated) {
+        this.lastUpdated = lastUpdated;
+        return this;
     }
 }

@@ -11,6 +11,7 @@ public class SessionVariables {
     public static final String CONFERENCE_ID = "conferenceId";
     public static final String SPEAKER_NAME = "name";
     public static final String SPEAKER_EMAIL = "email";
+    public static final String LAST_UPDATED = "lastUpdated";
 
     private SessionVariables() {
         throw new IllegalAccessError("No instance allowed");

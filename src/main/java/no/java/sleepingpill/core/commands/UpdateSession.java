@@ -2,6 +2,7 @@ package no.java.sleepingpill.core.commands;
 
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventType;
+import no.java.sleepingpill.core.exceptions.SessionChangedException;
 import no.java.sleepingpill.core.session.*;
 import org.jsonbuddy.*;
 import org.jsonbuddy.pojo.JsonGenerator;
@@ -14,6 +15,7 @@ public class UpdateSession implements HasDataInput {
     private final Map<String, DataField> data = new HashMap<>();
     private Optional<SessionStatus> sessionStatus = Optional.empty();
     private Optional<List<SpeakerData>> speakers = Optional.empty();
+    private Optional<String> lastUpdated = Optional.empty();
 
     public UpdateSession(String sessionId, String conferenceId) {
         this.sessionId = sessionId;
@@ -31,7 +33,8 @@ public class UpdateSession implements HasDataInput {
         return this;
     }
 
-    public Event createEvent() {
+    public Event createEvent(Session session) throws SessionChangedException {
+        checkLastUpdated(session);
         JsonObject jsonObject = JsonFactory.jsonObject()
                 .put(SessionVariables.DATA_OBJECT, JsonGenerator.generate(data))
                 .put(SessionVariables.SESSION_ID, sessionId)
@@ -43,6 +46,15 @@ public class UpdateSession implements HasDataInput {
         sessionStatus.ifPresent(status -> jsonObject.put(SessionVariables.SESSION_STATUS,status.toString()));
         Event event = new Event(EventType.UPDATE_SESSION, jsonObject,Optional.of(conferenceId));
         return event;
+    }
+
+    private void checkLastUpdated(Session session) throws SessionChangedException {
+        if (!lastUpdated.isPresent()) {
+            return;
+        }
+        if (!lastUpdated.get().equals(session.getLastUpdated())) {
+            throw new SessionChangedException(session.getLastUpdated(),lastUpdated.get());
+        }
     }
 
     public UpdateSession setSessionStatus(SessionStatus sessionStatus) {
@@ -61,7 +73,7 @@ public class UpdateSession implements HasDataInput {
             .objectStream()
             .map(SpeakerData::fromJson)
             .forEach(updateSession::addSpeakerData);
-
+        updateSession.lastUpdated = payload.stringValue(SessionVariables.LAST_UPDATED);
         return updateSession;
 
     }
@@ -73,5 +85,10 @@ public class UpdateSession implements HasDataInput {
             boolean privateValue = valueObject.booleanValue(SessionVariables.PRIVATE_FLAG).orElse(false);
             hasDataInput.addData(key, new DataField(jsonValue, privateValue));
         }
+    }
+
+    public UpdateSession setLastUpdated(String lastUpdated) {
+        this.lastUpdated = Optional.of(lastUpdated);
+        return this;
     }
 }

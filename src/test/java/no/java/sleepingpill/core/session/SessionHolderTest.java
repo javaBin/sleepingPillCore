@@ -63,7 +63,7 @@ public class SessionHolderTest {
         UpdateSession updateSession = new UpdateSession(session.getId(),CONFERENCE_ID)
                 .addSpeakerData(darthUpdate);
 
-        Event addSpeakerEvent = updateSession.createEvent();
+        Event addSpeakerEvent = updateSession.createEvent(session);
         sessionHolder.eventAdded(addSpeakerEvent);
 
         session = sessionHolder.sessionFromId(sessionOne.getSessionId()).orElseThrow(() -> new RuntimeException("Did not find session"));
@@ -108,7 +108,7 @@ public class SessionHolderTest {
                 .addSpeakerData(darthUpdate)
                 .addSpeakerData(luke);
 
-        Event addSpeakerEvent = updateSession.createEvent();
+        Event addSpeakerEvent = updateSession.createEvent(session);
         sessionHolder.eventAdded(addSpeakerEvent);
 
         session = sessionHolder.sessionFromId(sessionOne.getSessionId()).orElseThrow(() -> new RuntimeException("Did not find session"));
@@ -151,7 +151,7 @@ public class SessionHolderTest {
         UpdateSession updateSession = new UpdateSession(session.getId(),CONFERENCE_ID)
                 .addSpeakerData(darthUpdate);
 
-        Event addSpeakerEvent = updateSession.createEvent();
+        Event addSpeakerEvent = updateSession.createEvent(session);
         sessionHolder.eventAdded(addSpeakerEvent);
 
         session = sessionHolder.sessionFromId(sessionOne.getSessionId()).orElseThrow(() -> new RuntimeException("Did not find session"));

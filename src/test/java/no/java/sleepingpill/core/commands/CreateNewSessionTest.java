@@ -78,7 +78,7 @@ public class CreateNewSessionTest {
         updateSession.addData("audience", DataField.simplePublicStringValue("Do not need one"));
         updateSession.setSessionStatus(SessionStatus.SUBMITTED);
 
-        Event updateSessionEvent = updateSession.createEvent();
+        Event updateSessionEvent = updateSession.createEvent(sessionHolder.sessionFromId(sessionId).get());
         eventHandler.addEvent(updateSessionEvent);
 
         List<Session> sessions = sessionHolder.allSessions();

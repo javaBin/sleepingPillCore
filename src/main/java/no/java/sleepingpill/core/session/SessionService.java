@@ -5,6 +5,7 @@ import no.java.sleepingpill.core.ServiceResult;
 import no.java.sleepingpill.core.commands.*;
 import no.java.sleepingpill.core.event.Event;
 import no.java.sleepingpill.core.event.EventHandler;
+import no.java.sleepingpill.core.exceptions.SessionChangedException;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonNode;
@@ -80,7 +81,13 @@ public class SessionService {
         UpdateSession updateSession = UpdateSession.fromInputJson(payload,session.get());
 
 
-        Event event = updateSession.createEvent();
+        Event event;
+        try {
+            event = updateSession.createEvent(session.get());
+        } catch (SessionChangedException ex) {
+            String errormessage = String.format("Expected %s %s, was %s", SessionVariables.LAST_UPDATED, ex.actualLastChange, ex.correctLastChange);
+            return ServiceResult.sendError(HttpServletResponse.SC_CONFLICT, errormessage);
+        }
         EventHandler.instance().addEvent(event);
 
         return sessionById(sessionId);

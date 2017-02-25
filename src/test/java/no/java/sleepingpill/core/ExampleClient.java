@@ -88,7 +88,8 @@ public class ExampleClient {
         }
     }
 
-    public void updateSession(String sessionId,String speakerid) throws Exception {
+    public void updateSession(String sessionId, JsonObject session, String speakerid) throws Exception {
+        String lastUpdated = session.requiredString("lastUpdated");
         JsonObject luke = JsonFactory.jsonObject()
                 .put("name","Luke Skywalker")
                 .put("email","luke@deathstar.com")
@@ -108,7 +109,8 @@ public class ExampleClient {
                         .put("title", jsonObject().put("value", "Changed title").put("privateData", false))
                         .put("outline", jsonObject().put("value", "Here is my outline").put("privateData", true))
                 )
-                .put("speakers",speakers);
+                .put("speakers",speakers)
+                .put("lastUpdated",lastUpdated);
         HttpURLConnection conn = (HttpURLConnection) new URL(SERVER_ADDRESS + "/session/" + sessionId).openConnection();
         conn.setRequestMethod("PUT");
         conn.setDoOutput(true);
@@ -143,7 +145,7 @@ public class ExampleClient {
         JsonObject session = exampleClient.readSession(newSessionId);
         String speakerid = session.requiredArray("speakers").get(0,JsonObject.class).requiredString("id");
 
-        exampleClient.updateSession(newSessionId,speakerid);
+        exampleClient.updateSession(newSessionId,session,speakerid);
         session = exampleClient.readSession(newSessionId);
         System.out.println("Current session data:");
         System.out.println(session);

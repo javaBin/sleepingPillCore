@@ -26,25 +26,6 @@ public class SessionServiceTest {
         SessionHolder.instance().eventAdded(createNewSession.createEvent());
     }
 
-    @Test
-    public void addSession_state_result() throws Exception {
-
-    }
-
-    @Test
-    public void sessionById_state_result() throws Exception {
-
-    }
-
-    @Test
-    public void updateSession_state_result() throws Exception {
-
-    }
-
-    @Test
-    public void allConferences_state_result() throws Exception {
-
-    }
 
     @Test
     public void allSessionsForConference_noMatch_ok() throws Exception {

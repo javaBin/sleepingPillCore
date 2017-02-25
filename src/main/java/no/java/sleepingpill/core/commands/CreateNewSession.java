@@ -6,6 +6,7 @@ import no.java.sleepingpill.core.exceptions.InternalError;
 import no.java.sleepingpill.core.session.DataField;
 import no.java.sleepingpill.core.session.SessionStatus;
 import no.java.sleepingpill.core.session.SessionVariables;
+import no.java.sleepingpill.core.util.DateUtil;
 import no.java.sleepingpill.core.util.IdGenerator;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
@@ -49,6 +50,7 @@ public class CreateNewSession implements HasDataInput {
         dataObj.put(SessionVariables.SESSION_ID, sessionId.get());
         dataObj.put(SessionVariables.SPEAKER_ARRAY, JsonArray.fromNodeStream(speakers.stream().map(SpeakerData::eventData)));
         dataObj.put(SessionVariables.DATA_OBJECT, JsonGenerator.generate(data));
+        dataObj.put(SessionVariables.LAST_UPDATED, DateUtil.get().generateLastUpdated());
         postedByMail.ifPresent(s -> dataObj.put(SessionVariables.POSTED_BY_MAIL, s));
         sessionStatus.ifPresent(status -> dataObj.put(SessionVariables.SESSION_STATUS,status.toString()));
 

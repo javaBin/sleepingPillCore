@@ -21,10 +21,18 @@ public class SessionHolderTest {
 
     @Test
     public void shouldFindSessionByEmail() throws Exception {
+        String sessionId = createSession();
+
+        List<Session> sessions = sessionHolder.sessionsByEmail("darth@deathstar.com");
+        assertThat(sessions).hasSize(1).extracting(Session::getId).containsOnly(sessionId);
+
+    }
+
+    private String createSession() {
         SpeakerData darth = new SpeakerData()
             .setEmail("darth@deathstar.com")
             .setName("Darth Vader")
-            .addData("bio",DataField.simplePublicStringValue("Here is my bio"));
+            .addData("bio", DataField.simplePublicStringValue("Here is my bio"));
 
         CreateNewSession sessionOne = new CreateNewSession()
                 .setConferenceId(CONFERENCE_ID)
@@ -32,27 +40,14 @@ public class SessionHolderTest {
                 .addData("title", DataField.simplePublicStringValue("SessionOne"));
 
         sessionHolder.eventAdded(sessionOne.createEvent());
-
-        List<Session> sessions = sessionHolder.sessionsByEmail("darth@deathstar.com");
-        assertThat(sessions).hasSize(1).extracting(Session::getId).containsOnly(sessionOne.getSessionId());
-
+        return sessionOne.getSessionId();
     }
 
     @Test
     public void shouldBeAbleToUpdateBio() throws Exception {
-        SpeakerData darth = new SpeakerData()
-                .setEmail("darth@deathstar.com")
-                .setName("Darth Vader")
-                .addData("bio",DataField.simplePublicStringValue("Here is my bio"));
+        String sessionId = createSession();
 
-        CreateNewSession sessionOne = new CreateNewSession()
-                .setConferenceId(CONFERENCE_ID)
-                .addSpeaker(darth)
-                .addData("title", DataField.simplePublicStringValue("SessionOne"));
-
-        sessionHolder.eventAdded(sessionOne.createEvent());
-
-        Session session = sessionHolder.sessionFromId(sessionOne.getSessionId()).orElseThrow(() -> new RuntimeException("Did not find session"));
+        Session session = sessionHolder.sessionFromId(sessionId).orElseThrow(() -> new RuntimeException("Did not find session"));
 
         Speaker darthSpeaker = session.getSpeakers().get(0);
 
@@ -66,7 +61,7 @@ public class SessionHolderTest {
         Event addSpeakerEvent = updateSession.createEvent(session);
         sessionHolder.eventAdded(addSpeakerEvent);
 
-        session = sessionHolder.sessionFromId(sessionOne.getSessionId()).orElseThrow(() -> new RuntimeException("Did not find session"));
+        session = sessionHolder.sessionFromId(sessionId).orElseThrow(() -> new RuntimeException("Did not find session"));
 
         assertThat(session.getSpeakers()).hasSize(1);
         darthSpeaker = session.getSpeakers().get(0);
@@ -79,19 +74,8 @@ public class SessionHolderTest {
 
     @Test
     public void shouldBeAbleToAddASpeaker() throws Exception {
-        SpeakerData darth = new SpeakerData()
-                .setEmail("darth@deathstar.com")
-                .setName("Darth Vader")
-                .addData("bio",DataField.simplePublicStringValue("Here is my bio"));
-
-        CreateNewSession sessionOne = new CreateNewSession()
-                .setConferenceId(CONFERENCE_ID)
-                .addSpeaker(darth)
-                .addData("title", DataField.simplePublicStringValue("SessionOne"));
-
-        sessionHolder.eventAdded(sessionOne.createEvent());
-
-        Session session = sessionHolder.sessionFromId(sessionOne.getSessionId()).orElseThrow(() -> new RuntimeException("Did not find session"));
+        String sessionId = createSession();
+        Session session = sessionHolder.sessionFromId(sessionId).orElseThrow(() -> new RuntimeException("Did not find session"));
 
         Speaker darthSpeaker = session.getSpeakers().get(0);
 
@@ -111,7 +95,7 @@ public class SessionHolderTest {
         Event addSpeakerEvent = updateSession.createEvent(session);
         sessionHolder.eventAdded(addSpeakerEvent);
 
-        session = sessionHolder.sessionFromId(sessionOne.getSessionId()).orElseThrow(() -> new RuntimeException("Did not find session"));
+        session = sessionHolder.sessionFromId(sessionId).orElseThrow(() -> new RuntimeException("Did not find session"));
 
         assertThat(session.getSpeakers()).hasSize(2);
 
@@ -120,26 +104,9 @@ public class SessionHolderTest {
 
     @Test
     public void shouldBeAbleToDeleteSpeaker() throws Exception {
-        SpeakerData darth = new SpeakerData()
-                .setEmail("darth@deathstar.com")
-                .setName("Darth Vader")
-                .addData("bio",DataField.simplePublicStringValue("Here is my bio"));
+        String sessionId = createSession();
 
-        SpeakerData luke = new SpeakerData()
-                .setEmail("luke@endor.com")
-                .setName("Luke Skywalker")
-                .addData("bio",DataField.simplePublicStringValue("Is Darth Vader my father?"));
-
-
-        CreateNewSession sessionOne = new CreateNewSession()
-                .setConferenceId(CONFERENCE_ID)
-                .addSpeaker(darth)
-                .addSpeaker(luke)
-                .addData("title", DataField.simplePublicStringValue("SessionOne"));
-
-        sessionHolder.eventAdded(sessionOne.createEvent());
-
-        Session session = sessionHolder.sessionFromId(sessionOne.getSessionId()).orElseThrow(() -> new RuntimeException("Did not find session"));
+        Session session = sessionHolder.sessionFromId(sessionId).orElseThrow(() -> new RuntimeException("Did not find session"));
 
         Speaker darthSpeaker = session.getSpeakers().get(0);
 
@@ -154,7 +121,7 @@ public class SessionHolderTest {
         Event addSpeakerEvent = updateSession.createEvent(session);
         sessionHolder.eventAdded(addSpeakerEvent);
 
-        session = sessionHolder.sessionFromId(sessionOne.getSessionId()).orElseThrow(() -> new RuntimeException("Did not find session"));
+        session = sessionHolder.sessionFromId(sessionId).orElseThrow(() -> new RuntimeException("Did not find session"));
 
         assertThat(session.getSpeakers()).hasSize(1);
         assertThat(session.getSpeakers().get(0).getId()).isEqualTo(darthSpeaker.getId());
@@ -163,13 +130,9 @@ public class SessionHolderTest {
 
     @Test
     public void shouldDeleteSession() throws Exception {
-        CreateNewSession sessionOne = new CreateNewSession()
-                .setConferenceId(CONFERENCE_ID)
-                .addData("title", DataField.simplePublicStringValue("SessionOne"));
+        String sessionId = createSession();
 
-        sessionHolder.eventAdded(sessionOne.createEvent());
-
-        DeleteSession deleteSession = new DeleteSession(CONFERENCE_ID,sessionOne.getSessionId());
+        DeleteSession deleteSession = new DeleteSession(CONFERENCE_ID,sessionId);
 
         sessionHolder.eventAdded(deleteSession.createEvent());
 

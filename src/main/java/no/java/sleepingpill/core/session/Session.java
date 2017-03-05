@@ -14,6 +14,7 @@ public class Session extends DataObject {
     private volatile String lastUpdated;
     private volatile SessionStatus sessionStatus = SessionStatus.DRAFT;
     private volatile List<Speaker> speakers = new ArrayList<>();
+    private volatile List<Comment> comments = new ArrayList<>();
 
     public Session(String id, String conferenceId,Optional<String> addedByEmail) {
         super(id);
@@ -81,10 +82,16 @@ public class Session extends DataObject {
     public void addData(JsonObject update) {
         super.addData(update);
         Optional<JsonArray> optSpeaker = update.arrayValue(SessionVariables.SPEAKER_ARRAY);
-        //optSpeaker.ifPresent(jsonNodes -> jsonNodes.objectStream().forEach(jsp -> speakers.add(Speaker.fromJson(getId(), jsp))));
         optSpeaker.ifPresent(this::updateSpeakers);
+        update.arrayValue(SessionVariables.COMMENT_ARRAY).ifPresent(this::updateComments);
         this.lastUpdated = update.stringValue(SessionVariables.LAST_UPDATED).orElse(DateUtil.get().generateLastUpdated());
 
+    }
+
+    private void updateComments(JsonArray updatedCommentsJson) {
+        updatedCommentsJson.objectStream()
+                .map(Comment::fromJson)
+                .forEach(this.comments::add);
     }
 
     private void updateSpeakers(JsonArray updatedSpeakersJson) {
@@ -112,6 +119,10 @@ public class Session extends DataObject {
 
     public List<Speaker> getSpeakers() {
         return new ArrayList<>(speakers);
+    }
+
+    public List<Comment> getComments() {
+        return new ArrayList<>(comments);
     }
 
     public Session setSessionStatus(SessionStatus sessionStatus) {

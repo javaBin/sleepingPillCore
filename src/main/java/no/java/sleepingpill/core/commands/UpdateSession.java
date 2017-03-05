@@ -8,6 +8,7 @@ import org.jsonbuddy.*;
 import org.jsonbuddy.pojo.JsonGenerator;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UpdateSession implements HasDataInput {
     private final String sessionId;
@@ -16,6 +17,8 @@ public class UpdateSession implements HasDataInput {
     private Optional<SessionStatus> sessionStatus = Optional.empty();
     private Optional<List<SpeakerData>> speakers = Optional.empty();
     private Optional<String> lastUpdated = Optional.empty();
+    private Optional<List<NewComment>> comments = Optional.empty();
+
 
     public UpdateSession(String sessionId, String conferenceId) {
         this.sessionId = sessionId;
@@ -24,6 +27,11 @@ public class UpdateSession implements HasDataInput {
 
     public UpdateSession addData(String key, DataField dataField) {
         data.put(key, dataField);
+        return this;
+    }
+
+    public UpdateSession addComments(List<NewComment> newComments) {
+        this.comments = Optional.of(newComments);
         return this;
     }
 
@@ -43,6 +51,9 @@ public class UpdateSession implements HasDataInput {
                 jsonObject.put(SessionVariables.SPEAKER_ARRAY,
                         JsonArray.fromNodeStream(sparr.stream().map(SpeakerData::eventData))))
                 ;
+        comments.ifPresent(coarr -> jsonObject.put(SessionVariables.COMMENT_ARRAY,
+                JsonArray.fromNodeStream(coarr.stream().map(NewComment::eventData))
+                ));
         sessionStatus.ifPresent(status -> jsonObject.put(SessionVariables.SESSION_STATUS,status.toString()));
         Event event = new Event(EventType.UPDATE_SESSION, jsonObject,Optional.of(conferenceId));
         return event;
@@ -74,6 +85,8 @@ public class UpdateSession implements HasDataInput {
             .map(SpeakerData::fromJson)
             .forEach(updateSession::addSpeakerData);
         updateSession.lastUpdated = payload.stringValue(SessionVariables.LAST_UPDATED);
+        updateSession.comments = payload.arrayValue(SessionVariables.COMMENT_ARRAY)
+                .map(ar -> ar.objectStream().map(NewComment::new).collect(Collectors.toList()));
         return updateSession;
 
     }

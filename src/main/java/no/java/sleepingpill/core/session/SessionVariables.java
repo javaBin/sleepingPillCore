@@ -13,6 +13,14 @@ public class SessionVariables {
     public static final String SPEAKER_EMAIL = "email";
     public static final String LAST_UPDATED = "lastUpdated";
 
+    public static final String COMMENT_ID = "id";
+    public static final String COMMENT_POSTEDDATE = "postedDate";
+    public static final String COMMENT_EMAIL = "email";
+    public static final String COMMENT_FROM = "from";
+    public static final String COMMENT_COMMENT = "comment";
+    public static final String COMMENT_ARRAY = "comments";
+
+
     private SessionVariables() {
         throw new IllegalAccessError("No instance allowed");
     }

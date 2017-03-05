@@ -1,13 +1,14 @@
 package no.java.sleepingpill.core.session;
 
 
-import no.java.sleepingpill.core.commands.CreateNewSession;
-import no.java.sleepingpill.core.commands.DeleteSession;
-import no.java.sleepingpill.core.commands.SpeakerData;
-import no.java.sleepingpill.core.commands.UpdateSession;
+import no.java.sleepingpill.core.commands.*;
 import no.java.sleepingpill.core.event.Event;
+import org.jsonbuddy.JsonArray;
+import org.jsonbuddy.JsonFactory;
+import org.jsonbuddy.JsonObject;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -138,6 +139,34 @@ public class SessionHolderTest {
 
         assertThat(sessionHolder.allSessions()).isEmpty();
 
+    }
+
+    @Test
+    public void shouldBeAbleToAddComment() throws Exception {
+        String sessionId = createSession();
+
+        Session session = sessionHolder.sessionFromId(sessionId).orElseThrow(() -> new RuntimeException("Did not find session"));
+
+        UpdateSession updateSession = new UpdateSession(session.getId(), CONFERENCE_ID);
+        updateSession.setLastUpdated(session.getLastUpdated());
+
+        List<NewComment> newComments = Collections.singletonList(
+                new NewComment("anders@pkom", "Program comitee", "Please fill in all fields in the form"));
+
+        updateSession.addComments(newComments);
+
+        Event addCommentEvent = updateSession.createEvent(session);
+        sessionHolder.eventAdded(addCommentEvent);
+
+        session = sessionHolder.sessionFromId(sessionId).orElseThrow(() -> new RuntimeException("Did not find session"));
+
+        List<Comment> sessionComments = session.getComments();
+
+        assertThat(sessionComments).hasSize(1);
+
+        Comment comment = sessionComments.get(0);
+
+        assertThat(comment.getId()).isNotNull();
 
     }
 }

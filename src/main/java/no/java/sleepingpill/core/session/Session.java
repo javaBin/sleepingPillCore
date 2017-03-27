@@ -8,6 +8,8 @@ import org.jsonbuddy.JsonObject;
 
 import java.util.*;
 
+import static no.java.sleepingpill.core.session.SessionVariables.*;
+
 public class Session extends DataObject {
     private final String conferenceId;
     private final Optional<String> addedByEmail;
@@ -42,12 +44,13 @@ public class Session extends DataObject {
     public JsonObject asSingleSessionJson() {
         JsonObject result = JsonFactory.jsonObject()
                 .put("id", getId())
-                .put(SessionVariables.SESSION_ID, getId())
-                .put(SessionVariables.SPEAKER_ARRAY, JsonArray.fromNodeStream(speakers.stream().map(Speaker::singleSessionData)))
-                .put(SessionVariables.DATA_OBJECT, dataAsJson())
-                .put(SessionVariables.SESSION_STATUS,sessionStatus)
-                .put(SessionVariables.CONFERENCE_ID,conferenceId)
-                .put(SessionVariables.LAST_UPDATED,lastUpdated)
+                .put(SESSION_ID, getId())
+                .put(SPEAKER_ARRAY, JsonArray.fromNodeStream(speakers.stream().map(Speaker::singleSessionData)))
+                .put(DATA_OBJECT, dataAsJson())
+                .put(SESSION_STATUS,sessionStatus)
+                .put(CONFERENCE_ID,conferenceId)
+                .put(LAST_UPDATED,lastUpdated)
+                .put(COMMENT_ARRAY,JsonArray.fromNodeStream(comments.stream().map(Comment::toJson)))
                 ;
         addedByEmail.ifPresent(mail -> result.put(SessionVariables.POSTED_BY_MAIL,mail));
         return result;
@@ -62,13 +65,13 @@ public class Session extends DataObject {
             throw new RuntimeException("Tried to handle private session as public");
         }
         JsonObject result = JsonFactory.jsonObject();
-        result.put(SessionVariables.SESSION_ID,getId());
-        result.put(SessionVariables.CONFERENCE_ID,conferenceId);
+        result.put(SESSION_ID,getId());
+        result.put(CONFERENCE_ID,conferenceId);
         Map<String, DataField> data = getData();
         for (String key : data.keySet()) {
             data.get(key).readPublicData().ifPresent(da -> result.put(key,da));
         }
-        result.put(SessionVariables.SPEAKER_ARRAY,JsonArray.fromNodeStream(speakers.stream().map(Speaker::asPublicJson)));
+        result.put(SPEAKER_ARRAY,JsonArray.fromNodeStream(speakers.stream().map(Speaker::asPublicJson)));
         return result;
     }
 
@@ -81,10 +84,10 @@ public class Session extends DataObject {
     @Override
     public void addData(JsonObject update) {
         super.addData(update);
-        Optional<JsonArray> optSpeaker = update.arrayValue(SessionVariables.SPEAKER_ARRAY);
+        Optional<JsonArray> optSpeaker = update.arrayValue(SPEAKER_ARRAY);
         optSpeaker.ifPresent(this::updateSpeakers);
-        update.arrayValue(SessionVariables.COMMENT_ARRAY).ifPresent(this::updateComments);
-        this.lastUpdated = update.stringValue(SessionVariables.LAST_UPDATED).orElse(DateUtil.get().generateLastUpdated());
+        update.arrayValue(COMMENT_ARRAY).ifPresent(this::updateComments);
+        this.lastUpdated = update.stringValue(LAST_UPDATED).orElse(DateUtil.get().generateLastUpdated());
 
     }
 

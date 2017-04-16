@@ -59,7 +59,12 @@ public class SessionHolder implements EventListener {
             session.addData(event.data);
             event.data.stringValue(SessionVariables.SESSION_STATUS)
                     .map(SessionStatus::valueOf)
-                    .ifPresent(session::setSessionStatus);
+                    .ifPresent(sessionStatus -> {
+                        session.setSessionStatus(sessionStatus);
+                        if (sessionStatus == SessionStatus.SUBMITTED) {
+                            session.setSubmittedTime(event.index);
+                        }
+                    });
         }
     }
 
@@ -70,7 +75,12 @@ public class SessionHolder implements EventListener {
         Session session = new Session(sessionId, conferenceId, addedByEmail);
         event.data.stringValue(SessionVariables.SESSION_STATUS)
                 .map(SessionStatus::valueOf)
-                .ifPresent(session::setSessionStatus);
+                .ifPresent(sessionStatus -> {
+                    session.setSessionStatus(sessionStatus);
+                    if (sessionStatus == SessionStatus.SUBMITTED) {
+                        session.setSubmittedTime(event.index);
+                    }
+                });
         session.addData(event.data);
 
         synchronized (sessions) {

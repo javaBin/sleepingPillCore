@@ -12,6 +12,7 @@ public class SessionVariables {
     public static final String SPEAKER_NAME = "name";
     public static final String SPEAKER_EMAIL = "email";
     public static final String LAST_UPDATED = "lastUpdated";
+    public static final String SUBMITTED_TIME = "submittedTime";
 
     public static final String COMMENT_ID = "id";
     public static final String COMMENT_POSTEDDATE = "postedDate";

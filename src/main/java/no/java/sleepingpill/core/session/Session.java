@@ -3,9 +3,11 @@ package no.java.sleepingpill.core.session;
 import no.java.sleepingpill.core.util.DateUtil;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
-import org.jsonbuddy.JsonNode;
 import org.jsonbuddy.JsonObject;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 import static no.java.sleepingpill.core.session.SessionVariables.*;
@@ -17,6 +19,7 @@ public class Session extends DataObject {
     private volatile SessionStatus sessionStatus = SessionStatus.DRAFT;
     private volatile List<Speaker> speakers = new ArrayList<>();
     private volatile List<Comment> comments = new ArrayList<>();
+    private volatile Optional<LocalDateTime> submittedTime = Optional.empty();
 
     public Session(String id, String conferenceId,Optional<String> addedByEmail) {
         super(id);
@@ -52,6 +55,7 @@ public class Session extends DataObject {
                 .put(LAST_UPDATED,lastUpdated)
                 .put(COMMENT_ARRAY,JsonArray.fromNodeStream(comments.stream().map(Comment::toJson)))
                 ;
+        submittedTime.ifPresent(time -> result.put(SUBMITTED_TIME,time.toString()));
         addedByEmail.ifPresent(mail -> result.put(SessionVariables.POSTED_BY_MAIL,mail));
         return result;
     }
@@ -130,6 +134,7 @@ public class Session extends DataObject {
 
     public Session setSessionStatus(SessionStatus sessionStatus) {
         this.sessionStatus = sessionStatus;
+
         return this;
     }
 
@@ -164,6 +169,15 @@ public class Session extends DataObject {
 
     public Session setLastUpdated(String lastUpdated) {
         this.lastUpdated = lastUpdated;
+        return this;
+    }
+
+    public Session setSubmittedTime(long millis) {
+        if (submittedTime.isPresent()) {
+            return this;
+        }
+        LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault());
+        submittedTime = Optional.of(date);
         return this;
     }
 }

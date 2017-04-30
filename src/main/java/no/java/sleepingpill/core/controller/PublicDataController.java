@@ -7,6 +7,9 @@ import spark.Request;
 import spark.Response;
 import spark.Spark;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
+
 import static no.java.sleepingpill.core.util.JsonUtil.jsonBuddyString;
 
 public class PublicDataController {
@@ -17,8 +20,9 @@ public class PublicDataController {
     }
 
     public ServiceResult sessionsForConference(Request req, Response res) {
+        Optional<String> ifModifiedSince = Optional.ofNullable(req.headers("If-Modified-Since"));
         String conferenceSlug = req.params(":slug");
-        return PublicSessionService.get().allSessionsForConference(conferenceSlug);
+        return PublicSessionService.get().allSessionsForConference(conferenceSlug,ifModifiedSince);
     }
 
     public ServiceResult allConferences(Request req, Response res) {

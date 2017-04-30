@@ -5,9 +5,7 @@ import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
 
 import static no.java.sleepingpill.core.session.SessionVariables.*;
@@ -75,10 +73,21 @@ public class Session extends DataObject {
         for (String key : data.keySet()) {
             data.get(key).readPublicData().ifPresent(da -> result.put(key,da));
         }
+        addSlotTimesWithZuluTime(Optional.ofNullable(data.get(SessionVariables.START_TIME)),result,"startTimeZulu");
+        addSlotTimesWithZuluTime(Optional.ofNullable(data.get(SessionVariables.END_TIME)),result,"endTimeZulu");
         result.put(SPEAKER_ARRAY,JsonArray.fromNodeStream(speakers.stream().map(Speaker::asPublicJson)));
         return result;
     }
 
+    private static void addSlotTimesWithZuluTime(Optional<DataField> dataField, JsonObject dataObj, String fieldName) {
+        if (!dataField.isPresent()) {
+            return;
+        }
+        LocalDateTime localdate = LocalDateTime.parse(dataField.get().propertyValue());
+        ZonedDateTime zonedDateTime = localdate.atZone(ZoneId.of("Europe/Oslo"));
+        String zuluTime = zonedDateTime.withZoneSameInstant(ZoneId.of("Z")).toString();
+        dataObj.put(fieldName,zuluTime);
+    }
 
 
     public SessionStatus getSessionStatus() {

@@ -20,6 +20,10 @@ public class SessionVariables {
     public static final String COMMENT_FROM = "from";
     public static final String COMMENT_COMMENT = "comment";
     public static final String COMMENT_ARRAY = "comments";
+    public static final String ROOM = "room";
+    public static final String START_TIME = "startTime";
+    public static final String END_TIME = "endTime";
+    public static final String VIDEO = "video";
 
 
     private SessionVariables() {

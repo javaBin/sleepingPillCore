@@ -19,8 +19,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.jsonbuddy.JsonFactory.jsonObject;
-
 public class EmsImporter {
     private static final String SUBMIT_LOC = "http://localhost:8082/data/conference/6c599656fdd846468bbcab66cfffbbc0/session";
 
@@ -137,7 +135,7 @@ public class EmsImporter {
     }
 
     private JsonObject readFromEms(String emsUrl, boolean useAuthorization) {
-        URLConnection urlConnection = openConnection(emsUrl,useAuthorization);
+        URLConnection urlConnection = openConnectionToEms(emsUrl,useAuthorization);
         try (InputStream is = urlConnection.getInputStream()) {
             return JsonParser.parseToObject(is);
         } catch (IOException e) {
@@ -166,10 +164,10 @@ public class EmsImporter {
         }
     }
 
-    private static URLConnection openConnection(String questionUrl, boolean useAuthorization) {
+    public static HttpURLConnection openConnectionToEms(String questionUrl, boolean useAuthorization) {
         try {
             URL url = new URL(questionUrl);
-            URLConnection urlConnection = url.openConnection();
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
             if (useAuthorization) {
                 String authString = EmsImportConfig.emsUser() + ":" + EmsImportConfig.emsPassword();
@@ -277,7 +275,7 @@ public class EmsImporter {
         }
     }
 
-    private HttpURLConnection openConnectionToSleepingPill(String urlpath) {
+    public static HttpURLConnection openConnectionToSleepingPill(String urlpath) {
         try {
             URL url = new URL(urlpath);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

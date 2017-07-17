@@ -23,6 +23,7 @@ public class PictureController {
         get(HttpPaths.PICTURE_GET_SINGLE,this::readPicture);
     }
 
+    @SuppressWarnings("Duplicates")
     private Void readPicture(Request request, Response response) {
         String id = request.params(":id");
         Optional<Picture> pictureOpt = PicureService.get().getPicture(id);

@@ -72,9 +72,6 @@ public class Configuration {
         return Integer.parseInt(readValue("serverPort","8082"));
     }
 
-    public static String myLocation() {
-        return "http://localhost:8082/data/";
-    }
 
     public static boolean persistToDb() {
         return "true".equals(readValue("persistToDb","false"));
@@ -136,5 +133,9 @@ public class Configuration {
 
     public static Optional<String> basicAuthLogins() {
         return Optional.ofNullable(readValue("basicAuthLogins",null));
+    }
+
+    public static String serverAddress() {
+        return readValue("serverAddress","http://localhost:8082");
     }
 }

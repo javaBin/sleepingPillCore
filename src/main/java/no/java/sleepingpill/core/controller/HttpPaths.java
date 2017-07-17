@@ -15,6 +15,7 @@ public class HttpPaths {
     public static final String PICTURE_GET_SINGLE = "/data/picture/:id";
     public static final String PUBLIC_GET_SESSION_FOR_CONFERENCE = "/public/allSessions/:slug";
     public static final String PUBLIC_GET_CONFERENCES = "/public/allSessions";
+    public static final String PUBLIC_GET_PICTURE = "/public/picture/:id";
 
 
     private HttpPaths() {

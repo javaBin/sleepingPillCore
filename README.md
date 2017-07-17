@@ -51,7 +51,8 @@ The API returns a list of the published talks for the year. The following format
         {
           "name": "", // Name of the speaker
           "bio": "", // What the speaker said about him/herself
-          "twitter": "" // The speaker's Twitter account
+          "twitter": "", // The speaker's Twitter account
+          "pictureUrl": "" // Url to a picture of the speaker
         },
         // ... more speakers here
       ]
@@ -80,6 +81,7 @@ The following table lists the different fields, and what name we are using to de
 | speaker -> name | Speakers name | freetext | Your name |
 | speaker -> bio | Short description of the speaker | freetext | Short description of the speaker (try not to exceed 150 words) |
 | speaker -> twitter | Twitter handle | freetext | Twitter handle, starting with an @ |
+| speaker -> pictureUrl | Picture url | Url | An url to the picture of the speaker. |
 
 
 # Private API

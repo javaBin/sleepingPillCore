@@ -30,10 +30,12 @@ public class PublicDataController {
     public ServiceResult sessionsForConference(Request req, Response res) {
         Optional<String> ifModifiedSince = Optional.ofNullable(req.headers("If-Modified-Since"));
         String conferenceSlug = req.params(":slug");
+        res.header("Access-Control-Allow-Origin","*");
         return PublicSessionService.get().allSessionsForConference(conferenceSlug,ifModifiedSince);
     }
 
     public ServiceResult allConferences(Request req, Response res) {
+        res.header("Access-Control-Allow-Origin","*");
         return PublicSessionService.get().allConferences();
     }
 

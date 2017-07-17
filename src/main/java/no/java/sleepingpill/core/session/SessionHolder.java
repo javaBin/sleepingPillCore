@@ -10,11 +10,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class SessionHolder implements EventListener {
 
-    private final List<Session> sessions = new ArrayList<>();
+    private final ConcurrentHashMap<String,Session> sessions = new ConcurrentHashMap<>();
 
     public static SessionHolder instance() {
         return ServiceLocator.sessionHolder();
@@ -37,11 +38,9 @@ public class SessionHolder implements EventListener {
     private void handleDeleteSession(Event event) {
         String sessionId = event.data.requiredString(SessionVariables.SESSION_ID);
         synchronized (sessions) {
-            Session session = sessions.stream()
-                    .filter(se -> se.getId().equals(sessionId))
-                    .findAny()
+            Session session = Optional.ofNullable(sessions.get(sessionId))
                     .orElseThrow(() -> new InternalError("Unknown session id in update " + sessionId));
-            sessions.remove(session);
+            sessions.remove(sessionId);
         }
     }
 
@@ -52,9 +51,7 @@ public class SessionHolder implements EventListener {
     private void handleUpdateSession(Event event) {
         synchronized (sessions) {
             String sessionId = event.data.requiredString(SessionVariables.SESSION_ID);
-            Session session = sessions.stream()
-                    .filter(se -> se.getId().equals(sessionId))
-                    .findAny()
+            Session session = Optional.ofNullable(sessions.get(sessionId))
                     .orElseThrow(() -> new InternalError("Unknown session id in update " + sessionId));
             session.addData(event.data);
             event.data.stringValue(SessionVariables.SESSION_STATUS)
@@ -84,24 +81,20 @@ public class SessionHolder implements EventListener {
         session.addData(event.data);
 
         synchronized (sessions) {
-            sessions.add(session);
+            sessions.put(session.getId(),session);
         }
     }
 
     public List<Session> allSessions() {
         synchronized (sessions) {
-            return new ArrayList<>(sessions);
+            return new ArrayList<>(sessions.values());
         }
     }
 
 
 
     public Optional<Session> sessionFromId(String sessionId) {
-        synchronized (sessions) {
-            return sessions.stream()
-                    .filter(se -> se.getId().equals(sessionId))
-                    .findAny();
-        }
+        return Optional.ofNullable(sessions.get(sessionId));
     }
 
     public List<Session> sessionsByEmail(String email) {
@@ -109,7 +102,7 @@ public class SessionHolder implements EventListener {
             return Collections.emptyList();
         }
         synchronized (sessions) {
-            return sessions.stream()
+            return sessions.values().stream()
                     .filter(se -> se.isRelatedToEmail(email))
                     .collect(Collectors.toList());
         }

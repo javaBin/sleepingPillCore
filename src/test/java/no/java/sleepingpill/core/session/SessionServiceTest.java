@@ -2,6 +2,7 @@ package no.java.sleepingpill.core.session;
 
 import no.java.sleepingpill.core.ServiceResult;
 import no.java.sleepingpill.core.commands.CreateNewSession;
+import no.java.sleepingpill.core.event.Event;
 import org.jsonbuddy.JsonArray;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,12 +19,16 @@ public class SessionServiceTest {
     @Before
     public void setup(){
         SessionHolder.instance().clear();
+        SessionHolder.instance().eventAdded(createTestSession());
+        SessionHolder.instance().eventAdded(createTestSession());
+        SessionHolder.instance().eventAdded(createTestSession());
+    }
+
+    private Event createTestSession() {
         CreateNewSession createNewSession = new CreateNewSession();
         createNewSession.setConferenceId(ARRANGED_EVENT_ID);
         createNewSession.setPostedByMail(Optional.of(POSTED_BY));
-        SessionHolder.instance().eventAdded(createNewSession.createEvent());
-        SessionHolder.instance().eventAdded(createNewSession.createEvent());
-        SessionHolder.instance().eventAdded(createNewSession.createEvent());
+        return createNewSession.createEvent();
     }
 
 

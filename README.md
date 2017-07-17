@@ -134,6 +134,13 @@ The deploy needs the ansible vault password to be able to decrypt the property f
 
 ## Cloud tips and tricks :)
 
+### Downloading a dump of the database
+You can use postgres pg_dump to download the sleepingpill database. You need to open for access to the database. Login to the aws console, locate the security group for the rds instance and add an inbound rule for your ip. Run:
+pg_dump -h <dbserver> --username <dbUser> --dbname <dbname> --format custom --blobs --verbose >filename.backup
+
+You can find the values for dbserver,dbuser,dbname and dbpassword in the app property file (as described below).
+Please remember to delete your custom inbound rule from the security group after you are done :)
+
 ### SSH to the instance
 
 You need the ssh key. Get the private and public key (`javabin` and `javabin.pub`) from someone who have them already, and place them in `~/.ssh`

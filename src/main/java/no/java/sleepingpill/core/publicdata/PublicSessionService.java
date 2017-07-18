@@ -49,7 +49,7 @@ public class PublicSessionService {
     public ServiceResult allConferences() {
         List<Conference> conferences = ConferenceHolder.instance().allConferences();
         JsonArray jsonNodes = JsonArray.fromNodeStream(conferences.stream()
-                .map(conf -> JsonFactory.jsonObject().put("name", conf.name).put("slug", conf.slug))
+                .map(conf -> JsonFactory.jsonObject().put("name", conf.name).put("slug", conf.slug).put("id",conf.id))
         );
         return ServiceResult.ok(JsonFactory.jsonObject().put("conferences",jsonNodes));
     }

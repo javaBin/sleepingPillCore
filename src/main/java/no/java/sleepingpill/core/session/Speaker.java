@@ -74,7 +74,6 @@ public class Speaker extends DataObject {
     public JsonObject asPublicJson() {
         JsonObject result = JsonFactory.jsonObject();
         result.put(SessionVariables.SPEAKER_NAME,name);
-        result.put(SessionVariables.SESSION_ID,sessionId);
 
         Map<String, DataField> data = getData();
         for (String key : data.keySet()) {

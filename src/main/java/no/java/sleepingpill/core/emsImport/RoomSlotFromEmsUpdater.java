@@ -78,11 +78,11 @@ public class RoomSlotFromEmsUpdater {
         if (!SessionStatus.HISTORIC.toString().equals(sessionObj.requiredString(SESSION_STATUS))) {
             return false;
         }
-        return sessionObj.requiredObject(DATA_OBJECT).objectValue("emslocation").isPresent();
+        return sessionObj.requiredObject(DATA_OBJECT).objectValue(EMS_LOCATION).isPresent();
     }
 
     private static void updateSession(JsonObject sessionObj) {
-        String emsloc = sessionObj.requiredObject(DATA_OBJECT).requiredObject("emslocation").requiredString(VALUE_KEY);
+        String emsloc = sessionObj.requiredObject(DATA_OBJECT).requiredObject(EMS_LOCATION).requiredString(VALUE_KEY);
         HttpURLConnection connection = EmsImporter.openConnectionToEms(emsloc, false);
         JsonObject emsobj = parseToJson(connection);
         JsonArray emsLinks = emsobj.requiredObject("collection")

@@ -67,7 +67,7 @@ public class Session extends DataObject {
             throw new RuntimeException("Tried to handle private session as public");
         }
         JsonObject result = JsonFactory.jsonObject();
-        result.put(SESSION_ID,getId());
+        result.put(SESSION_ID,publicSessionId());
         result.put(CONFERENCE_ID,conferenceId);
         Map<String, DataField> data = getData();
         for (String key : data.keySet()) {
@@ -77,6 +77,14 @@ public class Session extends DataObject {
         addSlotTimesWithZuluTime(Optional.ofNullable(data.get(SessionVariables.END_TIME)),result,"endTimeZulu");
         result.put(SPEAKER_ARRAY,JsonArray.fromNodeStream(speakers.stream().map(Speaker::asPublicJson)));
         return result;
+    }
+
+    private String publicSessionId() {
+        return dataValue(EMS_LOCATION)
+                .map(DataField::propertyValue)
+                .map(emsloc -> emsloc.substring(emsloc.lastIndexOf("/")+1))
+                .orElse(getId());
+
     }
 
     private static void addSlotTimesWithZuluTime(Optional<DataField> dataField, JsonObject dataObj, String fieldName) {

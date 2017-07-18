@@ -28,7 +28,23 @@ public class PublicSessionService {
         if (!conferenceOptional.isPresent()) {
             return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST,"Unknown conference slug " + conferenceSlug);
         }
-        String conferenceid = conferenceOptional.get().id;
+        return readSessionsForConference(ifModifiedSince, conferenceOptional.get());
+    }
+
+    public ServiceResult allSessionsForConferenceById(String conferenceid,Optional<String> ifModifiedSince) {
+        Optional<Conference> conferenceOptional = ConferenceHolder.instance().allConferences().stream()
+                .filter(co -> co.id.equals(conferenceid))
+                .findAny();
+        if (!conferenceOptional.isPresent()) {
+            return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST,"Unknown conference id " + conferenceid);
+        }
+        return readSessionsForConference(ifModifiedSince, conferenceOptional.get());
+    }
+
+
+    private ServiceResult readSessionsForConference(Optional<String> ifModifiedSince, Conference conference) {
+
+        String conferenceid = conference.id;
         List<Session> allPubSessionsForConference = SessionHolder.instance().allSessions().stream()
                 .filter(se -> conferenceid.equals(se.getConferenceId()))
                 .filter(Session::isPublic)

@@ -18,11 +18,13 @@ This will give the following json:
  "conferences": [
      {
      "name": "JavaZone 2016",
-     "slug": "javazone_2016"
+     "slug": "javazone_2016",
+     "id": "3baa25d3-9cca-459a-90d7-9fc349209289"
      },
      {
      "name": "JavaZone 2017",
-     "slug": "javazone_2017"
+     "slug": "javazone_2017",
+     "id": "30d5c2f1cb214fc8b0649a44fdf3b4bf"
      },
      ....
  ]}
@@ -32,6 +34,12 @@ To fetch the sessions for each conference add the conference slug to the url, fo
 ```
 https://sleepingpill.javazone.no/public/allSessions/javazone_2017
 ```
+You can also use id if you want:
+```
+https://sleepingpill.javazone.no/public/conference/30d5c2f1cb214fc8b0649a44fdf3b4bf/session
+```
+
+
 
 The API returns a list of the published talks for the year. The following format are an example:
 

@@ -25,6 +25,14 @@ public class PublicDataController {
         Spark.get(HttpPaths.PUBLIC_GET_SESSION_FOR_CONFERENCE,this::sessionsForConference,jsonBuddyString());
         Spark.get(HttpPaths.PUBLIC_GET_CONFERENCES,this::allConferences,jsonBuddyString());
         Spark.get(HttpPaths.PUBLIC_GET_PICTURE,this::readPicture);
+        Spark.get(HttpPaths.PUBLIC_GET_SESSIONS_BY_CONFERENCE_ID,this::sessionsByConferenceid,jsonBuddyString());
+    }
+
+    private ServiceResult sessionsByConferenceid(Request request, Response response) {
+        Optional<String> ifModifiedSince = Optional.ofNullable(request.headers("If-Modified-Since"));
+        String conferenceid = request.params(":id");
+        response.header("Access-Control-Allow-Origin","*");
+        return PublicSessionService.get().allSessionsForConferenceById(conferenceid,ifModifiedSince);
     }
 
     public ServiceResult sessionsForConference(Request req, Response res) {

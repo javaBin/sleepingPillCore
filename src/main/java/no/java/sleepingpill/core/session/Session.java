@@ -7,6 +7,8 @@ import org.jsonbuddy.JsonObject;
 
 import java.time.*;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import static no.java.sleepingpill.core.session.SessionVariables.*;
 
@@ -15,14 +17,25 @@ public class Session extends DataObject {
     private final Optional<String> addedByEmail;
     private volatile String lastUpdated;
     private volatile SessionStatus sessionStatus = SessionStatus.DRAFT;
-    private volatile List<Speaker> speakers = new ArrayList<>();
-    private volatile List<Comment> comments = new ArrayList<>();
+    private volatile List<Speaker> speakers = new CopyOnWriteArrayList<>();
+    private volatile List<Comment> comments = new CopyOnWriteArrayList<>();
     private volatile Optional<LocalDateTime> submittedTime = Optional.empty();
+    private volatile Optional<Session> publicVersion = Optional.empty();
 
     public Session(String id, String conferenceId,Optional<String> addedByEmail) {
         super(id);
         this.conferenceId = conferenceId;
         this.addedByEmail = addedByEmail;
+    }
+
+    private Session(Session session) {
+        super(session);
+        this.conferenceId = session.conferenceId;
+        this.addedByEmail = session.addedByEmail;
+        this.lastUpdated = session.lastUpdated;
+        this.sessionStatus = session.sessionStatus;
+        this.speakers = new CopyOnWriteArrayList<>(session.speakers.stream().map(Speaker::new).collect(Collectors.toList()));
+        this.comments = new CopyOnWriteArrayList<>(session.comments.stream().map(Comment::new).collect(Collectors.toList()));
     }
 
 
@@ -59,12 +72,15 @@ public class Session extends DataObject {
     }
 
     public boolean isPublic() {
-        return sessionStatus == SessionStatus.APPROVED || sessionStatus == SessionStatus.HISTORIC;
+        return Optional.ofNullable(sessionStatus).map(SessionStatus::isPublic).orElse(false);
     }
 
     public JsonObject asPublicSessionJson() {
         if (!isPublic()) {
             throw new RuntimeException("Tried to handle private session as public");
+        }
+        if (publicVersion.isPresent()) {
+            return publicVersion.get().asPublicSessionJson();
         }
         JsonObject result = JsonFactory.jsonObject();
         result.put(SESSION_ID,publicSessionId());
@@ -104,12 +120,19 @@ public class Session extends DataObject {
 
     @Override
     public void addData(JsonObject update) {
+        SessionStatus newSessStatus = update.stringValue(SessionVariables.SESSION_STATUS)
+                .map(SessionStatus::valueOf)
+                .orElse(this.sessionStatus);
+        boolean wasPublised = newSessStatus.wasPublished(this.sessionStatus);
         super.addData(update);
         Optional<JsonArray> optSpeaker = update.arrayValue(SPEAKER_ARRAY);
         optSpeaker.ifPresent(this::updateSpeakers);
         update.arrayValue(COMMENT_ARRAY).ifPresent(this::updateComments);
         this.lastUpdated = update.stringValue(LAST_UPDATED).orElse(DateUtil.get().generateLastUpdated());
-
+        this.sessionStatus = newSessStatus;
+        if (wasPublised) {
+                this.publicVersion = Optional.of(new Session(this));
+        }
     }
 
     private void updateComments(JsonArray updatedCommentsJson) {

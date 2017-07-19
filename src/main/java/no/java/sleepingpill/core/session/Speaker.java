@@ -23,6 +23,14 @@ public class Speaker extends DataObject {
 
     }
 
+    public Speaker(Speaker speaker) {
+        super(speaker);
+        this.sessionId = speaker.sessionId;
+        this.name = speaker.name;
+        this.email = speaker.email;
+    }
+
+
 
     public static Speaker fromJson(String sessionid,JsonObject input) {
         String id = input.requiredObject("id").requiredString("value");

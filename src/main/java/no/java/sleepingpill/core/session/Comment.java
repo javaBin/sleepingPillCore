@@ -30,6 +30,15 @@ public class Comment {
         this.comment = jsonObject.requiredString(COMMENT_COMMENT);
     }
 
+    public Comment(Comment othercomment) {
+        this.id = othercomment.id;
+        this.postedDate = othercomment.postedDate;
+        this.email = othercomment.email;
+        this.from = othercomment.from;
+        this.comment = othercomment.comment;
+
+    }
+
 
 
     public static Comment fromJson(JsonObject jsonObject) {

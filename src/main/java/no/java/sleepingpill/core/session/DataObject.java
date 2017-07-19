@@ -8,13 +8,20 @@ import org.jsonbuddy.pojo.PojoMapper;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DataObject {
     private final String id;
-    private final Map<String,DataField> data = new HashMap<>();
+    private final Map<String,DataField> data;
 
     public DataObject(String id) {
         this.id = id;
+        this.data = new ConcurrentHashMap<>();
+    }
+
+    public DataObject(DataObject dataObject) {
+        this.id = dataObject.id;
+        this.data = new ConcurrentHashMap<>(dataObject.data);
     }
 
     public String getId() {

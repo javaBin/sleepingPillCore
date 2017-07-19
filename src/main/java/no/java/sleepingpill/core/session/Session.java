@@ -21,6 +21,7 @@ public class Session extends DataObject {
     private volatile List<Comment> comments = new CopyOnWriteArrayList<>();
     private volatile Optional<LocalDateTime> submittedTime = Optional.empty();
     private volatile Optional<Session> publicVersion = Optional.empty();
+    private volatile SessionUpdates sessionUpdates = SessionUpdates.noUpdates();
 
     public Session(String id, String conferenceId,Optional<String> addedByEmail) {
         super(id);
@@ -131,8 +132,20 @@ public class Session extends DataObject {
         this.lastUpdated = update.stringValue(LAST_UPDATED).orElse(DateUtil.get().generateLastUpdated());
         this.sessionStatus = newSessStatus;
         if (wasPublised) {
-                this.publicVersion = Optional.of(new Session(this));
+            this.publicVersion = Optional.of(new Session(this));
+            this.sessionUpdates = SessionUpdates.noUpdates();
+        } else {
+            this.sessionUpdates = computeSessionUpdates();
         }
+    }
+
+    private SessionUpdates computeSessionUpdates() {
+        if (!this.publicVersion.isPresent()) {
+            return SessionUpdates.noUpdates();
+        }
+        Session pver = this.publicVersion.get();
+        Map<String, String> changedMap = super.changedPublicFields(pver);
+        return new SessionUpdates(changedMap,Collections.emptyList());
     }
 
     private void updateComments(JsonArray updatedCommentsJson) {
@@ -219,5 +232,9 @@ public class Session extends DataObject {
         LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault());
         submittedTime = Optional.of(date);
         return this;
+    }
+
+    public SessionUpdates getSessionUpdates() {
+        return sessionUpdates;
     }
 }

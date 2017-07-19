@@ -1,7 +1,9 @@
 package no.java.sleepingpill.core.session;
 
 import no.java.sleepingpill.core.exceptions.InternalError;
+import org.jsonbuddy.JsonNode;
 import org.jsonbuddy.JsonObject;
+import org.jsonbuddy.JsonString;
 import org.jsonbuddy.pojo.JsonGenerator;
 import org.jsonbuddy.pojo.PojoMapper;
 
@@ -51,6 +53,28 @@ public class DataObject {
                     value.booleanValue("privateData").orElseThrow(() -> new InternalError("Missing privateData in data field"))));
         }
 
+    }
+
+    public Map<String,String> changedPublicFields(DataObject publicVersion) {
+        Map<String, String> result = new HashMap<>();
+        for (Map.Entry<String,DataField> entry : data.entrySet()) {
+            Optional<String> myVal = entry.getValue().readPublicData().filter(jn -> jn instanceof JsonString).map(JsonNode::stringValue);
+            if (!myVal.isPresent()) {
+                continue;
+            }
+            Optional<String> pubval = Optional.ofNullable(publicVersion.data.get(entry.getKey()))
+                    .map(DataField::readPublicData)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .filter(jn -> jn instanceof JsonString)
+                    .map(JsonNode::stringValue);
+            if (myVal.equals(pubval)) {
+                continue;
+            }
+            result.put(entry.getKey(),pubval.orElse(""));
+
+        }
+        return result;
     }
 
 

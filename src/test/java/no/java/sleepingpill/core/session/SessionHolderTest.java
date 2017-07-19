@@ -169,4 +169,32 @@ public class SessionHolderTest {
         assertThat(comment.getId()).isNotNull();
 
     }
+
+    @Test
+    public void shouldMarkUpdatedTitle() throws Exception {
+        String sessionid = createSession();
+        Session session = sessionHolder.sessionFromId(sessionid).orElseThrow(() -> new RuntimeException("Did not find session"));
+        assertThat(session.getSessionStatus()).isEqualTo(SessionStatus.DRAFT);
+        UpdateSession publisSessionEvent=new UpdateSession(sessionid,CONFERENCE_ID).setSessionStatus(SessionStatus.APPROVED);
+        sessionHolder.eventAdded(publisSessionEvent.createEvent(session));
+
+        session = sessionHolder.sessionFromId(sessionid).orElseThrow(() -> new RuntimeException("Did not find session"));
+
+        assertThat(session.getSessionStatus()).isEqualTo(SessionStatus.APPROVED);
+
+        UpdateSession updateTitle=new UpdateSession(sessionid,CONFERENCE_ID).addData("title",DataField.simplePublicStringValue("Updated title"));
+        sessionHolder.eventAdded(updateTitle.createEvent(session));
+
+        session = sessionHolder.sessionFromId(sessionid).orElseThrow(() -> new RuntimeException("Did not find session"));
+
+        Optional<DataField> title = session.dataValue("title");
+        assertThat(title.get().propertyValue()).isEqualTo("Updated title");
+        assertThat(session.asPublicSessionJson().requiredString("title")).isEqualTo("SessionOne");
+
+        SessionUpdates sessionUpdates = session.getSessionUpdates();
+        assertThat(sessionUpdates.oldValues.keySet()).hasSize(1);
+        assertThat(sessionUpdates.oldValues.get("title")).isEqualTo("SessionOne");
+
+
+    }
 }

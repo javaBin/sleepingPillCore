@@ -121,4 +121,17 @@ public class SessionService {
 
         return ServiceResult.ok(JsonFactory.jsonObject().put(SessionVariables.SESSION_ID,sessionId));
     }
+
+    public ServiceResult publishSessionData(String sessionId) {
+        Optional<Session> session = SessionHolder.instance().sessionFromId(sessionId);
+        if (!session.isPresent()) {
+            return ServiceResult.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown sessionid " + sessionId);
+        }
+
+        PublishChangesToSession publishChangesToSession = new PublishChangesToSession(sessionId, session.get().getConferenceId());
+        Event event = publishChangesToSession.createEvent();
+        EventHandler.instance().addEvent(event);
+
+        return ServiceResult.ok(JsonFactory.jsonObject().put(SessionVariables.SESSION_ID,sessionId));
+    }
 }

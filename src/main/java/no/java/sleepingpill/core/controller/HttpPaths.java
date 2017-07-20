@@ -7,6 +7,7 @@ public class HttpPaths {
     public static final String SESSION_GET_ALL_BY_CONFERENCE = "/data/conference/:conferenceId/session";
     public static final String SESSION_GET_SINGLE = "/data/session/:id";
     public static final String SESSION_POST_ADD_NEW = "/data/conference/:conferenceId/session";
+    public static final String SESSION_POST_PUBLISH = "/data/session/:id/publish";
     public static final String SESSION_PUT_UPDATE = "/data/session/:id";
     public static final String SESSION_DELETE = "/data/session/:id";
     public static final String SUBMITTER_POST_ADD_NEW = "/data/submitter";

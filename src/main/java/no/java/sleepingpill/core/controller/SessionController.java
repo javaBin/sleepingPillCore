@@ -31,6 +31,7 @@ public class SessionController {
         get(HttpPaths.SESSION_GET_SINGLE, this::getSessionById, jsonBuddyString());
 
         post(HttpPaths.SESSION_POST_ADD_NEW, this::postAddSession, jsonBuddyString());
+        post(HttpPaths.SESSION_POST_PUBLISH,this::postPublishSession,jsonBuddyString());
 
         put(HttpPaths.SESSION_PUT_UPDATE, this::putUpdateSession, jsonBuddyString());
 
@@ -42,6 +43,11 @@ public class SessionController {
             res.type("application/json");
         });
 
+    }
+
+    private ServiceResult postPublishSession(Request request, Response response) {
+        String id = request.params(":id");
+        return sessionService.publishSessionData(id);
     }
 
 

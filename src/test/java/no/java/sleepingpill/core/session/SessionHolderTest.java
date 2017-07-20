@@ -206,8 +206,9 @@ public class SessionHolderTest {
         assertThat(session.asPublicSessionJson().requiredString("title")).isEqualTo("SessionOne");
 
         SessionUpdates sessionUpdates = session.getSessionUpdates();
-        assertThat(sessionUpdates.oldValues.keySet()).hasSize(1);
-        assertThat(sessionUpdates.oldValues.get("title")).isEqualTo("SessionOne");
+        assertThat(sessionUpdates.oldValues).hasSize(1);
+        assertThat(sessionUpdates.oldValues.get(0).requiredString("key")).isEqualTo("title");
+        assertThat(sessionUpdates.oldValues.get(0).requiredString("value")).isEqualTo("SessionOne");
 
 
     }

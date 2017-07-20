@@ -168,10 +168,13 @@ public class Session extends DataObject {
                 speakerUpdates.add(new SpeakerUpdates(speaker.getId(),allPublic(speaker),UpdateType.ADDED));
                 continue;
             }
-            Map<String, String> changedPublicFields = speaker.changedPublicFields(matching.get());
-            if (changedPublicFields.isEmpty()) {
+            Map<String, String> changedPublicFieldsMap = speaker.changedPublicFields(matching.get());
+            if (changedPublicFieldsMap.isEmpty()) {
                 continue;
             }
+            List<JsonObject> changedPublicFields = changedPublicFieldsMap.entrySet().stream()
+                    .map(en -> JsonFactory.jsonObject().put("key",en.getKey()).put("value",en.getValue()))
+                    .collect(Collectors.toList());
             speakerUpdates.add(new SpeakerUpdates(speaker.getId(),changedPublicFields,UpdateType.CHANGED));
         }
         for (Speaker speaker : pver.speakers) {
@@ -181,18 +184,23 @@ public class Session extends DataObject {
             speakerUpdates.add(new SpeakerUpdates(speaker.getId(),allPublic(speaker),UpdateType.DELETED));
         }
 
+        List<JsonObject> changes = changedMap.entrySet().stream()
+                .map(entr -> JsonFactory.jsonObject().put("key", entr.getKey()).put("value", entr.getValue()))
+                .collect(Collectors.toList());
 
-        return new SessionUpdates(changedMap,speakerUpdates);
+        return new SessionUpdates(changes,speakerUpdates);
     }
 
-    private static Map<String, String> allPublic(Speaker speaker) {
+    private static List<JsonObject> allPublic(Speaker speaker) {
         Map<String, String> result = new HashMap<>();
         speaker.getData().entrySet().stream()
                 .filter(en -> !en.getValue().isPrivateData())
                 .filter(en -> en.getValue().isProperty())
                 .forEach(en -> result.put(en.getKey(),en.getValue().propertyValue()));
         result.put("name",speaker.getName());
-        return result;
+        return result.entrySet().stream()
+                .map(en -> JsonFactory.jsonObject().put("key",en.getKey()).put("value",en.getValue()))
+                .collect(Collectors.toList());
     }
 
     private void updateComments(JsonArray updatedCommentsJson) {

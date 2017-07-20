@@ -142,6 +142,14 @@ public class Session extends DataObject {
         }
     }
 
+    public void publishChanges() {
+        if (!getSessionUpdates().getHasUnpublishedChanges()) {
+            return;
+        }
+        this.publicVersion = Optional.of(new Session(this));
+        this.sessionUpdates = SessionUpdates.noUpdates();
+    }
+
     private SessionUpdates computeSessionUpdates() {
         if (!this.publicVersion.isPresent()) {
             return SessionUpdates.noUpdates();
@@ -276,4 +284,6 @@ public class Session extends DataObject {
     public SessionUpdates getSessionUpdates() {
         return sessionUpdates;
     }
+
+
 }

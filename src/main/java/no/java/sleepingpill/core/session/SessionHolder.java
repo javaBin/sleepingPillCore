@@ -33,6 +33,18 @@ public class SessionHolder implements EventListener {
         if (event.eventType == EventType.DELETE_SESSION) {
             handleDeleteSession(event);
         }
+        if (event.eventType == EventType.PUBLISH_CHANGES_TO_SESSION) {
+            handlePublishedChanges(event);
+        }
+    }
+
+    private void handlePublishedChanges(Event event) {
+        String sessionId = event.data.requiredString(SessionVariables.SESSION_ID);
+        synchronized (sessions) {
+            Session session = Optional.ofNullable(sessions.get(sessionId))
+                    .orElseThrow(() -> new InternalError("Unknown session id in update " + sessionId));
+            session.publishChanges();
+        }
     }
 
     private void handleDeleteSession(Event event) {

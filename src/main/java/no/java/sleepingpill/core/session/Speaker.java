@@ -2,6 +2,7 @@ package no.java.sleepingpill.core.session;
 
 import no.java.sleepingpill.core.Configuration;
 import no.java.sleepingpill.core.util.IdGenerator;
+import no.java.sleepingpill.core.util.MD5Util;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonNode;
 import org.jsonbuddy.JsonObject;
@@ -93,10 +94,13 @@ public class Speaker extends DataObject {
 
     private void addPictureUrl(Map<String, DataField> data, JsonObject result) {
         Optional<String> pictureIdOpt = Optional.ofNullable(data.get("pictureId")).map(DataField::propertyValue);
-        if (!pictureIdOpt.isPresent()) {
-            return;
+        String url;
+        if (pictureIdOpt.isPresent()) {
+            url = Configuration.serverAddress() + "/public/picture/" + pictureIdOpt.get();
+        } else {
+            String hash = MD5Util.md5Hex(email);
+            url = "https://www.gravatar.com/avatar/" + hash + "?d=mm";
         }
-        String url = Configuration.serverAddress() + "/public/picture/" + pictureIdOpt.get();
         result.put("pictureUrl",url);
     }
 

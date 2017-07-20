@@ -40,6 +40,10 @@ public class DataField implements OverridesJsonGenerator {
         return ((JsonString) value).stringValue();
     }
 
+    public boolean isProperty() {
+        return (value instanceof JsonString);
+    }
+
     private JsonNode getValue() {
         return value.deepClone();
     }

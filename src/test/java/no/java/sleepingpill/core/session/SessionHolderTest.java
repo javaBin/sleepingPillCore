@@ -78,6 +78,11 @@ public class SessionHolderTest {
         String sessionId = createSession();
         Session session = sessionHolder.sessionFromId(sessionId).orElseThrow(() -> new RuntimeException("Did not find session"));
 
+        UpdateSession publisSessionEvent=new UpdateSession(sessionId,CONFERENCE_ID).setSessionStatus(SessionStatus.APPROVED);
+        sessionHolder.eventAdded(publisSessionEvent.createEvent(session));
+
+        session = sessionHolder.sessionFromId(sessionId).orElseThrow(() -> new RuntimeException("Did not find session"));
+
         Speaker darthSpeaker = session.getSpeakers().get(0);
 
         SpeakerData darthUpdate = new SpeakerData()
@@ -99,6 +104,14 @@ public class SessionHolderTest {
         session = sessionHolder.sessionFromId(sessionId).orElseThrow(() -> new RuntimeException("Did not find session"));
 
         assertThat(session.getSpeakers()).hasSize(2);
+        assertThat(session.asPublicSessionJson().requiredArray(SessionVariables.SPEAKER_ARRAY)).hasSize(1);
+        assertThat(session.getSessionUpdates().getHasUnpublishedChanges()).isTrue();
+        List<SpeakerUpdates> speakerUpdates = session.getSessionUpdates().speakerUpdates;
+
+        assertThat(speakerUpdates).hasSize(1);
+        SpeakerUpdates addedSpeaker = speakerUpdates.get(0);
+        assertThat(addedSpeaker.updateType).isEqualTo(UpdateType.ADDED);
+        assertThat(addedSpeaker.speakerid).isNotNull().isNotEqualTo(darthSpeaker.getId());
 
     }
 
@@ -108,6 +121,7 @@ public class SessionHolderTest {
         String sessionId = createSession();
 
         Session session = sessionHolder.sessionFromId(sessionId).orElseThrow(() -> new RuntimeException("Did not find session"));
+
 
         Speaker darthSpeaker = session.getSpeakers().get(0);
 

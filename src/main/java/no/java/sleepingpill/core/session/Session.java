@@ -4,6 +4,7 @@ import no.java.sleepingpill.core.util.DateUtil;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
+import org.jsonbuddy.JsonString;
 import org.jsonbuddy.pojo.JsonGenerator;
 
 import java.time.*;
@@ -147,7 +148,43 @@ public class Session extends DataObject {
         }
         Session pver = this.publicVersion.get();
         Map<String, String> changedMap = super.changedPublicFields(pver);
-        return new SessionUpdates(changedMap,Collections.emptyList());
+
+        Set<String> currentSpeakers = new HashSet<>();
+        List<SpeakerUpdates> speakerUpdates = new ArrayList<>();
+        for (Speaker speaker : speakers) {
+            currentSpeakers.add(speaker.getId());
+            Optional<Speaker> matching = pver.speakers.stream()
+                    .filter(sp -> sp.getId().equals(speaker.getId()))
+                    .findAny();
+            if (!matching.isPresent()) {
+                speakerUpdates.add(new SpeakerUpdates(speaker.getId(),allPublic(speaker),UpdateType.ADDED));
+                continue;
+            }
+            Map<String, String> changedPublicFields = speaker.changedPublicFields(matching.get());
+            if (changedPublicFields.isEmpty()) {
+                continue;
+            }
+            speakerUpdates.add(new SpeakerUpdates(speaker.getId(),changedPublicFields,UpdateType.CHANGED));
+        }
+        for (Speaker speaker : pver.speakers) {
+            if (currentSpeakers.contains(speaker.getId())) {
+                continue;
+            }
+            speakerUpdates.add(new SpeakerUpdates(speaker.getId(),allPublic(speaker),UpdateType.DELETED));
+        }
+
+
+        return new SessionUpdates(changedMap,speakerUpdates);
+    }
+
+    private static Map<String, String> allPublic(Speaker speaker) {
+        Map<String, String> result = new HashMap<>();
+        speaker.getData().entrySet().stream()
+                .filter(en -> !en.getValue().isPrivateData())
+                .filter(en -> en.getValue().isProperty())
+                .forEach(en -> result.put(en.getKey(),en.getValue().propertyValue()));
+        result.put("name",speaker.getName());
+        return result;
     }
 
     private void updateComments(JsonArray updatedCommentsJson) {

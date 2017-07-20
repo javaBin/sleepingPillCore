@@ -99,4 +99,12 @@ public class Speaker extends DataObject {
         String url = Configuration.serverAddress() + "/public/picture/" + pictureIdOpt.get();
         result.put("pictureUrl",url);
     }
+
+    public Map<String, String> changedPublicFields(Speaker publicVersion) {
+        Map<String, String> changedPublicFields = super.changedPublicFields(publicVersion);
+        if (!name.equals(publicVersion.name)) {
+            changedPublicFields.put("name",publicVersion.name);
+        }
+        return changedPublicFields;
+    }
 }

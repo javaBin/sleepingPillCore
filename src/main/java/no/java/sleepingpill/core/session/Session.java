@@ -4,6 +4,7 @@ import no.java.sleepingpill.core.util.DateUtil;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
+import org.jsonbuddy.pojo.JsonGenerator;
 
 import java.time.*;
 import java.util.*;
@@ -66,6 +67,7 @@ public class Session extends DataObject {
                 .put(CONFERENCE_ID,conferenceId)
                 .put(LAST_UPDATED,lastUpdated)
                 .put(COMMENT_ARRAY,JsonArray.fromNodeStream(comments.stream().map(Comment::toJson)))
+                .put(SESSION_UPDATES, JsonGenerator.generate(getSessionUpdates()))
                 ;
         submittedTime.ifPresent(time -> result.put(SUBMITTED_TIME,time.toString()));
         addedByEmail.ifPresent(mail -> result.put(SessionVariables.POSTED_BY_MAIL,mail));

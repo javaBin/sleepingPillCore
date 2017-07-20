@@ -25,6 +25,7 @@ public class SessionVariables {
     public static final String END_TIME = "endTime";
     public static final String VIDEO = "video";
     public static final String EMS_LOCATION = "emslocation";
+    public static final String SESSION_UPDATES = "sessionUpdates";
 
 
     private SessionVariables() {

@@ -16,4 +16,8 @@ public class SessionUpdates {
     public static SessionUpdates noUpdates() {
         return new SessionUpdates(Collections.emptyMap(),Collections.emptyList());
     }
+
+    public boolean getHasUnpublishedChanges() {
+        return !(oldValues.isEmpty() && speakerUpdates.isEmpty());
+    }
 }

@@ -4,7 +4,6 @@ import no.java.sleepingpill.core.util.DateUtil;
 import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
 import org.jsonbuddy.JsonObject;
-import org.jsonbuddy.JsonString;
 import org.jsonbuddy.pojo.JsonGenerator;
 
 import java.time.*;
@@ -112,9 +111,7 @@ public class Session extends DataObject {
             return;
         }
         LocalDateTime localdate = LocalDateTime.parse(dataField.get().propertyValue());
-        ZonedDateTime zonedDateTime = localdate.atZone(ZoneId.of("Europe/Oslo"));
-        String zuluTime = zonedDateTime.withZoneSameInstant(ZoneId.of("Z")).toString();
-        dataObj.put(fieldName,zuluTime);
+        dataObj.put(fieldName, DateUtil.toZuluTimeString(localdate));
     }
 
 

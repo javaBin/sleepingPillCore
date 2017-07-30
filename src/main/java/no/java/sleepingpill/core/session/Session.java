@@ -121,9 +121,9 @@ public class Session extends DataObject {
 
     @Override
     public void addData(JsonObject update) {
-        SessionStatus newSessStatus = update.stringValue(SessionVariables.SESSION_STATUS)
+        SessionStatus newSessStatus = this.sessionStatus.findNewStatus(update.stringValue(SessionVariables.SESSION_STATUS)
                 .map(SessionStatus::valueOf)
-                .orElse(this.sessionStatus);
+                .orElse(this.sessionStatus));
         boolean wasPublised = newSessStatus.wasPublished(this.sessionStatus);
         super.addData(update);
         Optional<JsonArray> optSpeaker = update.arrayValue(SPEAKER_ARRAY);

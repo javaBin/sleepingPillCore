@@ -69,9 +69,12 @@ public class SessionHolder implements EventListener {
             event.data.stringValue(SessionVariables.SESSION_STATUS)
                     .map(SessionStatus::valueOf)
                     .ifPresent(sessionStatus -> {
-                        session.setSessionStatus(sessionStatus);
-                        if (sessionStatus == SessionStatus.SUBMITTED) {
-                            session.setSubmittedTime(event.index);
+                        SessionStatus newStatus = session.getSessionStatus().findNewStatus(sessionStatus);
+                        if (newStatus != session.getSessionStatus()) {                             
+                            session.setSessionStatus(newStatus);
+                            if (sessionStatus == SessionStatus.SUBMITTED) {
+                                session.setSubmittedTime(event.index);
+                            }
                         }
                     });
         }

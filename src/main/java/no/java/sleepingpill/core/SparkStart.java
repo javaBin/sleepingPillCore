@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import static no.java.sleepingpill.core.ServiceLocator.eventHandler;
+import static spark.Spark.after;
 import static spark.Spark.port;
 public class SparkStart {
     private static final Logger logger = LoggerFactory.getLogger(SparkStart.class);
@@ -45,6 +46,9 @@ public class SparkStart {
 
         new BasicAuthController().initSpark();
         new ExceptionHandler().initSparkExceptionHandling();
+        after((request, response) -> {
+            response.header("Content-Encoding", "gzip");
+        });
     }
 
     public static void setConfigFile(String[] argv) {

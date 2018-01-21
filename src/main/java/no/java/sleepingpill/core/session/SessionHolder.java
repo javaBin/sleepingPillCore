@@ -70,7 +70,7 @@ public class SessionHolder implements EventListener {
                     .map(SessionStatus::valueOf)
                     .ifPresent(sessionStatus -> {
                         SessionStatus newStatus = session.getSessionStatus().findNewStatus(sessionStatus);
-                        if (newStatus != session.getSessionStatus()) {                             
+                        if (newStatus != session.getSessionStatus()) {
                             session.setSessionStatus(newStatus);
                             if (sessionStatus == SessionStatus.SUBMITTED) {
                                 session.setSubmittedTime(event.index);

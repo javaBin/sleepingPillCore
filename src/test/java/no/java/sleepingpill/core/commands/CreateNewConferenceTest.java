@@ -37,7 +37,28 @@ public class CreateNewConferenceTest {
         List<Conference> conferences = conferenceHolder.allConferences();
 
         assertThat(conferences).hasSize(1);
-        assertThat(conferences.get(0).name).isEqualTo("Javazone 2017");
+        assertThat(conferences.get(0).getName()).isEqualTo("Javazone 2017");
+
+    }
+
+    @Test
+    public void shouldBeAbleToUpdateConferenceName() {
+        CreateNewConference createNewConference = new CreateNewConference();
+        createNewConference.setName("Jaxazone 2017");
+        createNewConference.setSlug("javazone2017");
+
+        Event event = createNewConference.createEvent();
+        eventHandler.addEvent(event);
+
+        String conferenceId = conferenceHolder.allConferences().get(0).id;
+        assertThat(conferenceId).isNotNull();
+
+        UpdateConference updateConference = new UpdateConference(conferenceId,"JavaZone 2017");
+        event = updateConference.createEvent();
+        eventHandler.addEvent(event);
+
+        assertThat(conferenceHolder.allConferences()).hasSize(1);
+        assertThat(conferenceHolder.allConferences().get(0).getName()).isEqualTo("JavaZone 2017");
 
     }
 }

@@ -7,10 +7,8 @@ import org.jsonbuddy.parse.JsonParser;
 import spark.Request;
 import spark.Response;
 
-import static spark.Spark.after;
-import static spark.Spark.get;
-import static spark.Spark.post;
 import static no.java.sleepingpill.core.util.JsonUtil.jsonBuddyString;
+import static spark.Spark.*;
 
 public class ConferenceController {
     private ConferenceService conferenceService;
@@ -26,6 +24,7 @@ public class ConferenceController {
     public void initSpark(){
         get(HttpPaths.CONFERENCE_GET, this::getAllConferences, jsonBuddyString());
         post(HttpPaths.CONFERENCE_POST,this::postAddConference, jsonBuddyString());
+        put(HttpPaths.CONFERENCE_PUT_UPDATE,this::putUpdateConference,jsonBuddyString());
     }
 
     public ServiceResult getAllConferences(Request req, Response res) {
@@ -39,5 +38,11 @@ public class ConferenceController {
     }
 
 
+    public ServiceResult putUpdateConference(Request req, Response res) {
+        String id = req.params(":id");
+        String body = req.body();
+        JsonObject payload = JsonParser.parseToObject(body);
+        return conferenceService.updateConference(id,payload);
+    }
 
 }

@@ -3,6 +3,7 @@ package no.java.sleepingpill.core.controller;
 public class HttpPaths {
     public static final String CONFERENCE_GET = "/data/conference";
     public static final String CONFERENCE_POST = "/data/conference";
+    public static final String CONFERENCE_PUT_UPDATE = "/data/conference/:id";
     public static final String SESSION_GET_ALL_FOR_CONFERENCE_BY_ID = "/data/session";
     public static final String SESSION_GET_ALL_BY_CONFERENCE = "/data/conference/:conferenceId/session";
     public static final String SESSION_GET_SINGLE = "/data/session/:id";

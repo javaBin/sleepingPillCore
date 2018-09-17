@@ -135,6 +135,10 @@ public class Configuration {
         return Optional.ofNullable(readValue("basicAuthLogins",null));
     }
 
+    public static Optional<String> readOnlyBasicAuthLogins() {
+        return Optional.ofNullable(readValue("readOnlyBasicAuthLogins",null));
+    }
+
     public static String serverAddress() {
         return readValue("serverAddress","http://localhost:8082");
     }

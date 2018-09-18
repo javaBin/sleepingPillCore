@@ -3,9 +3,7 @@ package no.java.sleepingpill.core.controller;
 import no.java.sleepingpill.core.Configuration;
 import spark.Request;
 import spark.Response;
-import spark.Spark;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,37 +14,47 @@ import static spark.Spark.halt;
 
 public class BasicAuthController {
     private final Set<Credentials> allowedLogins;
+    private final Set<Credentials> readOnlyLogins;
 
     public BasicAuthController() {
-        this.allowedLogins = readAllowedLogins();
+        this.allowedLogins = getCredentials(Configuration.basicAuthLogins());
+        this.readOnlyLogins = getCredentials(Configuration.readOnlyBasicAuthLogins());
     }
 
-    private static Set<Credentials> readAllowedLogins() {
-        Optional<String> basicAuthLogins = Configuration.basicAuthLogins();
+    private static Set<Credentials> getCredentials(Optional<String> basicAuthLogins) {
         if (!basicAuthLogins.isPresent()) {
             return Collections.emptySet();
         }
         return Stream.of(basicAuthLogins.get().split(","))
                 .map(str -> {
                     int pos = str.indexOf("=");
-                    return new Credentials(str.substring(0,pos),str.substring(pos+1));
+                    return new Credentials(str.substring(0, pos), str.substring(pos + 1));
                 })
                 .collect(Collectors.toSet());
     }
 
     public void initSpark() {
-        before("/data/*",this::basicAuthFilter);
+        before("/data/*", this::basicAuthFilter);
     }
 
     private void basicAuthFilter(Request request, Response response) {
-        if (this.allowedLogins.isEmpty()) {
+
+        if (this.allowedLogins.isEmpty() && this.readOnlyLogins.isEmpty()) {
             return;
         }
-        Optional<Credentials> credentials = credentialsWithBasicAuthentication(request);
-        if (!credentials.isPresent() || !allowedLogins.contains(credentials.get())) {
-            halt(401,"Not authorized");
-        }
 
+        Optional<Credentials> credentials = credentialsWithBasicAuthentication(request);
+
+        if (!credentials.isPresent() ||
+                !allowedLogins.contains(credentials.get()) ||
+                (isReadRequest(request) && readOnlyLogins.contains(credentials.get()))
+                ) {
+            halt(401, "Not authorized");
+        }
+    }
+
+    private boolean isReadRequest(Request request) {
+        return "GET".equalsIgnoreCase(request.requestMethod()) || "HEAD".equalsIgnoreCase(request.requestMethod());
     }
 
     private static class Credentials {
@@ -88,7 +96,7 @@ public class BasicAuthController {
                             String login = credentials.substring(0, p).trim();
                             String password = credentials.substring(p + 1).trim();
 
-                            return Optional.of(new Credentials(login,password));
+                            return Optional.of(new Credentials(login, password));
                         } else {
                             return Optional.empty();
                         }

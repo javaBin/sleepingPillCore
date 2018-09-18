@@ -45,12 +45,23 @@ public class BasicAuthController {
 
         Optional<Credentials> credentials = credentialsWithBasicAuthentication(request);
 
-        if (!credentials.isPresent() ||
-                !allowedLogins.contains(credentials.get()) ||
-                (isReadRequest(request) && readOnlyLogins.contains(credentials.get()))
-                ) {
+
+        if (!isAuthorized(credentials,request)) {
             halt(401, "Not authorized");
         }
+    }
+
+    private boolean isAuthorized(Optional<Credentials> credentials, Request request) {
+        if (!credentials.isPresent()) {
+            return false;
+        }
+        if (allowedLogins.contains(credentials.get())) {
+            return true;
+        }
+        if (!isReadRequest(request)) {
+            return false;
+        }
+        return readOnlyLogins.contains(credentials.get());
     }
 
     private boolean isReadRequest(Request request) {

@@ -41,17 +41,21 @@ public class SessionHolder implements EventListener {
     private void handlePublishedChanges(Event event) {
         String sessionId = event.data.requiredString(SessionVariables.SESSION_ID);
         synchronized (sessions) {
-            Session session = Optional.ofNullable(sessions.get(sessionId))
-                    .orElseThrow(() -> new InternalError("Unknown session id in update " + sessionId));
-            session.publishChanges();
+            Optional<Session> session = Optional.ofNullable(sessions.get(sessionId));
+            if (!session.isPresent()) {
+                return;
+            }
+            session.get().publishChanges();
         }
     }
 
     private void handleDeleteSession(Event event) {
         String sessionId = event.data.requiredString(SessionVariables.SESSION_ID);
         synchronized (sessions) {
-            Session session = Optional.ofNullable(sessions.get(sessionId))
-                    .orElseThrow(() -> new InternalError("Unknown session id in update " + sessionId));
+            Optional<Session> session = Optional.ofNullable(sessions.get(sessionId));
+            if (!session.isPresent()) {
+                return;
+            }
             sessions.remove(sessionId);
         }
     }
@@ -63,8 +67,11 @@ public class SessionHolder implements EventListener {
     private void handleUpdateSession(Event event) {
         synchronized (sessions) {
             String sessionId = event.data.requiredString(SessionVariables.SESSION_ID);
-            Session session = Optional.ofNullable(sessions.get(sessionId))
-                    .orElseThrow(() -> new InternalError("Unknown session id in update " + sessionId));
+            Optional<Session> sessionOpt = Optional.ofNullable(sessions.get(sessionId));
+            if (!sessionOpt.isPresent()) {
+                return;
+            }
+            Session session = sessionOpt.get();
             session.addData(event.data);
             event.data.stringValue(SessionVariables.SESSION_STATUS)
                     .map(SessionStatus::valueOf)

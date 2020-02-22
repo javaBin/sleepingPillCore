@@ -19,6 +19,7 @@ public class HttpPaths {
     public static final String PUBLIC_GET_SESSIONS_BY_CONFERENCE_ID = "/public/conference/:id/session";
     public static final String PUBLIC_GET_CONFERENCES = "/public/allSessions";
     public static final String PUBLIC_GET_PICTURE = "/public/picture/:id";
+    public static final String PUBLIC_GET_CONFIG = "/public/config";
 
 
     private HttpPaths() {

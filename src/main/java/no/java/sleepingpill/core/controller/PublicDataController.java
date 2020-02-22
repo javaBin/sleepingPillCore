@@ -5,7 +5,9 @@ import no.java.sleepingpill.core.exceptions.ServiceResultException;
 import no.java.sleepingpill.core.picture.Picture;
 import no.java.sleepingpill.core.picture.PicureService;
 import no.java.sleepingpill.core.publicdata.PublicSessionService;
+import org.jsonbuddy.JsonArray;
 import org.jsonbuddy.JsonFactory;
+import org.jsonbuddy.JsonObject;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -26,6 +28,7 @@ public class PublicDataController {
         Spark.get(HttpPaths.PUBLIC_GET_CONFERENCES,this::allConferences,jsonBuddyString());
         Spark.get(HttpPaths.PUBLIC_GET_PICTURE,this::readPicture);
         Spark.get(HttpPaths.PUBLIC_GET_SESSIONS_BY_CONFERENCE_ID,this::sessionsByConferenceid,jsonBuddyString());
+        Spark.get(HttpPaths.PUBLIC_GET_CONFIG,this::readConfig,jsonBuddyString());
     }
 
     private ServiceResult sessionsByConferenceid(Request request, Response response) {
@@ -67,6 +70,15 @@ public class PublicDataController {
         }
 
         return null;
+    }
+
+    private ServiceResult readConfig(Request request, Response response) {
+        JsonObject configObject = new JsonObject();
+        configObject.put("conferenceUrl","https://sleepingpill.javazone.no/public/allSessions/javazone_2019");
+        configObject.put("conferenceName","JavaZone 2019");
+        configObject.put("conferenceDates", new JsonArray().add("11.09.2019").add("12.09.2019"));
+        configObject.put("workshopDate", "10.09.2019");
+        return ServiceResult.ok(configObject);
     }
 
 }

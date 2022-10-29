@@ -1,3 +1,6 @@
+# Legacy
+This is now longer in use We now use https://github.com/javaBin/moresleep
+
 # What's this?
 
 Session register which holds the talks for JavaZone. Used by [Cake-redux](https://github.com/javaBin/cake-redux),  [Submit](https://github.com/javaBin/submit) and other JavaZone systems.
